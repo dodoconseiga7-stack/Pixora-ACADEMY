@@ -1,15 +1,17 @@
 /**
- * PIXORA STUDIO — Contrôleur Principal de l'Application
+ * PIXORA STUDIO — Contrôleur Principal
+ * Intégration complète WhatsApp (+226 03 24 95 48), filtres et modales.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const config = window.PIXORA_DATA.config;
+
   // 1. Initialisation du lecteur Showreel Vidéo
   const showreel = new PixoraShowreelPlayer("showreel-canvas", "showreel-player-container");
 
   // 2. Rendu de la grille des 18 services
   const servicesGrid = document.getElementById("services-grid");
   const filterButtons = document.querySelectorAll(".filter-btn");
-  let activeFilter = "all";
 
   function renderServices(filter = "all") {
     if (!servicesGrid) return;
@@ -24,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("div");
       card.className = "service-card";
       card.setAttribute("data-category", service.category);
-      card.setAttribute("data-aos", "fade-up");
-      card.style.animationDelay = `${idx * 0.05}s`;
+
+      const waOrderUrl = `https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(service.whatsappMessage)}`;
 
       card.innerHTML = `
         <div class="service-card-media" onclick="openProductModal('${service.id}')">
@@ -33,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="service-media-overlay">
             <span class="zoom-pill">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              Examiner le Mockup HD
+              Voir la réalisation
             </span>
           </div>
           <span class="service-category-badge">${service.categoryLabel}</span>
@@ -49,11 +51,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           <div class="service-card-footer">
             <button class="btn-details" onclick="openProductModal('${service.id}')">
-              Fiche Technique
+              Détails & Formats
             </button>
-            <a href="https://wa.me/${window.PIXORA_DATA.whatsappNumber}?text=${encodeURIComponent(service.whatsappMessage)}" target="_blank" rel="noopener noreferrer" class="btn-order-wa">
+            <a href="${waOrderUrl}" target="_blank" rel="noopener noreferrer" class="btn-order-wa" title="Commander sur WhatsApp">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-              Commander
+              Commander sur WhatsApp
             </a>
           </div>
         </div>
@@ -68,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => {
       filterButtons.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      activeFilter = btn.getAttribute("data-filter");
+      const activeFilter = btn.getAttribute("data-filter");
       renderServices(activeFilter);
     });
   });
@@ -84,11 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const service = window.PIXORA_DATA.services.find(s => s.id === serviceId);
     if (!service || !modal) return;
 
+    const waOrderUrl = `https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(service.whatsappMessage)}`;
+
     modalContent.innerHTML = `
       <div class="modal-grid">
         <div class="modal-media-wrapper">
           <img src="${service.image}" alt="${service.title}" class="modal-large-img" />
-          <div class="modal-caption">Mockup 3D Haute Résolution — Réalisation Pixora Studio</div>
+          <div class="modal-caption">Référence visuelle studio — ${service.title}</div>
         </div>
         <div class="modal-info-wrapper">
           <div class="modal-header-top">
@@ -99,32 +103,32 @@ document.addEventListener("DOMContentLoaded", () => {
           <p class="modal-desc">${service.fullDesc}</p>
 
           <div class="modal-specs-box">
-            <h4 class="specs-box-title">Spécifications Techniques & Finitions</h4>
+            <h4 class="specs-box-title">Caractéristiques & Options</h4>
             <div class="specs-row">
-              <span class="spec-label">Formats standards :</span>
+              <span class="spec-label">Formats habituels :</span>
               <span class="spec-value">${service.specs.formats}</span>
             </div>
             <div class="specs-row">
-              <span class="spec-label">Supports & Papiers :</span>
+              <span class="spec-label">Matières & Papiers :</span>
               <span class="spec-value">${service.specs.papier}</span>
             </div>
             <div class="specs-row">
-              <span class="spec-label">Finitions disponibles :</span>
+              <span class="spec-label">Finitions & Options :</span>
               <span class="spec-value">${service.specs.finitions}</span>
             </div>
             <div class="specs-row">
-              <span class="spec-label">Délais de fabrication :</span>
+              <span class="spec-label">Délai de réalisation :</span>
               <span class="spec-value">${service.specs.delai}</span>
             </div>
           </div>
 
           <div class="modal-cta-box">
-            <a href="https://wa.me/${window.PIXORA_DATA.whatsappNumber}?text=${encodeURIComponent(service.whatsappMessage)}" target="_blank" rel="noopener noreferrer" class="btn-primary-wa">
+            <a href="${waOrderUrl}" target="_blank" rel="noopener noreferrer" class="btn-primary-wa">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-              Demander un Devis WhatsApp Immédiat
+              Commander sur WhatsApp (${config.whatsappDisplay})
             </a>
             <button class="btn-jump-showreel" onclick="jumpToShowreelProduct('${service.id}')">
-              Voir dans le Showreel Vidéo ▶
+              Voir la présentation vidéo ▶
             </button>
           </div>
         </div>
@@ -166,11 +170,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // 4. Formulaire Devis Instantané WhatsApp
+  // 4. Formulaire Devis Express WhatsApp
   const quoteForm = document.getElementById("quote-form");
   const quoteProductSelect = document.getElementById("quote-product");
 
   if (quoteProductSelect) {
+    quoteProductSelect.innerHTML = '<option value="" disabled selected>-- Sélectionnez un produit ou service --</option>';
     window.PIXORA_DATA.services.forEach(s => {
       const opt = document.createElement("option");
       opt.value = s.title;
@@ -187,9 +192,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const details = document.getElementById("quote-details").value;
       const name = document.getElementById("quote-name").value;
 
-      const message = `Bonjour Pixora Studio,\n\nJe m'appelle *${name}* et je souhaite obtenir un devis pour :\n- *Produit* : ${product}\n- *Quantité estimée* : ${quantity}\n- *Détails / Finitions souhaitées* : ${details || "Standard"}\n\nMerci de m'indiquer vos tarifs et délais.`;
+      const message = `Bonjour Pixora Studio,\n\nJe m'appelle *${name}* et je souhaite avoir des informations / un devis pour :\n- *Produit* : ${product}\n- *Quantité estimée* : ${quantity}\n- *Détails / Finitions souhaitées* : ${details || "Standard"}\n\nMerci de me recontacter sur WhatsApp.`;
 
-      const waUrl = `https://wa.me/${window.PIXORA_DATA.whatsappNumber}?text=${encodeURIComponent(message)}`;
+      const waUrl = `https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(message)}`;
       window.open(waUrl, "_blank");
     });
   }

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none">
+  <!-- PIXORA STUDIO — Emplacement Logo Officiel (Non déformé, 100% vectoriel) -->
+  <defs>
+    <linearGradient id="pixoraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#E5C07B"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Symbole géométrique d'imprimerie & design -->
+  <g transform="translate(6, 6)">
+    <rect width="52" height="52" rx="14" fill="#0B0F19" stroke="url(#pixoraGrad)" stroke-width="2"/>
+    <path d="M18 16 H32 C38 16 41 19 41 24 C41 29 38 32 32 32 H24 V40 H18 V16 Z" fill="url(#pixoraGrad)"/>
+    <circle cx="28" cy="24" r="3.5" fill="#06080D"/>
+  </g>
+  
+  <!-- Typographie de marque -->
+  <text x="74" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="900" letter-spacing="1.5" fill="#FFFFFF">PIXORA</text>
+  <text x="180" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="800" letter-spacing="1.5" fill="#00E5FF">STUDIO</text>
+  <text x="75" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="2.5" fill="#94A3B8">COMMUNICATION VISUELLE &amp; PRINT</text>
+</svg>
