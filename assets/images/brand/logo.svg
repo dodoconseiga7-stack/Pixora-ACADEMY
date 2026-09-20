@@ -1,22 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 64" fill="none">
-  <!-- PIXORA STUDIO — Emplacement Logo Officiel (Non déformé, 100% vectoriel) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 64" fill="none">
+  <!-- PIXORA ACADEMY — Logo Officiel -->
   <defs>
     <linearGradient id="pixoraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00E5FF"/>
-      <stop offset="50%" stop-color="#3B82F6"/>
-      <stop offset="100%" stop-color="#E5C07B"/>
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="40%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#EC4899"/>
     </linearGradient>
   </defs>
   
-  <!-- Symbole géométrique d'imprimerie & design -->
+  <!-- Symbole P stylisé -->
   <g transform="translate(6, 6)">
-    <rect width="52" height="52" rx="14" fill="#0B0F19" stroke="url(#pixoraGrad)" stroke-width="2"/>
-    <path d="M18 16 H32 C38 16 41 19 41 24 C41 29 38 32 32 32 H24 V40 H18 V16 Z" fill="url(#pixoraGrad)"/>
-    <circle cx="28" cy="24" r="3.5" fill="#06080D"/>
+    <rect width="52" height="52" rx="14" fill="url(#pixoraGrad)"/>
+    <path d="M18 16 H32 C38 16 41 19 41 24 C41 29 38 32 32 32 H24 V40 H18 V16 Z" fill="#FFFFFF"/>
+    <circle cx="28" cy="24" r="3.5" fill="url(#pixoraGrad)"/>
   </g>
   
   <!-- Typographie de marque -->
-  <text x="74" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="900" letter-spacing="1.5" fill="#FFFFFF">PIXORA</text>
-  <text x="180" y="34" font-family="'Plus Jakarta Sans', sans-serif" font-size="24" font-weight="800" letter-spacing="1.5" fill="#00E5FF">STUDIO</text>
-  <text x="75" y="48" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" letter-spacing="2.5" fill="#94A3B8">COMMUNICATION VISUELLE &amp; PRINT</text>
+  <text x="74" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-size="26" font-weight="900" letter-spacing="1.5" fill="#0F172A">PIXORA</text>
+  <text x="74" y="50" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" letter-spacing="4" fill="#2563EB">ACADEMY</text>
 </svg>
