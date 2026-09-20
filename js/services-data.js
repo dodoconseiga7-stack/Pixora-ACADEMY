@@ -1,7 +1,7 @@
 /**
  * PIXORA STUDIO — Données Officielles des 18 Services & Produits
  * Numéro WhatsApp officiel : +226 03 24 95 48
- * Chemins d'images normalisés dans public/images/services/<sous-dossier>/
+ * Chemins d'images normalisés dans assets/images/services/<sous-dossier>/
  */
 
 const PIXORA_CONFIG = {
@@ -9,8 +9,8 @@ const PIXORA_CONFIG = {
   tagline: "Studio de Conception Graphique, Communication Visuelle & Impression",
   whatsappNumber: "22603249548",
   whatsappDisplay: "+226 03 24 95 48",
-  logoPath: "public/images/brand/logo.svg",
-  faviconPath: "public/images/brand/favicon.svg"
+  logoPath: "assets/images/brand/logo.svg",
+  faviconPath: "assets/images/brand/favicon.svg"
 };
 
 const SERVICES_DATA = [
@@ -21,7 +21,7 @@ const SERVICES_DATA = [
     categoryLabel: "Impression Papier",
     shortDesc: "Cartes de visite professionnelles et modernes avec finitions soignées, papiers épais et tranches soignées.",
     fullDesc: "Créez une première impression percutante auprès de vos partenaires et clients avec nos cartes de visite professionnelles. Nous proposons un choix rigoureux de papiers épais (couché mat 350g, 400g ou texturé), avec finitions dorure, vernis sélectif ou pelliculage Soft Touch pour valoriser votre statut.",
-    image: "public/images/services/business-cards/business-card-01.jpg",
+    image: "assets/images/services/business-cards/business-card-01.jpg",
     specs: {
       formats: "85 x 55 mm, 90 x 50 mm ou dimensions personnalisées",
       papier: "Couché mat 350g/400g, Coton ou Papier texturé de création",
@@ -39,7 +39,7 @@ const SERVICES_DATA = [
     categoryLabel: "Impression Papier",
     shortDesc: "Supports promotionnels percutants pour vos lancements, offres spéciales et événements professionnels.",
     fullDesc: "Diffusez efficacement votre message commercial grâce à nos flyers haute qualité. Conception graphique attrayante, mise en valeur claire de votre offre et impression haute définition sur papier couché mat ou brillant.",
-    image: "public/images/services/flyers/flyer-01.jpg",
+    image: "assets/images/services/flyers/flyer-01.jpg",
     specs: {
       formats: "A6 (105x148mm), A5 (148x210mm), format DL (100x210mm)",
       papier: "Couché 135g, 170g, 250g ou 350g cartonné",
@@ -57,7 +57,7 @@ const SERVICES_DATA = [
     categoryLabel: "Signalétique & Grand Format",
     shortDesc: "Affiches publicitaires grand format et urbaines avec encres durables et haute résolution d'impression.",
     fullDesc: "Captez le regard dans l'espace public et valorisez vos campagnes d'affichage. Nos affiches publicitaires sont imprimées en haute définition avec des encres résistantes pour affichage intérieur, vitrine ou mobilier urbain.",
-    image: "public/images/services/posters/poster-01.jpg",
+    image: "assets/images/services/posters/poster-01.jpg",
     specs: {
       formats: "A3, A2, A1, A0, Abribus 120x176cm ou formats libres",
       papier: "Papier couché 150g satiné, Papier dos bleu, Backlight pour caissons",
@@ -75,7 +75,7 @@ const SERVICES_DATA = [
     categoryLabel: "Branding & Digital",
     shortDesc: "Visuels, carrousels et bannières optimisés pour développer votre notoriété sur les réseaux sociaux.",
     fullDesc: "Renforcez votre image de marque sur Facebook, Instagram, LinkedIn et TikTok avec des visuels au design soigné et impactant. Nous concevons des publications, stories, bannières et carrousels qui captivent votre audience.",
-    image: "public/images/services/social-media/social-media-01.jpg",
+    image: "assets/images/services/social-media/social-media-01.jpg",
     specs: {
       formats: "Formats optimisés carré (1:1), portrait (4:5) et story (9:16)",
       papier: "Livrables numériques HD (PNG, JPG, MP4)",
@@ -93,7 +93,7 @@ const SERVICES_DATA = [
     categoryLabel: "Signalétique & Grand Format",
     shortDesc: "Plaques murales professionnelles en plexiglas, laiton brossé ou aluminium pour cabinets et entreprises.",
     fullDesc: "Indiquez l'entrée de votre entreprise, cabinet ou boutique avec élégance. Confectionnées dans des matériaux durables et résistants aux intempéries (plexiglas, laiton, inox, aluminium Dibond) avec fixations par entretoises soignées.",
-    image: "public/images/services/plaques/plaque-01.jpg",
+    image: "assets/images/services/plaques/plaque-01.jpg",
     specs: {
       formats: "30 x 20 cm, 40 x 30 cm, 60 x 40 cm ou sur mesure",
       papier: "Plexiglas transparent, Laiton brossé, Inox brossé, Aluminium Dibond",
@@ -111,7 +111,7 @@ const SERVICES_DATA = [
     categoryLabel: "Signalétique & Grand Format",
     shortDesc: "Structures autoportantes rétractables avec toile infroissable et sac de transport pour événements et salons.",
     fullDesc: "Le support nomade par excellence pour vos salons, expositions, foires et réceptions. Facile à transporter et à monter en quelques secondes, notre roll-up intègre une bâche haute qualité qui ne gondole pas sur les bords.",
-    image: "public/images/services/kakemono/kakemono-01.jpg",
+    image: "assets/images/services/kakemono/kakemono-01.jpg",
     specs: {
       formats: "85 x 200 cm, 100 x 200 cm, 120 x 200 cm",
       papier: "Toile polyester anti-curling (ne s'enroule pas sur les côtés)",
@@ -129,7 +129,7 @@ const SERVICES_DATA = [
     categoryLabel: "Signalétique & Grand Format",
     shortDesc: "Enseignes de magasin, panneaux de façade et signalétique extérieure visibles de jour comme de nuit.",
     fullDesc: "Augmentez la visibilité de votre point de vente ou bâtiment d'entreprise avec nos enseignes et panneaux publicitaires. Lettres découpées, caissons lumineux ou panneaux en aluminium composite résistants à l'exposition extérieure.",
-    image: "public/images/services/signage/signage-01.jpg",
+    image: "assets/images/services/signage/signage-01.jpg",
     specs: {
       formats: "Dimensions entièrement sur-mesure selon la façade",
       papier: "Aluminium composite Dibond, Plexiglas diffusant, Bâche tendue",
@@ -147,7 +147,7 @@ const SERVICES_DATA = [
     categoryLabel: "Packaging & Goodies",
     shortDesc: "Stickers en vinyle découpés à la forme personnalisée, étanches et résistants pour emballages et marquage.",
     fullDesc: "Personnalisez vos colis, produits ou supports avec des autocollants vinyle sur mesure. Découpe exacte à la forme de votre logo, finition brillante ou mate, grande adhérence sur verre, carton, plastique et métal.",
-    image: "public/images/services/stickers/sticker-01.jpg",
+    image: "assets/images/services/stickers/sticker-01.jpg",
     specs: {
       formats: "Découpe libre à la forme (die-cut) ou planches prédécoupées",
       papier: "Vinyle adhésif haute résistance, Papier adhésif couché",
@@ -165,7 +165,7 @@ const SERVICES_DATA = [
     categoryLabel: "Packaging & Goodies",
     shortDesc: "Boîtes personnalisées, coffrets produits et sacs boutique pour offrir une expérience client mémorable.",
     fullDesc: "Valorisez vos produits physiques dès le premier regard grâce à nos solutions de packaging sur-mesure. Boîtes rigides, étuis en cartonnette et sacs shopping conçus pour refléter le sérieux et le standing de votre marque.",
-    image: "public/images/services/packaging/packaging-01.jpg",
+    image: "assets/images/services/packaging/packaging-01.jpg",
     specs: {
       formats: "Gabarits personnalisés selon les dimensions exactes de vos produits",
       papier: "Carton compact rigide, Cartonnette micro-cannelée, Papier kraft",
@@ -183,7 +183,7 @@ const SERVICES_DATA = [
     categoryLabel: "Impression Papier",
     shortDesc: "Dépliants 2 et 3 volets, brochures agrafées et livrets de présentation pour détailler votre offre commerciale.",
     fullDesc: "Présentez l'ensemble de vos activités, tarifs ou gammes de produits dans un document soigné et structuré. Du dépliant commercial pliable au livret agrafé multipages, nous assurons une mise en page claire et une impression nette.",
-    image: "public/images/services/brochures/brochure-01.jpg",
+    image: "assets/images/services/brochures/brochure-01.jpg",
     specs: {
       formats: "A4 fermé (A3 ouvert), A5 fermé, Format carré ou sur mesure",
       papier: "Couché 135g à 170g intérieur, Couverture renforcée jusqu'à 300g",
@@ -201,7 +201,7 @@ const SERVICES_DATA = [
     categoryLabel: "Impression Papier",
     shortDesc: "Catalogues produits avec reliure dos carré collé ou spirale pour présenter l'ensemble de votre catalogue.",
     fullDesc: "L'outil de référence pour vos commerciaux, partenaires et clients. Confection de catalogues avec reliure robuste (dos carré collé ou reliure spirale métallique) et couverture pelliculée durable.",
-    image: "public/images/services/catalogues/catalogue-01.jpg",
+    image: "assets/images/services/catalogues/catalogue-01.jpg",
     specs: {
       formats: "A4 vertical, A4 à l'italienne (paysage), Format carré",
       papier: "Pages intérieures couché mat ou brillant, Couverture cartonnée 300g",
@@ -219,7 +219,7 @@ const SERVICES_DATA = [
     categoryLabel: "Impression Papier",
     shortDesc: "Faire-part, cartons d'invitation et cartes d'accès pour événements d'entreprise, galas et cérémonies.",
     fullDesc: "Donnez le ton de votre événement dès l'envoi des invitations. Choix de papiers texturés d'exception, découpes personnalisées et finitions haut de gamme pour séduire vos invités.",
-    image: "public/images/services/invitations/invitation-01.jpg",
+    image: "assets/images/services/invitations/invitation-01.jpg",
     specs: {
       formats: "10 x 21 cm (format correspondance), 15 x 21 cm, Format carré ou double volet",
       papier: "Papiers de création texturés, Papier coton, Couché épais 350g",
@@ -237,7 +237,7 @@ const SERVICES_DATA = [
     categoryLabel: "Packaging & Goodies",
     shortDesc: "Étiquettes adhésives en rouleaux ou planches pour bouteilles, cosmétiques, emballages et pots.",
     fullDesc: "Habillez vos bouteilles, pots, flacons et emballages alimentaires ou cosmétiques avec des étiquettes adhésives conçues pour durer. Résistantes à l'humidité, aux manipulations et aux variations de température.",
-    image: "public/images/services/labels/label-01.jpg",
+    image: "assets/images/services/labels/label-01.jpg",
     specs: {
       formats: "En rouleaux (bobines) pour pose manuelle ou machine, ou en planches",
       papier: "Papier couché adhésif, Polypropylène imperméable, Papier texturé",
@@ -255,7 +255,7 @@ const SERVICES_DATA = [
     categoryLabel: "Textile & Vêtements",
     shortDesc: "Polos brodés, t-shirts sérigraphiés et vêtements d'entreprise pour renforcer l'esprit d'équipe et la visibilité.",
     fullDesc: "Fédérez votre équipe et affichez vos couleurs lors de vos activités avec du textile personnalisé de qualité. Marquage durable par broderie, sérigraphie ou flocage haute définition sur des tissus confortables.",
-    image: "public/images/services/t-shirts/t-shirt-01.jpg",
+    image: "assets/images/services/t-shirts/t-shirt-01.jpg",
     specs: {
       formats: "Tailles du S au 3XL (coupes homme, femme et unisexe)",
       papier: "Coton peigné, Maille piquée pour polos, Polyester respirant",
@@ -273,7 +273,7 @@ const SERVICES_DATA = [
     categoryLabel: "Signalétique & Grand Format",
     shortDesc: "Marquage adhésif, lettrage et covering sur utilitaires et voitures pour transformer votre flotte en publicité roulante.",
     fullDesc: "Multipliez vos contacts quotidiens grâce au marquage publicitaire de vos véhicules. Du simple lettrage d'identification (logo, coordonnées, activités) au covering partiel ou total avec film vinyle haute durabilité.",
-    image: "public/images/services/vehicle-branding/vehicle-01.jpg",
+    image: "assets/images/services/vehicle-branding/vehicle-01.jpg",
     specs: {
       formats: "Conception sur le gabarit exact du modèle de votre véhicule",
       papier: "Vinyle adhésif coulé haute conformabilité pour carrosserie",
@@ -291,7 +291,7 @@ const SERVICES_DATA = [
     categoryLabel: "Branding & Digital",
     shortDesc: "Création de logotypes professionnels, originaux et intemporels, adaptés à tous vos supports de communication.",
     fullDesc: "Donnez une identité forte et mémorable à votre marque avec un logo conçu sur-mesure. Nous étudions votre positionnement pour créer un symbole vectoriel unique, déclinable sur tous vos supports numériques et imprimés.",
-    image: "public/images/services/logos/logo-01.jpg",
+    image: "assets/images/services/logos/logo-01.jpg",
     specs: {
       formats: "Fichiers vectoriels exploitables à l'infini (AI, EPS, SVG, PDF) + PNG haute définition",
       papier: "Livrable numérique complet avec variantes couleur, blanc et noir",
@@ -309,7 +309,7 @@ const SERVICES_DATA = [
     categoryLabel: "Branding & Digital",
     shortDesc: "Charte graphique complète, palette de couleurs, typographies et déclinaisons de marque harmonieuses.",
     fullDesc: "Une identité visuelle cohérente est la clé de la crédibilité de votre entreprise. Nous définissons l'ensemble de votre univers graphique : typographies, codes couleurs, règles d'usage et déclinaisons papeterie.",
-    image: "public/images/services/branding/branding-01.jpg",
+    image: "assets/images/services/branding/branding-01.jpg",
     specs: {
       formats: "Guide de marque / Charte graphique PDF + Dossier d'assets prêts à l'emploi",
       papier: "Mise en page des modèles de papeterie d'entreprise",
@@ -327,7 +327,7 @@ const SERVICES_DATA = [
     categoryLabel: "Impression Papier",
     shortDesc: "Pochettes à rabats, chemises porte-documents, blocs-notes et papeterie corporate pour vos rendez-vous d'affaires.",
     fullDesc: "Équipez vos collaborateurs avec des supports d'affaires qui renforcent votre image lors de chaque rendez-vous commercial. Chemises à rabats avec encoche pour carte de visite, en-têtes de lettre, blocs-notes et carnets personnalisés.",
-    image: "public/images/services/corporate-stationery/stationery-01.jpg",
+    image: "assets/images/services/corporate-stationery/stationery-01.jpg",
     specs: {
       formats: "Chemises à rabats A4 simple ou double rainage, Blocs A4/A5, Têtes de lettre A4",
       papier: "Carton couché 350g, Papier en-tête 90g compatible imprimantes de bureau",
@@ -348,7 +348,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Papiers épais & finitions professionnelles",
     category: "CARTES DE VISITE",
     serviceId: "business-cards",
-    image: "public/images/services/business-cards/business-card-01.jpg",
+    image: "assets/images/services/business-cards/business-card-01.jpg",
     badge: "Finition Soignée",
     features: ["Papiers épais 350g/400g", "Pelliculage mat & Soft Touch", "Découpe nette et précise"]
   },
@@ -358,7 +358,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Campagnes et lancements promotionnels",
     category: "FLYERS",
     serviceId: "flyers",
-    image: "public/images/services/flyers/flyer-01.jpg",
+    image: "assets/images/services/flyers/flyer-01.jpg",
     badge: "Haute Définition",
     features: ["Formats A5 & A6", "Impression recto ou recto/verso", "Papier couché brillant ou mat"]
   },
@@ -368,7 +368,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Affichage événementiel & urbain grand format",
     category: "AFFICHES PUBLICITAIRES",
     serviceId: "posters",
-    image: "public/images/services/posters/poster-01.jpg",
+    image: "assets/images/services/posters/poster-01.jpg",
     badge: "Grand Format",
     features: ["Formats A3, A2, A1, A0", "Encres résistantes", "Haute fidélité des couleurs"]
   },
@@ -378,7 +378,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Designs calibrés pour vos réseaux sociaux",
     category: "VISUELS PROFESSIONNELS",
     serviceId: "social-media",
-    image: "public/images/services/social-media/social-media-01.jpg",
+    image: "assets/images/services/social-media/social-media-01.jpg",
     badge: "Impact Digital",
     features: ["Publications & Carrousels", "Formats adaptés mobiles", "Identité graphique soignée"]
   },
@@ -388,7 +388,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Plexiglas, laiton brossé et inox pour entrées",
     category: "PLAQUES PUBLICITAIRES",
     serviceId: "plaques",
-    image: "public/images/services/plaques/plaque-01.jpg",
+    image: "assets/images/services/plaques/plaque-01.jpg",
     badge: "Matériaux Durables",
     features: ["Plexiglas & Métaux brossés", "Gravure et impression soignées", "Entretoises de fixation inox"]
   },
@@ -398,7 +398,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Structures nomades en aluminium pour salons",
     category: "KAKEMONO / ROLL-UP",
     serviceId: "kakemono",
-    image: "public/images/services/kakemono/kakemono-01.jpg",
+    image: "assets/images/services/kakemono/kakemono-01.jpg",
     badge: "Nomade & Efficace",
     features: ["Format standard 85x200cm", "Toile infroissable", "Montage facile en 30 secondes"]
   },
@@ -408,7 +408,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Signalétique extérieure et façades de magasins",
     category: "PANNEAUX & ENSEIGNES",
     serviceId: "signage",
-    image: "public/images/services/signage/signage-01.jpg",
+    image: "assets/images/services/signage/signage-01.jpg",
     badge: "Visibilité Extérieure",
     features: ["Aluminium composite résistant", "Lettres en relief & caissons", "Fabrication sur mesure"]
   },
@@ -418,7 +418,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Vinyle adhésif haute résistance découpé à la forme",
     category: "AUTOCOLLANTS / STICKERS",
     serviceId: "stickers",
-    image: "public/images/services/stickers/sticker-01.jpg",
+    image: "assets/images/services/stickers/sticker-01.jpg",
     badge: "Découpe Sur-Mesure",
     features: ["Découpe exacte à la forme", "Adhésif résistant à l'eau", "Pour colis, emballages et vitres"]
   },
@@ -428,7 +428,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Boîtes personnalisées et sacs de boutique",
     category: "PACKAGING & EMBALLAGES",
     serviceId: "packaging",
-    image: "public/images/services/packaging/packaging-01.jpg",
+    image: "assets/images/services/packaging/packaging-01.jpg",
     badge: "Présentation Produit",
     features: ["Boîtes rigides & coffrets", "Sacs boutique personnalisés", "Mise en valeur de votre marque"]
   },
@@ -438,7 +438,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Dépliants 2 et 3 volets & livrets de présentation",
     category: "BROCHURES & DÉPLIANTS",
     serviceId: "brochures",
-    image: "public/images/services/brochures/brochure-01.jpg",
+    image: "assets/images/services/brochures/brochure-01.jpg",
     badge: "Mise en Page Pro",
     features: ["Dépliants 2 et 3 volets", "Brochures agrafées", "Papier couché soigné"]
   },
@@ -448,7 +448,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Catalogues produits avec reliure soignée",
     category: "CATALOGUES",
     serviceId: "catalogues",
-    image: "public/images/services/catalogues/catalogue-01.jpg",
+    image: "assets/images/services/catalogues/catalogue-01.jpg",
     badge: "Présentation Complète",
     features: ["Reliure dos carré collé", "Pagination personnalisée", "Couverture protectrice"]
   },
@@ -458,7 +458,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Cartons d'invitation pour événements et cérémonies",
     category: "INVITATIONS",
     serviceId: "invitations",
-    image: "public/images/services/invitations/invitation-01.jpg",
+    image: "assets/images/services/invitations/invitation-01.jpg",
     badge: "Événements Soignés",
     features: ["Papiers texturés de qualité", "Finitions élégantes", "Formats personnalisés"]
   },
@@ -468,7 +468,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Étiquettes adhésives pour flacons et bouteilles",
     category: "ÉTIQUETTES",
     serviceId: "labels",
-    image: "public/images/services/labels/label-01.jpg",
+    image: "assets/images/services/labels/label-01.jpg",
     badge: "Usage Produit",
     features: ["En rouleaux ou planches", "Bonne tenue sur verre et plastique", "Découpe personnalisée"]
   },
@@ -478,7 +478,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Polos brodés et t-shirts pour vos équipes",
     category: "VÊTEMENTS PERSONNALISÉS",
     serviceId: "t-shirts",
-    image: "public/images/services/t-shirts/t-shirt-01.jpg",
+    image: "assets/images/services/t-shirts/t-shirt-01.jpg",
     badge: "Textile Équipe",
     features: ["Broderie & marquage durable", "Textiles de qualité", "Toutes tailles disponibles"]
   },
@@ -488,7 +488,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Marquage publicitaire et lettrage sur véhicules",
     category: "HABILLAGE DE VÉHICULES",
     serviceId: "vehicle-branding",
-    image: "public/images/services/vehicle-branding/vehicle-01.jpg",
+    image: "assets/images/services/vehicle-branding/vehicle-01.jpg",
     badge: "Publicité Roulante",
     features: ["Vinyle coulé carrosserie", "Lettrage & covering partiel", "Haute visibilité sur la route"]
   },
@@ -498,7 +498,7 @@ const SHOWREEL_PRODUCTS = [
     subtitle: "Création de logos et chartes graphiques complètes",
     category: "LOGOS & IDENTITÉ VISUELLE",
     serviceId: "logos",
-    image: "public/images/services/logos/logo-01.jpg",
+    image: "assets/images/services/logos/logo-01.jpg",
     badge: "Création Vectorielle",
     features: ["Logos 100% vectoriels originaux", "Formats pour print & digital", "Charte graphique harmonieuse"]
   }
