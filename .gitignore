@@ -38,3 +38,10 @@ logs/
 # Cache
 .cache/
 .parcel-cache/
+
+# Fichiers temporaires du projet
+*.txt
+push.log
+push_log.txt
+out.txt
+implementation_plan.md
