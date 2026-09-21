@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (myList.length > 0) {
             const r = myList[Math.floor(Math.random() * myList.length)];
             myEl.innerHTML = `
-                <img src="${r.image}" alt="${r.title}">
+                <img src="${r.image}" alt="${r.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+Indisponible';">
                 <h4>${r.title}</h4>
                 <p>${r.service} — ${r.domain}</p>
             `;
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Affichage de la galerie IA (grille)
             const galleryHtml = aiList.map(item => `
                 <div class="ai-gallery-item" data-fullimg="${item.image}">
-                    <img src="${item.image}" alt="${item.title}">
+                    <img src="${item.image}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+Indisponible';">
                     <div class="ai-gallery-info">
                         <h4>${item.title}</h4>
                         <div class="ai-badge">IA</div>

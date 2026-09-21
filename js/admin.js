@@ -145,6 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
     cImgFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        // Vérification de la taille du fichier (Max 5 Mo)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('L\\'image est trop lourde. Veuillez choisir une image de moins de 5 Mo.');
+            e.target.value = '';
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = (ev) => {
             pendingImgBase64 = ev.target.result;
