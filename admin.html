@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration — PIXORA STUDIO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #f0f2f5; }
+        .admin-wrap { max-width: 940px; margin: 40px auto; padding: 0 20px 60px; }
+        .admin-header { text-align:center; margin-bottom: 40px; padding: 30px; background:white; border-radius:12px; border:1px solid var(--c-border); }
+        .admin-header h1 { font-size: 1.8rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); }
+        .admin-header p { color: var(--c-text-muted); margin-top: 6px; }
+        .admin-panel { background: var(--c-white); padding: 30px; border-radius: 12px; margin-bottom: 28px; border: 1px solid var(--c-border); box-shadow: var(--shadow-sm); }
+        .admin-panel-title { font-size: 1.2rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); border-bottom: 1px solid var(--c-border); padding-bottom: 12px; margin-bottom: 24px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .msg-success { display:none; background:#d4edda; color:#155724; padding:12px 18px; border-radius:8px; margin-bottom:24px; font-weight:var(--fw-semibold); text-align:center; }
+        .item-row { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; gap: 12px; }
+        .item-info { display:flex; align-items:center; gap:14px; min-width:0; }
+        .item-info img { width:56px; height:56px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+        .item-meta { min-width: 0; }
+        .item-meta strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .item-meta small { color:var(--c-text-muted); font-size:0.82rem; }
+        .badge-type { display:inline-block; background:var(--c-primary-light); color:var(--c-primary-dark); font-size:0.75rem; font-weight:var(--fw-semibold); padding:2px 8px; border-radius:4px; margin-left:6px; }
+        .badge-ai { background:#f0f0f0; color:#555; }
+        .btn-delete { background:#e53935; color:white; border:none; padding:7px 14px; border-radius:6px; cursor:pointer; font-family:var(--font); font-weight:var(--fw-semibold); font-size:0.85rem; white-space:nowrap; flex-shrink:0; }
+        .logo-preview { max-width:220px; max-height:120px; object-fit:contain; border:1px solid var(--c-border); border-radius:8px; padding:10px; background:white; display:block; margin-bottom:14px; }
+        .file-label { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; background:var(--c-primary-light); color:var(--c-primary-dark); border-radius:8px; font-weight:var(--fw-semibold); cursor:pointer; border:1.5px dashed var(--c-primary); transition:background 0.2s; font-size:0.95rem; }
+        .file-label:hover { background:#d0e3f5; }
+        .service-img-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+        .service-img-name { font-weight:var(--fw-medium); min-width:170px; }
+        .service-img-thumb { width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--c-border); background:var(--c-bg); display:none; }
+        @media(max-width:680px) { .grid-2{grid-template-columns:1fr;} .item-row{flex-wrap:wrap;} }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo-nav-container"><span class="logo-text">PIXORA STUDIO</span></a>
+            <nav><ul class="nav-links"><li><a href="index.html">← Retour au site</a></li></ul></nav>
+        </div>
+    </header>
+
+    <div class="admin-wrap">
+        <div class="admin-header">
+            <h1>Espace Administration</h1>
+            <p>Gérez votre logo, vos créations, vos images de services et vos tarifs sans toucher au code.</p>
+        </div>
+
+        <div class="msg-success" id="msg-success">✓ Modifications enregistrées avec succès !</div>
+
+        <!-- === LOGO === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">🖼️ Mon Logo</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Importez votre logo directement depuis votre ordinateur. Les formats PNG, JPG, JPEG et SVG sont acceptés.</p>
+            <img id="logo-preview" class="logo-preview" src="" alt="Aperçu du logo" style="display:none;">
+            <p id="logo-placeholder" style="color:var(--c-text-muted); margin-bottom:14px;">Aucun logo importé. Le nom "PIXORA STUDIO" s'affiche à la place.</p>
+            <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+                <label class="file-label" for="logo-file-input">
+                    📁 Choisir un fichier image
+                    <input type="file" id="logo-file-input" accept=".png,.jpg,.jpeg,.svg,image/*" style="display:none;">
+                </label>
+                <button class="btn btn-outline" id="btn-remove-logo" style="display:none;">Supprimer le logo</button>
+            </div>
+        </div>
+
+        <!-- === WHATSAPP === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">📱 Numéro WhatsApp</div>
+            <form id="settings-form" style="max-width:400px;">
+                <div class="form-group">
+                    <label for="admin-wa">Numéro (avec indicatif, ex: +226 03 24 95 48)</label>
+                    <input type="text" id="admin-wa" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+        </div>
+
+        <!-- === IMAGES SERVICES === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">🎨 Images des Cartes de Services (Page d'accueil)</div>
+            <p style="color:var(--c-text-muted); margin-bottom:24px;">Pour chaque service, importez une image qui sera affichée sur la carte dans la section "Nos Services" de la page d'accueil.</p>
+            <div id="service-images-list"></div>
+            <button class="btn btn-primary" id="btn-save-service-images" style="margin-top:20px;">Enregistrer les images des services</button>
+        </div>
+
+        <!-- === CRÉATIONS (Portfolio + IA) === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">📁 Gestion des Créations</div>
+            <form id="creation-form" class="grid-2">
+                <div class="form-group">
+                    <label>Type de création</label>
+                    <select id="c-type" class="form-control">
+                        <option value="MY_CREATION">Ma Création (Portfolio)</option>
+                        <option value="AI_CREATION">Création par IA (Comparaison)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Titre</label>
+                    <input type="text" id="c-title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Domaine</label>
+                    <select id="c-domain" class="form-control"></select>
+                </div>
+                <div class="form-group">
+                    <label>Service</label>
+                    <select id="c-service" class="form-control"></select>
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Image — Importer depuis votre ordinateur ou coller un lien URL</label>
+                    <label class="file-label" for="c-img-file" style="margin-bottom:10px;">
+                        📁 Choisir depuis l'ordinateur
+                        <input type="file" id="c-img-file" accept="image/*" style="display:none;">
+                    </label>
+                    <input type="url" id="c-img-url" class="form-control" placeholder="Ou coller une URL d'image...">
+                    <img id="c-img-preview" src="" style="display:none; max-height:100px; margin-top:10px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Description (facultatif)</label>
+                    <input type="text" id="c-desc" class="form-control">
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <button type="submit" class="btn btn-primary">Ajouter au catalogue</button>
+                </div>
+            </form>
+
+            <h3 style="font-size:1rem; font-weight:var(--fw-semibold); margin:30px 0 16px;">Catalogue actuel</h3>
+            <div id="creations-list"></div>
+        </div>
+
+        <!-- === TARIFS === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">💰 Gestion des Tarifs</div>
+            <form id="prices-form">
+                <div id="prices-list" class="grid-2"></div>
+                <div style="margin-top:24px;">
+                    <button type="submit" class="btn btn-primary">Enregistrer les tarifs</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

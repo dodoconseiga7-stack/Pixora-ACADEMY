@@ -1,627 +1,265 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PIXORA ACADEMY — Formez-vous au Design Graphique & Communication Visuelle</title>
-  <meta name="description" content="Pixora Academy : formations professionnelles en conception graphique, identité visuelle, print design et communication digitale. Inscrivez-vous dès maintenant et développez vos compétences créatives." />
-  <meta name="keywords" content="formation design graphique, académie design, cours conception graphique, formation identité visuelle, apprendre design, cours Photoshop, cours Illustrator, formation print design, communication visuelle formation" />
-  <meta name="author" content="Pixora Academy" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIXORA STUDIO - Studio de Création Graphique Professionnel</title>
+    <meta name="description" content="Pixora Studio : Studio de création graphique. Cartes de visite, flyers, affiches, logos. Commandez directement sur WhatsApp." />
+    <meta name="author" content="Pixora Studio" />
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="assets/images/brand/favicon.svg" />
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="PIXORA ACADEMY — Formations Design Graphique & Communication Visuelle" />
-  <meta property="og:description" content="Formez-vous aux métiers du design graphique avec des cours pratiques et professionnels. Rejoignez Pixora Academy." />
-  <meta property="og:image" content="assets/images/hero-academy.jpg" />
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- ====================================================================
-       HEADER / NAVIGATION
-       ==================================================================== -->
-  <header class="site-header" id="main-header">
-    <div class="container header-container">
-      <a href="#hero" class="brand-logo" id="logo-link" title="PIXORA ACADEMY — Accueil">
-        <img src="assets/images/brand/logo.svg" alt="PIXORA ACADEMY Logo" class="site-logo-img" id="site-logo" />
-      </a>
-
-      <nav>
-        <ul class="nav-links" id="nav-menu">
-          <li><a href="#hero" class="nav-link">Accueil</a></li>
-          <li><a href="#programmes" class="nav-link">Programmes</a></li>
-          <li><a href="#avantages" class="nav-link">Nos Atouts</a></li>
-          <li><a href="#parcours" class="nav-link">Comment ça marche</a></li>
-          <li><a href="#inscription" class="nav-link">S'inscrire</a></li>
-          <li><a href="#temoignages" class="nav-link">Avis</a></li>
-        </ul>
-      </nav>
-
-      <div class="header-actions">
-        <a href="#inscription" class="btn-header-login">Se connecter</a>
-        <a href="#inscription" class="btn-header-cta" id="header-cta-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-          S'inscrire
-        </a>
-        <button class="mobile-toggle" id="mobile-menu-toggle" aria-label="Ouvrir le menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ====================================================================
-       1. HERO SECTION
-       ==================================================================== -->
-  <section class="hero-section" id="hero">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-content">
-          <div class="hero-badge">
-            <span class="badge-dot"></span>
-            Inscriptions ouvertes — Session 2026
-          </div>
-
-          <h1 class="hero-title">
-            Devenez Expert en<br />
-            <span class="hero-title-accent">Design Graphique</span>
-          </h1>
-
-          <p class="hero-subtitle">
-            Pixora Academy vous forme aux métiers de la conception graphique, de l'identité visuelle et de la communication print & digitale. Des cours pratiques animés par des professionnels.
-          </p>
-
-          <div class="hero-cta-group">
-            <a href="#inscription" class="btn-primary" id="hero-cta-register">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-              Commencer ma Formation
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="#accueil" class="logo-nav-container" id="site-logo-nav">
+                <span class="logo-text">PIXORA STUDIO</span>
             </a>
-            <a href="#programmes" class="btn-secondary" id="hero-cta-explore">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              Explorer les Programmes
-            </a>
-          </div>
-
-          <div class="hero-trust">
-            <div class="hero-trust-item">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Formations certifiantes
-            </div>
-            <div class="hero-trust-item">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              +500 étudiants formés
-            </div>
-            <div class="hero-trust-item">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              Note 4.9/5 satisfaction
-            </div>
-          </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#nos-services">Services</a></li>
+                    <li><a href="#difference">La Différence</a></li>
+                    <li><a href="#creations">Mes Créations</a></li>
+                    <li><a href="#tarifs">Tarifs</a></li>
+                    <li><a href="#commander" class="nav-cta">Commander</a></li>
+                </ul>
+            </nav>
         </div>
+    </header>
 
-        <div class="hero-visual">
-          <div class="hero-image-wrapper">
-            <img src="assets/images/hero-academy.jpg" alt="Espace de formation Pixora Academy — Design Graphique" />
-          </div>
+    <main>
 
-          <div class="hero-float-card card-1">
-            <div class="float-card-number">18</div>
-            <div class="float-card-label">Modules de formation</div>
-          </div>
+        <!-- ========================================
+             SECTION 1 : HERO + GRAND LOGO
+        ======================================== -->
+        <section id="accueil" class="section-hero">
+            <div class="container">
+                <!-- Grand Logo -->
+                <div class="hero-logo-zone" id="hero-logo-zone">
+                    <!-- Contenu injecté par JS (image ou texte) -->
+                </div>
 
-          <div class="hero-float-card card-2">
-            <div class="float-card-number">100<span style="color: var(--primary); font-size: 18px;">%</span></div>
-            <div class="float-card-label">Pratique & Projets réels</div>
-          </div>
+                <!-- Texte de présentation -->
+                <div class="hero-text text-center">
+                    <h1 class="hero-title">BIENVENUE CHEZ PIXORA STUDIO</h1>
+                    <p class="hero-subtitle">Des créations graphiques pensées pour donner une vraie image professionnelle à votre activité.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             SECTION 2 : NOS SERVICES (cartes visuelles)
+        ======================================== -->
+        <section id="nos-services" class="section-service-cards bg-light">
+            <div class="container">
+                <h2 class="section-title">NOS SERVICES</h2>
+                <div class="service-cards-grid" id="service-cards-grid">
+                    <!-- Cartes injectées par JS -->
+                </div>
+                <div class="hero-actions text-center" style="margin-top: 50px;">
+                    <a href="#creations" class="btn btn-primary">VOIR TOUTES MES CRÉATIONS</a>
+                    <a href="#commander" class="btn btn-outline">COMMANDER</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             SECTION 3 : LA DIFFÉRENCE
+        ======================================== -->
+        <section id="difference" class="section-difference">
+            <div class="container">
+                <h2 class="section-title">LA DIFFÉRENCE</h2>
+                <p class="section-subtitle text-center">Voyez par vous-même la différence entre une création artisanale et une image générée automatiquement.</p>
+                <div class="difference-container">
+                    <div class="diff-card">
+                        <h3 class="card-label label-mine">MA CRÉATION</h3>
+                        <div class="diff-content" id="my-creation-content">
+                            <div class="diff-placeholder"><span>Aucune création encore ajoutée.</span></div>
+                        </div>
+                    </div>
+                    <div class="diff-badge">VS</div>
+                    <div class="diff-card diff-card-ai">
+                        <h3 class="card-label label-ai">🤖 CRÉATION PAR IA</h3>
+                        <div class="diff-content" id="ai-creation-content">
+                            <div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             SECTION 4 : MES CRÉATIONS (Portfolio)
+        ======================================== -->
+        <section id="creations" class="section-creations bg-light">
+            <div class="container">
+                <h2 class="section-title">MES CRÉATIONS</h2>
+                <div class="filters" id="domain-filters">
+                    <!-- Filtres injectés par JS -->
+                </div>
+                <div class="grid" id="creations-grid">
+                    <!-- Créations injectées par JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             SECTION 5 : TARIFS
+        ======================================== -->
+        <section id="tarifs" class="section-tarifs">
+            <div class="container">
+                <h2 class="section-title">SERVICES & TARIFS</h2>
+                <p class="section-subtitle text-center">Chaque création est disponible en trois niveaux adaptés à votre budget et à vos besoins.</p>
+
+                <!-- Niveau description -->
+                <div class="tiers-desc-grid">
+                    <div class="tier-desc-card">
+                        <div class="tier-badge tier-basic">BASIC</div>
+                        <p>Pour un besoin simple et professionnel.</p>
+                    </div>
+                    <div class="tier-desc-card">
+                        <div class="tier-badge tier-standard">STANDARD</div>
+                        <p>Pour une création plus personnalisée et travaillée.</p>
+                    </div>
+                    <div class="tier-desc-card">
+                        <div class="tier-badge tier-premium">PREMIUM</div>
+                        <p>Pour une création complète, raffinée et poussée.</p>
+                    </div>
+                </div>
+
+                <div class="grid" id="prices-grid">
+                    <!-- Prix injectés par JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             SECTION 6 : COMMANDER
+        ======================================== -->
+        <section id="commander" class="section-order bg-light">
+            <div class="container">
+                <div class="order-box">
+                    <h2 class="section-title">COMMANDER</h2>
+                    <form id="order-form">
+
+                        <h3 class="subsection-title">Vos informations</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="order-nom">Nom *</label>
+                                <input type="text" id="order-nom" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="order-prenom">Prénom *</label>
+                                <input type="text" id="order-prenom" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="order-tel">Numéro de téléphone *</label>
+                                <input type="tel" id="order-tel" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="order-adresse">Adresse / Quartier *</label>
+                                <input type="text" id="order-adresse" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <h3 class="subsection-title" style="margin-top:28px;">Votre projet</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="order-domaine">Domaine d'activité *</label>
+                                <select id="order-domaine" class="form-control" required>
+                                    <!-- Injecté par JS -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="order-logo">Vous avez déjà un logo ? *</label>
+                                <select id="order-logo" class="form-control" required>
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non">Non</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h3 class="subsection-title" style="margin-top:28px;">Que voulez-vous commander ?</h3>
+                        <div id="services-list">
+                            <div class="service-row">
+                                <select class="form-control input-service" required>
+                                    <!-- Injecté par JS -->
+                                </select>
+                                <select class="form-control input-formule" required>
+                                    <option value="basic">Basic</option>
+                                    <option value="standard">Standard</option>
+                                    <option value="premium">Premium</option>
+                                </select>
+                                <button type="button" class="btn-remove-service" style="visibility:hidden;" aria-label="Supprimer">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" id="btn-add-service" class="btn-link">+ Ajouter un autre service</button>
+
+                        <div class="order-total-box">
+                            <span>TOTAL :</span>
+                            <span id="order-total-amount">0 F CFA</span>
+                        </div>
+
+                        <div class="text-center" style="margin-top: 30px;">
+                            <button type="submit" class="btn btn-primary btn-large">GÉNÉRER LE RÉCAPITULATIF</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================
+             SECTION 7 : CONTACT WHATSAPP
+        ======================================== -->
+        <section class="section-whatsapp text-center">
+            <div class="container">
+                <h2 class="text-white mb-2">UNE QUESTION ? CONTACTEZ-NOUS</h2>
+                <div class="wa-number" id="display-wa-number">+226 03 24 95 48</div>
+                <a href="#" class="btn btn-whatsapp" id="wa-contact-btn">CONTACTER SUR WHATSAPP</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer text-center">
+        <div class="container">
+            <p>© 2026 Pixora Studio — Studio de création graphique. Tous droits réservés.</p>
+            <p style="margin-top: 10px;"><a href="admin.html" class="admin-link">Espace Administration</a></p>
         </div>
-      </div>
+    </footer>
+
+    <!-- MODAL RÉCAPITULATIF -->
+    <div class="modal-overlay" id="recap-modal">
+        <div class="modal-card">
+            <h2 class="modal-title">RÉCAPITULATIF DE VOTRE COMMANDE</h2>
+            <div class="modal-body" id="recap-content"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="btn-edit-order">Modifier la commande</button>
+                <button type="button" class="btn btn-primary" id="btn-confirm-wa">CONFIRMER ET ENVOYER SUR WHATSAPP</button>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- ====================================================================
-       STATS BAR
-       ==================================================================== -->
-  <section class="stats-bar">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-item reveal">
-          <span class="stat-number">18</span>
-          <span class="stat-label">Modules Spécialisés</span>
+    <!-- LIGHTBOX -->
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightbox-close">&times;</button>
+            <img id="lightbox-img" src="" alt="Zoom">
         </div>
-        <div class="stat-item reveal reveal-delay-1">
-          <span class="stat-number">500<span>+</span></span>
-          <span class="stat-label">Étudiants Formés</span>
-        </div>
-        <div class="stat-item reveal reveal-delay-2">
-          <span class="stat-number">95<span>%</span></span>
-          <span class="stat-label">Taux de Réussite</span>
-        </div>
-        <div class="stat-item reveal reveal-delay-3">
-          <span class="stat-number">4.9<span>/5</span></span>
-          <span class="stat-label">Satisfaction Globale</span>
-        </div>
-      </div>
     </div>
-  </section>
 
-  <!-- ====================================================================
-       2. PROGRAMMES — PINTEREST MASONRY GRID
-       ==================================================================== -->
-  <section class="programs-section" id="programmes">
-    <div class="container">
-      <div class="section-badge-center reveal">
-        <span class="section-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          Nos Programmes
-        </span>
-      </div>
-      <h2 class="section-title reveal">Explorez nos Formations en Design</h2>
-      <p class="section-subtitle reveal">
-        Des parcours complets pour maîtriser la conception graphique, du logo à l'enseigne grand format. Chaque formation combine théorie et projets concrets.
-      </p>
-
-      <!-- Filtres -->
-      <div class="filters-bar reveal" id="programs-filter-bar">
-        <button class="filter-btn active" data-filter="all">Tous (18)</button>
-        <button class="filter-btn" data-filter="print">Print & Papier</button>
-        <button class="filter-btn" data-filter="signage">Signalétique</button>
-        <button class="filter-btn" data-filter="packaging">Packaging</button>
-        <button class="filter-btn" data-filter="branding">Branding & Digital</button>
-        <button class="filter-btn" data-filter="textile">Textile</button>
-      </div>
-
-      <!-- Pinterest Grid -->
-      <div class="pinterest-grid" id="programs-grid">
-        <!-- Rempli dynamiquement par app.js -->
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       3. AVANTAGES / POURQUOI PIXORA ACADEMY
-       ==================================================================== -->
-  <section class="features-section" id="avantages">
-    <div class="container">
-      <div class="section-badge-center reveal">
-        <span class="section-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          Nos Atouts
-        </span>
-      </div>
-      <h2 class="section-title reveal">Pourquoi Choisir Pixora Academy ?</h2>
-      <p class="section-subtitle reveal">
-        Une pédagogie orientée résultats, des formateurs experts et un accompagnement personnalisé pour lancer votre carrière dans le design.
-      </p>
-
-      <div class="features-grid">
-        <div class="feature-card reveal">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          </div>
-          <h3 class="feature-title">Formations 100% Pratiques</h3>
-          <p class="feature-text">
-            Pas de théorie sans application. Chaque module vous plonge dans des projets concrets : création de logos, maquettes de flyers, montage packaging, et bien plus.
-          </p>
-        </div>
-
-        <div class="feature-card reveal reveal-delay-1">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3 class="feature-title">Formateurs Professionnels</h3>
-          <p class="feature-text">
-            Nos instructeurs sont des designers en activité avec des années d'expérience en agence et en freelance. Ils partagent leur expertise et leurs méthodes.
-          </p>
-        </div>
-
-        <div class="feature-card reveal reveal-delay-2">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-          <h3 class="feature-title">Certification Reconnue</h3>
-          <p class="feature-text">
-            À la fin de chaque parcours, obtenez un certificat attestant de vos compétences en design graphique. Un atout majeur pour votre CV et vos clients.
-          </p>
-        </div>
-
-        <div class="feature-card reveal reveal-delay-1">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          </div>
-          <h3 class="feature-title">Portfolio Professionnel</h3>
-          <p class="feature-text">
-            Construisez un book de réalisations concrètes pendant votre formation. Chaque projet finalisé est un cas client réel que vous pourrez présenter.
-          </p>
-        </div>
-
-        <div class="feature-card reveal reveal-delay-2">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <h3 class="feature-title">Rythme Flexible</h3>
-          <p class="feature-text">
-            Apprenez à votre rythme. Accédez à vos cours et exercices à tout moment. Idéal si vous êtes en activité ou en reconversion professionnelle.
-          </p>
-        </div>
-
-        <div class="feature-card reveal reveal-delay-3">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <h3 class="feature-title">Support & Communauté</h3>
-          <p class="feature-text">
-            Rejoignez une communauté active de designers. Échangez avec vos pairs, posez vos questions aux formateurs et bénéficiez d'un suivi personnalisé via WhatsApp.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       4. COMMENT ÇA MARCHE
-       ==================================================================== -->
-  <section class="how-section" id="parcours">
-    <div class="container">
-      <div class="section-badge-center reveal">
-        <span class="section-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Parcours d'Inscription
-        </span>
-      </div>
-      <h2 class="section-title reveal">Comment Rejoindre Pixora Academy ?</h2>
-      <p class="section-subtitle reveal">
-        Un processus simple et rapide pour démarrer votre formation en design graphique.
-      </p>
-
-      <div class="how-grid">
-        <div class="how-step reveal">
-          <div class="how-step-number">1</div>
-          <h3 class="how-step-title">Choisissez votre Programme</h3>
-          <p class="how-step-text">Explorez nos 18 modules et sélectionnez la formation qui correspond à vos objectifs créatifs.</p>
-        </div>
-
-        <div class="how-step reveal reveal-delay-1">
-          <div class="how-step-number">2</div>
-          <h3 class="how-step-title">Remplissez le Formulaire</h3>
-          <p class="how-step-text">Inscrivez-vous en 2 minutes via notre formulaire. Aucun prérequis technique n'est demandé.</p>
-        </div>
-
-        <div class="how-step reveal reveal-delay-2">
-          <div class="how-step-number">3</div>
-          <h3 class="how-step-title">Confirmation & Accès</h3>
-          <p class="how-step-text">Recevez votre confirmation par WhatsApp et accédez immédiatement à votre espace de formation.</p>
-        </div>
-
-        <div class="how-step reveal reveal-delay-3">
-          <div class="how-step-number">4</div>
-          <h3 class="how-step-title">Apprenez & Créez</h3>
-          <p class="how-step-text">Suivez les cours, réalisez vos projets et obtenez votre certificat Pixora Academy.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       5. FORMULAIRE D'INSCRIPTION
-       ==================================================================== -->
-  <section class="register-section" id="inscription">
-    <div class="container">
-      <div class="register-container">
-        <div class="register-info reveal">
-          <div class="section-badge" style="margin-bottom: 20px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-            Inscription
-          </div>
-          <h2 class="register-info-title">
-            Lancez votre carrière en <span>Design Graphique</span>
-          </h2>
-          <p class="register-info-text">
-            Remplissez le formulaire pour pré-inscrire votre place. Notre équipe vous contactera sur WhatsApp pour finaliser votre inscription et répondre à toutes vos questions.
-          </p>
-
-          <div class="register-benefits">
-            <div class="register-benefit">
-              <div class="register-benefit-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <span class="register-benefit-text">Accès immédiat aux supports de cours après inscription</span>
-            </div>
-            <div class="register-benefit">
-              <div class="register-benefit-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <span class="register-benefit-text">Suivi personnalisé par un formateur dédié</span>
-            </div>
-            <div class="register-benefit">
-              <div class="register-benefit-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <span class="register-benefit-text">Certificat de compétence à la fin de chaque module</span>
-            </div>
-            <div class="register-benefit">
-              <div class="register-benefit-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <span class="register-benefit-text">Paiement flexible — Contactez-nous sur WhatsApp</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="register-form-card reveal">
-          <form id="register-form">
-            <h3 class="form-title">Créer mon compte étudiant</h3>
-            <p class="form-subtitle">Tous les champs marqués * sont obligatoires</p>
-
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="reg-firstname" class="form-label">Prénom <span class="required">*</span></label>
-                <input type="text" id="reg-firstname" class="form-input" placeholder="Ex: Amadou" required />
-              </div>
-
-              <div class="form-group">
-                <label for="reg-lastname" class="form-label">Nom <span class="required">*</span></label>
-                <input type="text" id="reg-lastname" class="form-input" placeholder="Ex: Ouédraogo" required />
-              </div>
-
-              <div class="form-group">
-                <label for="reg-email" class="form-label">Adresse Email <span class="required">*</span></label>
-                <input type="email" id="reg-email" class="form-input" placeholder="votre@email.com" required />
-              </div>
-
-              <div class="form-group">
-                <label for="reg-phone" class="form-label">Téléphone / WhatsApp <span class="required">*</span></label>
-                <input type="tel" id="reg-phone" class="form-input" placeholder="+226 XX XX XX XX" required />
-              </div>
-
-              <div class="form-group">
-                <label for="reg-program" class="form-label">Programme souhaité <span class="required">*</span></label>
-                <select id="reg-program" class="form-select" required>
-                  <option value="" disabled selected>-- Choisissez un programme --</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="reg-level" class="form-label">Votre Niveau Actuel <span class="required">*</span></label>
-                <select id="reg-level" class="form-select" required>
-                  <option value="" disabled selected>-- Sélectionnez --</option>
-                  <option value="debutant">Débutant complet</option>
-                  <option value="initie">Initié (notions de base)</option>
-                  <option value="intermediaire">Intermédiaire</option>
-                  <option value="avance">Avancé (perfectionnement)</option>
-                </select>
-              </div>
-
-              <div class="form-group full-width">
-                <label for="reg-motivation" class="form-label">Votre motivation / Objectif professionnel</label>
-                <textarea id="reg-motivation" class="form-textarea" placeholder="Dites-nous ce qui vous motive et vos objectifs après la formation..."></textarea>
-              </div>
-
-              <div class="form-group full-width">
-                <button type="submit" class="btn-submit" id="btn-register">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-                  Valider mon Inscription
-                </button>
-              </div>
-            </div>
-          </form>
-
-          <div class="form-success" id="form-success">
-            <div class="form-success-icon">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <h3 class="form-success-title">Inscription Envoyée !</h3>
-            <p class="form-success-text">
-              Merci pour votre inscription. Vous allez être redirigé vers WhatsApp pour finaliser votre dossier avec notre équipe.
-            </p>
-          </div>
-
-          <p class="form-note">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            Vos données sont sécurisées et ne seront jamais partagées.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       6. TÉMOIGNAGES
-       ==================================================================== -->
-  <section class="testimonials-section" id="temoignages">
-    <div class="container">
-      <div class="section-badge-center reveal">
-        <span class="section-badge">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Témoignages
-        </span>
-      </div>
-      <h2 class="section-title reveal">Ce que Disent nos Étudiants</h2>
-      <p class="section-subtitle reveal">
-        Découvrez les retours de ceux qui ont suivi nos formations et transformé leur passion en compétence professionnelle.
-      </p>
-
-      <div class="testimonials-grid">
-        <div class="testimonial-card reveal">
-          <div class="testimonial-stars">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <p class="testimonial-text">
-            « Grâce à Pixora Academy, j'ai appris à créer des identités visuelles complètes. J'ai décroché mes premiers clients freelance dès la fin de ma formation. L'accompagnement est exceptionnel. »
-          </p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">SA</div>
-            <div>
-              <div class="testimonial-name">Saidou Abdoulaye</div>
-              <div class="testimonial-role">Designer Freelance — Ouagadougou</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card reveal reveal-delay-1">
-          <div class="testimonial-stars">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <p class="testimonial-text">
-            « Le module Packaging m'a permis de comprendre toute la chaîne de création d'emballages. Les exercices sont vraiment proches des conditions réelles. Je recommande vivement ! »
-          </p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">FK</div>
-            <div>
-              <div class="testimonial-name">Fatimata Konaté</div>
-              <div class="testimonial-role">Graphiste en Agence — Bobo-Dioulasso</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="testimonial-card reveal reveal-delay-2">
-          <div class="testimonial-stars">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          </div>
-          <p class="testimonial-text">
-            « En tant qu'entrepreneur, j'avais besoin de créer mes propres supports marketing. La formation m'a donné toutes les clés. Le contact WhatsApp avec l'équipe est un vrai plus. »
-          </p>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">JZ</div>
-            <div>
-              <div class="testimonial-name">Jean-Baptiste Zombré</div>
-              <div class="testimonial-role">Entrepreneur — Koudougou</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       7. CTA FINAL
-       ==================================================================== -->
-  <section class="cta-section">
-    <div class="container">
-      <div class="cta-content reveal">
-        <h2 class="cta-title">Prêt à Transformer votre Passion en Métier ?</h2>
-        <p class="cta-text">
-          Rejoignez plus de 500 étudiants qui ont choisi Pixora Academy pour développer leurs compétences en design graphique. La prochaine session commence bientôt.
-        </p>
-        <div class="cta-buttons">
-          <a href="#inscription" class="btn-cta-white">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-            S'inscrire Maintenant
-          </a>
-          <a href="https://wa.me/22603249548?text=Bonjour%2C%20je%20souhaite%20avoir%20des%20informations%20sur%20les%20formations%20Pixora%20Academy." target="_blank" rel="noopener noreferrer" class="btn-cta-outline">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-            Contacter sur WhatsApp
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ====================================================================
-       FOOTER
-       ==================================================================== -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <a href="#hero" class="brand-logo">
-            <img src="assets/images/brand/logo-white.svg" alt="PIXORA ACADEMY Logo" class="footer-logo-img" />
-          </a>
-          <p class="footer-desc">
-            Pixora Academy forme la prochaine génération de designers graphiques. Cours pratiques, formateurs experts et accompagnement personnalisé.
-          </p>
-          <div class="footer-social">
-            <a href="https://wa.me/22603249548" target="_blank" rel="noopener noreferrer" class="footer-social-link" title="WhatsApp">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="footer-col-title">Programmes</h4>
-          <ul class="footer-links">
-            <li><a href="#programmes" class="footer-link">Design de Logo</a></li>
-            <li><a href="#programmes" class="footer-link">Cartes de Visite</a></li>
-            <li><a href="#programmes" class="footer-link">Flyers & Affiches</a></li>
-            <li><a href="#programmes" class="footer-link">Packaging</a></li>
-            <li><a href="#programmes" class="footer-link">Signalétique</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="footer-col-title">Académie</h4>
-          <ul class="footer-links">
-            <li><a href="#avantages" class="footer-link">Pourquoi nous choisir</a></li>
-            <li><a href="#parcours" class="footer-link">Comment ça marche</a></li>
-            <li><a href="#temoignages" class="footer-link">Avis étudiants</a></li>
-            <li><a href="#inscription" class="footer-link">S'inscrire</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="footer-col-title">Contact</h4>
-          <div class="footer-contact-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-            <span>WhatsApp : <strong style="color: var(--white);">+226 03 24 95 48</strong></span>
-          </div>
-          <div class="footer-contact-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <span>contact@pixora-academy.com</span>
-          </div>
-          <div class="footer-contact-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>Ouagadougou, Burkina Faso</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>&copy; 2026 PIXORA ACADEMY. Tous droits réservés. Formation en Design Graphique & Communication Visuelle.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Bouton Flottant WhatsApp -->
-  <a href="https://wa.me/22603249548?text=Bonjour%2C%20je%20souhaite%20avoir%20des%20informations%20sur%20les%20formations%20Pixora%20Academy." target="_blank" rel="noopener noreferrer" class="whatsapp-float" id="whatsapp-float-btn" title="Nous contacter sur WhatsApp (+226 03 24 95 48)" aria-label="WhatsApp">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-  </a>
-
-  <!-- Modal (pour détails programme) -->
-  <div class="modal-backdrop" id="program-modal" role="dialog" aria-modal="true" aria-label="Détails du programme">
-    <div class="modal-dialog">
-      <button class="modal-close-btn" id="modal-close" aria-label="Fermer">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <div id="modal-body">
-        <!-- Rempli dynamiquement -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/services-data.js"></script>
-  <script src="js/app.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/ai-seed.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

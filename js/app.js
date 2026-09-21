@@ -1,265 +1,358 @@
-/**
- * PIXORA ACADEMY — Main Application Logic
- * Handles UI interactions, Pinterest grid rendering, and Form submission.
- */
-
 document.addEventListener('DOMContentLoaded', () => {
-  // --- 1. Data Initialization ---
-  const data = window.PIXORA_DATA;
-  if (!data) {
-    console.error("Erreur : Les données PIXORA_DATA sont introuvables.");
-    return;
-  }
+    const data = getData();
 
-  const { config, programs } = data;
+    // ============================================================
+    // 1. LOGO — Grand affichage dans le hero + logo nav
+    // ============================================================
+    const heroLogoZone = document.getElementById('hero-logo-zone');
+    const siteLogoNav = document.getElementById('site-logo-nav');
 
-  // --- 2. DOM Elements ---
-  const header = document.getElementById('main-header');
-  const mobileToggle = document.getElementById('mobile-menu-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  const navLinks = document.querySelectorAll('.nav-link');
-  
-  const programsGrid = document.getElementById('programs-grid');
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  
-  const programSelect = document.getElementById('reg-program');
-  const registerForm = document.getElementById('register-form');
-  const formSuccess = document.getElementById('form-success');
-  
-  const modalBackdrop = document.getElementById('program-modal');
-  const modalClose = document.getElementById('modal-close');
-  const modalBody = document.getElementById('modal-body');
-
-  // --- 3. Header & Navigation ---
-  // Sticky Header on Scroll
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    function renderLogo() {
+        const d = getData(); // reload latest data
+        if (d.settings.logoUrl) {
+            // Hero : grande image
+            heroLogoZone.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO Logo">`;
+            // Nav : petite image
+            siteLogoNav.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO">`;
+        } else {
+            // Hero : texte stylisé
+            heroLogoZone.innerHTML = `
+                <div class="hero-logo-placeholder">PIXORA STUDIO</div>
+                <div class="hero-logo-sub">Studio de création graphique</div>
+            `;
+            // Nav : texte
+            siteLogoNav.innerHTML = `<span class="logo-text">PIXORA STUDIO</span>`;
+        }
     }
-    revealElements();
-  });
+    renderLogo();
 
-  // Mobile Menu Toggle
-  if (mobileToggle) {
-    mobileToggle.addEventListener('click', () => {
-      mobileToggle.classList.toggle('open');
-      navMenu.classList.toggle('open');
-      document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+    // ============================================================
+    // 2. WHATSAPP
+    // ============================================================
+    document.getElementById('display-wa-number').textContent = data.settings.whatsappNumber;
+    const waNum = data.settings.whatsappNumber.replace(/[^0-9]/g, '');
+    document.getElementById('wa-contact-btn').href = `https://wa.me/${waNum}`;
+
+    // ============================================================
+    // 3. LA DIFFÉRENCE
+    // ============================================================
+    function renderDiff() {
+        const freshData = getData();
+        const myList = freshData.creations.filter(c => c.type === 'MY_CREATION');
+        const aiList = freshData.creations.filter(c => c.type === 'AI_CREATION');
+
+        const myEl = document.getElementById('my-creation-content');
+        const aiEl = document.getElementById('ai-creation-content');
+
+        if (myList.length > 0) {
+            const r = myList[Math.floor(Math.random() * myList.length)];
+            myEl.innerHTML = `
+                <img src="${r.image}" alt="${r.title}">
+                <h4>${r.title}</h4>
+                <p>${r.service} — ${r.domain}</p>
+            `;
+        } else {
+            myEl.innerHTML = `<div class="diff-placeholder"><span>Ajoutez vos créations depuis l'administration.</span></div>`;
+        }
+
+        if (aiList.length > 0) {
+            // Affichage de la galerie IA (grille)
+            const galleryHtml = aiList.map(item => `
+                <div class="ai-gallery-item" data-fullimg="${item.image}">
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="ai-gallery-info">
+                        <h4>${item.title}</h4>
+                        <div class="ai-badge">IA</div>
+                    </div>
+                </div>
+            `).join('');
+            aiEl.innerHTML = `<div class="ai-gallery-grid">${galleryHtml}</div>`;
+            
+            // Attacher événements lightbox aux nouveaux items
+            aiEl.querySelectorAll('.ai-gallery-item').forEach(el => {
+                el.addEventListener('click', () => openLightbox(el.dataset.fullimg));
+            });
+        } else {
+            aiEl.innerHTML = `<div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>`;
+        }
+    }
+    renderDiff();
+
+    // ============================================================
+    // 3.5 LIGHTBOX
+    // ============================================================
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    function openLightbox(src) {
+        lightboxImg.src = src;
+        lightbox.classList.add('active');
+    }
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        lightboxImg.src = '';
+    }
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightbox) lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
     });
-  }
 
-  // Close mobile menu on link click & handle active state
-  navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      // Remove active from all
-      navLinks.forEach(l => l.classList.remove('active'));
-      // Add active to clicked
-      e.target.classList.add('active');
-      
-      // Close mobile menu
-      if (navMenu.classList.contains('open')) {
-        mobileToggle.classList.remove('open');
-        navMenu.classList.remove('open');
-        document.body.style.overflow = '';
-      }
-    });
-  });
 
-  // --- 4. Render Programs Grid (Pinterest Style) ---
-  function renderPrograms(filter = 'all') {
-    if (!programsGrid) return;
-    
-    programsGrid.innerHTML = '';
-    
-    const filteredPrograms = filter === 'all' 
-      ? programs 
-      : programs.filter(p => p.category === filter);
-      
-    filteredPrograms.forEach((program, index) => {
-      // Création de la carte Pinterest
-      const item = document.createElement('div');
-      item.className = 'pinterest-item';
-      
-      // Ajout d'une hauteur aléatoire pour accentuer l'effet masonry (Optionnel)
-      // On utilise l'image fournie, la hauteur naturelle fera l'affaire.
-      
-      item.innerHTML = `
-        <div class="pinterest-item-media">
-          <img src="${program.image}" alt="${program.title}" loading="lazy" />
-          <div class="pinterest-item-overlay">
-            <span class="pinterest-overlay-badge">Découvrir le programme</span>
-          </div>
-        </div>
-        <div class="pinterest-item-body">
-          <div class="pinterest-item-category">${program.categoryLabel}</div>
-          <h3 class="pinterest-item-title">${program.title}</h3>
-          <p class="pinterest-item-desc">${program.shortDesc}</p>
-          <div class="pinterest-item-footer">
-            <div class="pinterest-item-meta">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              ${program.specs.delai}
+    // ============================================================
+    // 4. NOS SERVICES (cartes visuelles)
+    // ============================================================
+    const serviceCardsGrid = document.getElementById('service-cards-grid');
+
+    function renderServiceCards() {
+        const freshData = getData();
+        // Exclure "Autres" des cartes visuelles
+        const displayServices = freshData.services.filter(s => s !== 'Autres');
+
+        serviceCardsGrid.innerHTML = displayServices.map(s => {
+            const price = freshData.prices[s] ? freshData.prices[s].basic : 0;
+            const imgUrl = freshData.serviceImages ? freshData.serviceImages[s] : '';
+            const icon = (typeof SERVICE_ICONS !== 'undefined' && SERVICE_ICONS[s]) ? SERVICE_ICONS[s] : '🎨';
+
+            const imageHtml = imgUrl
+                ? `<img src="${imgUrl}" alt="${s}" class="service-card-img">`
+                : `<div class="service-card-img-placeholder">${icon}</div>`;
+
+            return `
+                <a href="#commander" class="service-visual-card">
+                    ${imageHtml}
+                    <div class="service-card-body">
+                        <div class="service-card-name">${s}</div>
+                        <div class="service-card-price">À partir de ${price.toLocaleString('fr-FR')} F CFA</div>
+                    </div>
+                </a>
+            `;
+        }).join('');
+    }
+    renderServiceCards();
+
+    // ============================================================
+    // 5. MES CRÉATIONS (Portfolio)
+    // ============================================================
+    const domainFilters = document.getElementById('domain-filters');
+    const creationsGrid = document.getElementById('creations-grid');
+
+    function buildFilters() {
+        const freshData = getData();
+        domainFilters.innerHTML = `<button class="filter-btn active" data-domain="ALL">Tous</button>`;
+        freshData.domains.forEach(d => {
+            domainFilters.innerHTML += `<button class="filter-btn" data-domain="${d}">${d}</button>`;
+        });
+    }
+
+    function renderPortfolio(domain = 'ALL') {
+        const freshData = getData();
+        const list = freshData.creations.filter(c =>
+            c.type === 'MY_CREATION' && (domain === 'ALL' || c.domain === domain)
+        );
+        if (list.length === 0) {
+            creationsGrid.innerHTML = `
+                <p style="grid-column:1/-1; text-align:center; color:var(--c-text-muted); padding: 40px 0;">
+                    Aucune création dans ce domaine pour l'instant.
+                </p>`;
+            return;
+        }
+        creationsGrid.innerHTML = list.map(c => `
+            <div class="creation-item">
+                <img src="${c.image}" alt="${c.title}">
+                <div class="creation-info">
+                    <h4>${c.title}</h4>
+                    <p>${c.description || ''}</p>
+                    <span class="creation-tag">${c.service}</span>
+                </div>
             </div>
-            <div class="pinterest-item-level">${program.level}</div>
-          </div>
-        </div>
-      `;
-      
-      // Click event for modal
-      item.addEventListener('click', () => openModal(program));
-      
-      programsGrid.appendChild(item);
-    });
-  }
-
-  // Init programs
-  renderPrograms();
-
-  // Filter functionality
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      // Update active button
-      filterBtns.forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      
-      // Render filtered grid
-      const filter = e.target.getAttribute('data-filter');
-      renderPrograms(filter);
-    });
-  });
-
-  // --- 5. Populate Form Select ---
-  if (programSelect && programs) {
-    programs.forEach(p => {
-      const option = document.createElement('option');
-      option.value = p.id;
-      option.textContent = p.title;
-      programSelect.appendChild(option);
-    });
-  }
-
-  // --- 6. Form Submission (WhatsApp Redirection) ---
-  if (registerForm) {
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      // Get values
-      const prenom = document.getElementById('reg-firstname').value;
-      const nom = document.getElementById('reg-lastname').value;
-      const email = document.getElementById('reg-email').value;
-      const phone = document.getElementById('reg-phone').value;
-      const programId = document.getElementById('reg-program').value;
-      const level = document.getElementById('reg-level').value;
-      const motivation = document.getElementById('reg-motivation').value;
-      
-      // Find program name
-      const program = programs.find(p => p.id === programId);
-      const programName = program ? program.title : "Non spécifié";
-      
-      // Format WhatsApp Message
-      const message = `*NOUVELLE INSCRIPTION - PIXORA ACADEMY*%0A%0A` +
-        `*Candidat:* ${prenom} ${nom}%0A` +
-        `*Email:* ${email}%0A` +
-        `*Téléphone:* ${phone}%0A` +
-        `*Niveau:* ${level}%0A%0A` +
-        `*Programme demandé:*%0A${programName}%0A%0A` +
-        `*Motivation:*%0A${motivation ? motivation : "Non précisée"}`;
-        
-      // Show success message
-      registerForm.style.display = 'none';
-      formSuccess.classList.add('show');
-      
-      // Redirect to WhatsApp after 2 seconds
-      setTimeout(() => {
-        window.open(`https://wa.me/${config.whatsappNumber}?text=${message}`, '_blank');
-      }, 2000);
-    });
-  }
-
-  // --- 7. Modal Functionality ---
-  function openModal(program) {
-    if (!modalBackdrop || !modalBody) return;
-    
-    document.body.style.overflow = 'hidden';
-    
-    // Generate Tags HTML
-    const tagsHtml = program.tags.map(tag => 
-      `<span style="display:inline-block; padding:4px 10px; background:var(--primary-50); color:var(--primary); font-size:12px; font-weight:600; border-radius:var(--radius-full); margin-right:8px; margin-bottom:8px;">${tag}</span>`
-    ).join('');
-    
-    modalBody.innerHTML = `
-      <div style="margin-bottom: 24px;">
-        <span style="font-size:12px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">${program.categoryLabel}</span>
-        <h2 style="font-family:var(--font-display); font-size:28px; font-weight:800; color:var(--gray-900); margin:8px 0 16px; line-height:1.2;">${program.title}</h2>
-        <div style="display:flex; flex-wrap:wrap; gap:8px;">
-          <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--gray-600);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${program.specs.delai}</span>
-          <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--gray-600);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> ${program.level}</span>
-        </div>
-      </div>
-      
-      <img src="${program.image}" alt="${program.title}" style="width:100%; border-radius:var(--radius-lg); margin-bottom:24px; box-shadow:var(--shadow-sm);" />
-      
-      <h3 style="font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--gray-900); margin-bottom:12px;">Description du programme</h3>
-      <p style="font-size:15px; color:var(--gray-600); line-height:1.7; margin-bottom:24px;">${program.fullDesc}</p>
-      
-      <div style="background:var(--gray-50); border:1px solid var(--gray-100); border-radius:var(--radius-md); padding:20px; margin-bottom:24px;">
-        <h4 style="font-size:14px; font-weight:700; color:var(--gray-900); margin-bottom:12px;">Au programme :</h4>
-        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px;">
-          <li style="display:flex; gap:10px; font-size:14px; color:var(--gray-600);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg> Création de maquettes (${program.specs.formats})</li>
-          <li style="display:flex; gap:10px; font-size:14px; color:var(--gray-600);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg> Choix des supports : ${program.specs.papier}</li>
-          <li style="display:flex; gap:10px; font-size:14px; color:var(--gray-600);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg> Préparation : ${program.specs.finitions}</li>
-        </ul>
-      </div>
-      
-      <div style="margin-bottom: 24px;">
-        ${tagsHtml}
-      </div>
-      
-      <div style="display:flex; gap:16px;">
-        <a href="#inscription" onclick="closeModalAndSelect('${program.id}')" style="flex:1; text-align:center; padding:14px 20px; background:var(--grad-primary); color:#fff; font-weight:700; border-radius:var(--radius-full); box-shadow:var(--shadow-blue);">S'inscrire à ce programme</a>
-      </div>
-    `;
-    
-    modalBackdrop.classList.add('active');
-  }
-
-  function closeModal() {
-    if (!modalBackdrop) return;
-    modalBackdrop.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  if (modalClose && modalBackdrop) {
-    modalClose.addEventListener('click', closeModal);
-    modalBackdrop.addEventListener('click', (e) => {
-      if (e.target === modalBackdrop) closeModal();
-    });
-  }
-  
-  // Expose to window for inline onclick in modal
-  window.closeModalAndSelect = function(programId) {
-    closeModal();
-    const select = document.getElementById('reg-program');
-    if (select) {
-      select.value = programId;
+        `).join('');
     }
-  };
 
-  // --- 8. Scroll Reveal Animations ---
-  const revealElements = () => {
-    const reveals = document.querySelectorAll('.reveal');
-    const windowHeight = window.innerHeight;
-    const elementVisible = 100;
+    buildFilters();
+    renderPortfolio();
 
-    reveals.forEach(reveal => {
-      const elementTop = reveal.getBoundingClientRect().top;
-      if (elementTop < windowHeight - elementVisible) {
-        reveal.classList.add('revealed');
-      }
+    domainFilters.addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-btn')) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            renderPortfolio(e.target.dataset.domain);
+        }
     });
-  };
 
-  // Initial trigger
-  setTimeout(revealElements, 100);
+    // ============================================================
+    // 6. TARIFS
+    // ============================================================
+    const pricesGrid = document.getElementById('prices-grid');
+    pricesGrid.innerHTML = data.services.map(s => {
+        const p = data.prices[s] || { basic: 0, standard: 0, premium: 0 };
+        return `
+            <div class="price-card">
+                <h3>${s}</h3>
+                <div class="price-tier"><span class="tier-name">BASIC</span><span class="tier-price">${p.basic.toLocaleString('fr-FR')} F</span></div>
+                <div class="price-tier"><span class="tier-name">STANDARD</span><span class="tier-price">${p.standard.toLocaleString('fr-FR')} F</span></div>
+                <div class="price-tier"><span class="tier-name">PREMIUM</span><span class="tier-price">${p.premium.toLocaleString('fr-FR')} F</span></div>
+            </div>
+        `;
+    }).join('');
+
+    // ============================================================
+    // 7. FORMULAIRE DE COMMANDE
+    // ============================================================
+    const orderDomaine = document.getElementById('order-domaine');
+    data.domains.forEach(d => { orderDomaine.innerHTML += `<option value="${d}">${d}</option>`; });
+
+    const servicesList = document.getElementById('services-list');
+    const orderTotalEl = document.getElementById('order-total-amount');
+
+    function getServiceOptionsHtml() {
+        return getData().services.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+    document.querySelector('.input-service').innerHTML = getServiceOptionsHtml();
+
+    function calcTotal() {
+        const freshData = getData();
+        let total = 0;
+        document.querySelectorAll('.service-row').forEach(row => {
+            const s = row.querySelector('.input-service').value;
+            const f = row.querySelector('.input-formule').value;
+            if (s && f && freshData.prices[s]) total += freshData.prices[s][f] || 0;
+        });
+        orderTotalEl.textContent = `${total.toLocaleString('fr-FR')} F CFA`;
+        return total;
+    }
+
+    document.getElementById('btn-add-service').addEventListener('click', () => {
+        const row = document.createElement('div');
+        row.className = 'service-row';
+        row.innerHTML = `
+            <select class="form-control input-service" required>${getServiceOptionsHtml()}</select>
+            <select class="form-control input-formule" required>
+                <option value="basic">Basic</option>
+                <option value="standard">Standard</option>
+                <option value="premium">Premium</option>
+            </select>
+            <button type="button" class="btn-remove-service" aria-label="Supprimer">✕</button>
+        `;
+        servicesList.appendChild(row);
+        row.querySelector('.btn-remove-service').addEventListener('click', () => { row.remove(); calcTotal(); });
+        row.querySelectorAll('select').forEach(el => el.addEventListener('change', calcTotal));
+        calcTotal();
+    });
+    document.querySelectorAll('.input-service, .input-formule').forEach(el => el.addEventListener('change', calcTotal));
+
+    // ============================================================
+    // 8. MODAL RÉCAPITULATIF & WHATSAPP
+    // ============================================================
+    const modal = document.getElementById('recap-modal');
+    const recapContent = document.getElementById('recap-content');
+
+    document.getElementById('order-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nom      = document.getElementById('order-nom').value;
+        const prenom   = document.getElementById('order-prenom').value;
+        const tel      = document.getElementById('order-tel').value;
+        const adresse  = document.getElementById('order-adresse').value;
+        const domaine  = document.getElementById('order-domaine').value;
+        const logo     = document.getElementById('order-logo').value;
+
+        const freshData = getData();
+        let servicesHtml = '';
+        let idx = 1;
+        document.querySelectorAll('.service-row').forEach(row => {
+            const s = row.querySelector('.input-service').value;
+            const f = row.querySelector('.input-formule').value;
+            const fTitle = f.charAt(0).toUpperCase() + f.slice(1);
+            const price = freshData.prices[s] ? freshData.prices[s][f] : 0;
+            servicesHtml += `
+                <div class="recap-row">
+                    <div><strong>${idx}. ${s}</strong><br><small style="color:var(--c-text-muted)">Formule : ${fTitle}</small></div>
+                    <strong>${price.toLocaleString('fr-FR')} F</strong>
+                </div>`;
+            idx++;
+        });
+
+        const total = calcTotal();
+
+        recapContent.innerHTML = `
+            <div class="recap-section">
+                <h4>Informations du client</h4>
+                <p><strong>Nom :</strong> ${nom} ${prenom}</p>
+                <p><strong>Téléphone :</strong> ${tel}</p>
+                <p><strong>Adresse :</strong> ${adresse}</p>
+            </div>
+            <div class="recap-section">
+                <h4>Projet</h4>
+                <p><strong>Domaine :</strong> ${domaine}</p>
+                <p><strong>Logo existant :</strong> ${logo}</p>
+            </div>
+            <div class="recap-section">
+                <h4>Services commandés</h4>
+                ${servicesHtml}
+            </div>
+            <div style="font-size:1.15rem; font-weight:700; border-top:2px solid var(--c-primary); padding-top:12px; display:flex; justify-content:space-between;">
+                <span>TOTAL</span><span>${total.toLocaleString('fr-FR')} F CFA</span>
+            </div>`;
+
+        modal.classList.add('active');
+    });
+
+    document.getElementById('btn-edit-order').addEventListener('click', () => modal.classList.remove('active'));
+
+    document.getElementById('btn-confirm-wa').addEventListener('click', () => {
+        const freshData = getData();
+        const nom     = document.getElementById('order-nom').value;
+        const prenom  = document.getElementById('order-prenom').value;
+        const tel     = document.getElementById('order-tel').value;
+        const adresse = document.getElementById('order-adresse').value;
+        const domaine = document.getElementById('order-domaine').value;
+        const logo    = document.getElementById('order-logo').value;
+
+        const numMap = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+
+        let msg = `━━━━━━━━━━━━━━━━━━
+🎨 NOUVELLE COMMANDE
+PIXORA STUDIO
+━━━━━━━━━━━━━━━━━━
+
+👤 INFORMATIONS DU CLIENT
+Nom : ${nom}
+Prénom : ${prenom}
+Téléphone : ${tel}
+Adresse / Quartier : ${adresse}
+
+🏢 DOMAINE
+${domaine}
+
+🏷️ LOGO EXISTANT
+${logo}
+
+🎨 SERVICES COMMANDÉS\n\n`;
+
+        let total = 0;
+        let idx = 0;
+        document.querySelectorAll('.service-row').forEach(row => {
+            const s = row.querySelector('.input-service').value;
+            const f = row.querySelector('.input-formule').value;
+            const fTitle = f.charAt(0).toUpperCase() + f.slice(1);
+            const price = freshData.prices[s] ? freshData.prices[s][f] : 0;
+            const emoji = numMap[idx] || `${idx + 1}.`;
+            msg += `${emoji} ${s}\nFormule : ${fTitle}\nPrix : ${price.toLocaleString('fr-FR')} F CFA\n\n`;
+            total += price;
+            idx++;
+        });
+
+        msg += `💰 TOTAL\n${total.toLocaleString('fr-FR')} F CFA
+
+📞 MODE DE CONTACT
+WhatsApp
+
+━━━━━━━━━━━━━━━━━━
+Commande envoyée depuis Pixora Studio
+━━━━━━━━━━━━━━━━━━`;
+
+        const phone = freshData.settings.whatsappNumber.replace(/[^0-9]/g, '');
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        modal.classList.remove('active');
+    });
 });
