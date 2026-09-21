@@ -18,15 +18,15 @@ const defaultData = {
         logoUrl: ''   // vide = affiche le texte "PIXORA STUDIO" en grand
     },
     serviceImages: {
-        // Clé = nom du service, valeur = URL de l'image de couverture
-        'Carte de visite': '',
-        'Flyer': '',
-        'Affiche publicitaire': '',
-        'Visuel publicitaire': '',
-        'Affiche / Kakémono': '',
-        'Étiquette': '',
-        'Logo': '',
-        'Autres': ''
+        // Images par défaut pour chaque service (remplaçables depuis l'administration)
+        'Carte de visite':      'assets/images/services/business-cards/business-card-01.jpg',
+        'Flyer':                'assets/images/services/flyers/flyer-01.jpg',
+        'Affiche publicitaire': 'assets/images/services/posters/poster-01.jpg',
+        'Visuel publicitaire':  'assets/images/services/social-media/social-media-01.jpg',
+        'Affiche / Kakémono':   'assets/images/services/kakemono/kakemono-01.jpg',
+        'Étiquette':            'assets/images/services/labels/label-01.jpg',
+        'Logo':                 'assets/images/services/logos/logo-01.jpg',
+        'Autres':               'assets/images/services/branding/branding-01.jpg'
     },
     domains: [
         'Plombier',
@@ -68,13 +68,23 @@ function initData() {
     if (!stored) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
     } else {
-        // Migration : ajouter serviceImages si absent (upgrade depuis ancienne version)
         let parsed = JSON.parse(stored);
         let updated = false;
+
+        // Migration : ajouter serviceImages si absent
         if (!parsed.serviceImages) {
             parsed.serviceImages = defaultData.serviceImages;
             updated = true;
+        } else {
+            // Migration : remplacer les images vides par les images par défaut
+            Object.keys(defaultData.serviceImages).forEach(key => {
+                if (!parsed.serviceImages[key] || parsed.serviceImages[key] === '') {
+                    parsed.serviceImages[key] = defaultData.serviceImages[key];
+                    updated = true;
+                }
+            });
         }
+
         if (updated) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
     }
 }
