@@ -9,79 +9,95 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
-        .admin-wrap { max-width: 980px; margin: 40px auto; padding: 0 20px 80px; }
-        .admin-header { text-align:center; margin-bottom: 30px; padding: 30px; background:white; border-radius:12px; border:1px solid var(--c-border); box-shadow: var(--shadow-sm); }
-        .admin-header h1 { font-size: 1.85rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); }
-        .admin-header p { color: var(--c-text-muted); margin-top: 6px; }
+        /* ─── Layout général ─────────────────────────────────── */
+        body { background:#f0f2f5; font-family:'Inter',sans-serif; }
+        .admin-wrap { max-width:980px; margin:40px auto; padding:0 20px 80px; }
 
-        .admin-panel { background: var(--c-white); padding: 30px; border-radius: 12px; margin-bottom: 28px; border: 1px solid var(--c-border); box-shadow: var(--shadow-sm); }
-        .admin-panel-title { font-size: 1.25rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); border-bottom: 1px solid var(--c-border); padding-bottom: 12px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; }
+        .admin-header { text-align:center; margin-bottom:30px; padding:30px; background:white; border-radius:14px; border:1px solid var(--c-border); box-shadow:var(--shadow-sm); }
+        .admin-header h1 { font-size:1.85rem; font-weight:var(--fw-bold); color:var(--c-primary-dark); }
+        .admin-header p  { color:var(--c-text-muted); margin-top:6px; }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .admin-panel { background:white; padding:28px 30px; border-radius:14px; margin-bottom:28px; border:1px solid var(--c-border); box-shadow:var(--shadow-sm); }
+        .admin-panel-title { font-size:1.2rem; font-weight:700; color:var(--c-primary-dark); border-bottom:1px solid var(--c-border); padding-bottom:12px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
 
-        .msg-success { display:none; padding:12px 18px; border-radius:8px; margin-bottom:24px; font-weight:600; text-align:center; border: 1px solid; position: sticky; top: 10px; z-index: 100; }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 
-        .item-row { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; gap:14px; background:#fff; transition: background 0.2s, box-shadow 0.2s; }
-        .item-row:hover { background:#f8fafc; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .item-info { display:flex; align-items:center; gap:14px; min-width:0; flex:1; }
-        .item-meta { min-width: 0; flex:1; }
-        .item-meta strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.95rem; color:#1e293b; }
-        .item-meta small { color:var(--c-text-muted); font-size:0.82rem; }
+        /* ─── Message succès/erreur ───────────────────────────── */
+        .msg-success { display:none; padding:12px 18px; border-radius:8px; margin-bottom:20px; font-weight:600; text-align:center; border:1px solid; position:sticky; top:10px; z-index:200; box-shadow:0 4px 12px rgba(0,0,0,0.12); }
 
-        .badge-type { display:inline-block; background:var(--c-primary-light); color:var(--c-primary-dark); font-size:0.75rem; font-weight:600; padding:2px 8px; border-radius:4px; margin-left:6px; }
-        .badge-ai { background:#f1f5f9; color:#475569; }
+        /* ─── Lignes de créations ─────────────────────────────── */
+        .item-row { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1px solid var(--c-border); border-radius:10px; margin-bottom:10px; gap:14px; background:#fff; transition:background 0.2s, box-shadow 0.2s; }
+        .item-row:hover { background:#f8fafc; box-shadow:0 2px 10px rgba(0,0,0,0.07); }
+        .item-info  { display:flex; align-items:center; gap:14px; min-width:0; flex:1; }
+        .item-meta  { min-width:0; flex:1; }
 
-        .btn-delete { background:#ef4444; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
+        .badge-type { display:inline-block; background:var(--c-primary-light); color:var(--c-primary-dark); font-size:0.73rem; font-weight:600; padding:2px 8px; border-radius:4px; }
+        .badge-ai   { background:#f1f5f9; color:#475569; }
+
+        .btn-delete { background:#ef4444; color:white; border:none; padding:8px 14px; border-radius:7px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
         .btn-delete:hover { background:#dc2626; }
-        .btn-edit { background:#3b82f6; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
+        .btn-edit   { background:#3b82f6; color:white; border:none; padding:8px 14px; border-radius:7px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
         .btn-edit:hover { background:#2563eb; }
 
-        /* Logo */
-        .logo-current-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:16px 20px; margin-bottom:18px; display:flex; align-items:center; gap:18px; }
-        .logo-current-label { font-size:0.85rem; font-weight:600; color:#64748b; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; }
-        .logo-preview { max-width:220px; max-height:110px; object-fit:contain; border-radius:6px; display:block; }
+        /* ─── Logo ────────────────────────────────────────────── */
+        #logo-current-box { display:none; background:#f0fdf4; border:1.5px solid #86efac; border-radius:12px; padding:18px 22px; margin-bottom:18px; align-items:center; gap:20px; flex-wrap:wrap; }
+        #logo-preview { max-width:220px; max-height:120px; object-fit:contain; border-radius:8px; border:1px solid #d1fae5; background:white; padding:8px; display:none; }
+        #logo-placeholder { background:#fef9c3; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; color:#78350f; font-size:0.9rem; margin-bottom:14px; }
 
+        /* ─── File label ──────────────────────────────────────── */
         .file-label { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; background:var(--c-primary-light); color:var(--c-primary-dark); border-radius:8px; font-weight:600; cursor:pointer; border:1.5px dashed var(--c-primary); transition:all 0.2s; font-size:0.9rem; }
         .file-label:hover { background:#d0e3f5; border-color:var(--c-primary-dark); }
 
+        /* ─── Services ────────────────────────────────────────── */
+        .service-editor-box { background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:20px; margin-bottom:24px; }
+        .svc-current-box { background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:16px 20px; margin-top:14px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+        .svc-preview-img { max-width:240px; max-height:140px; width:auto; height:auto; object-fit:contain; border-radius:8px; border:1px solid #cbd5e1; background:white; padding:6px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+        .svc-pending-box { background:#eff6ff; border:1.5px solid #93c5fd; border-radius:10px; padding:16px 20px; margin-top:14px; display:none; align-items:center; gap:20px; flex-wrap:wrap; }
+        .svc-placeholder-box { background:#fef9c3; border:1px solid #fde68a; border-radius:8px; padding:12px 18px; color:#78350f; font-size:0.9rem; margin-top:14px; }
         .service-img-row { display:flex; align-items:center; gap:14px; padding:12px 14px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; background:#fff; flex-wrap:wrap; }
-        .service-img-name { font-weight:600; min-width:160px; font-size:0.92rem; }
-        .service-img-thumb { width:54px; height:54px; object-fit:cover; border-radius:6px; border:1px solid var(--c-border); background:var(--c-bg); }
+        .service-img-name  { font-weight:600; min-width:160px; font-size:0.92rem; }
+        .service-img-thumb { width:64px; height:64px; object-fit:cover; border-radius:6px; border:1px solid var(--c-border); background:#f1f5f9; cursor:pointer; }
 
+        /* ─── Tags domaines ───────────────────────────────────── */
         .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
         .tag-item { display:inline-flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:20px; font-size:0.88rem; font-weight:500; border:1px solid #e2e8f0; }
-        .tag-del { color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem; line-height:1; }
+        .tag-del  { color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem; line-height:1; }
         .tag-del:hover { color:#b91c1c; }
 
-        .filter-tab-btn { background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:7px 16px; border-radius:6px; font-weight:600; font-size:0.85rem; cursor:pointer; transition: all 0.15s; }
+        /* ─── Filtres catalogue ───────────────────────────────── */
+        .filter-tab-btn { background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:7px 16px; border-radius:7px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.15s; }
         .filter-tab-btn.active { background:var(--c-primary); color:white; border-color:var(--c-primary); }
         .filter-tab-btn:hover:not(.active) { background:#e2e8f0; }
 
-        /* Modal modification */
+        /* ─── Galerie prévisualisation ajout ──────────────────── */
+        #add-images-preview { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; padding:10px; min-height:50px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; }
+
+        /* ─── Modal modification ──────────────────────────────── */
         .modal-edit { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; }
         .modal-edit.active { display:flex; }
-        .modal-edit-card { background:white; border-radius:14px; padding:28px; width:90%; max-width:620px; max-height:92vh; overflow-y:auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
-        .modal-edit-card h3 { font-size:1.15rem; font-weight:700; margin-bottom:20px; color:var(--c-primary-dark); display:flex; align-items:center; gap:8px; }
+        .modal-edit-card { background:white; border-radius:16px; padding:28px; width:92%; max-width:680px; max-height:93vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,0.3); }
+        .modal-edit-card h3 { font-size:1.15rem; font-weight:700; margin-bottom:20px; color:var(--c-primary-dark); }
 
-        /* Image courante dans la modal */
-        .modal-img-current { display:flex; flex-direction:column; align-items:flex-start; gap:8px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:16px; }
-        .modal-img-current-label { font-size:0.78rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; }
-        #edit-c-img-preview { max-height:140px; max-width:100%; border-radius:8px; border:1px solid #cbd5e1; object-fit:contain; }
+        /* Galerie images dans la modal */
+        .modal-gallery-box { background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:18px; }
+        .modal-gallery-label { font-size:0.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px; display:block; }
+        #edit-images-gallery { display:flex; flex-wrap:wrap; gap:8px; min-height:40px; }
 
-        /* Overlay plein écran image */
-        #img-fullscreen-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
-        #img-fullscreen-overlay.open { display:flex; }
-        #img-fullscreen-img { max-width:90vw; max-height:80vh; object-fit:contain; border-radius:10px; }
-        #img-fullscreen-title { color:white; font-size:1.1rem; font-weight:600; text-align:center; }
-        #img-fullscreen-close { position:fixed; top:18px; right:22px; background:rgba(255,255,255,0.15); border:none; color:white; font-size:1.6rem; cursor:pointer; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:background 0.2s; }
-        #img-fullscreen-close:hover { background:rgba(255,255,255,0.3); }
+        /* ─── Overlay fullscreen image ────────────────────────── */
+        #img-fullscreen-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:10000; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
+        #img-fullscreen-img { max-width:90vw; max-height:80vh; object-fit:contain; border-radius:10px; box-shadow:0 0 60px rgba(0,0,0,0.5); }
+        #img-fullscreen-title { color:white; font-size:1rem; font-weight:600; text-align:center; }
+        #img-fullscreen-close { position:fixed; top:18px; right:22px; background:rgba(255,255,255,0.12); border:none; color:white; font-size:1.6rem; cursor:pointer; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:background 0.2s; z-index:10001; }
+        #img-fullscreen-close:hover { background:rgba(255,255,255,0.28); }
+
+        /* ─── Bloc formulaire ajout ───────────────────────────── */
+        .add-form-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:22px; margin-bottom:28px; }
+        .add-form-box h3 { font-size:1rem; font-weight:700; color:var(--c-primary-dark); margin-bottom:18px; }
 
         @media(max-width:768px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns:1fr; }
             .item-row { flex-wrap:wrap; }
-            .logo-current-box { flex-direction:column; align-items:flex-start; }
+            #logo-current-box { flex-direction:column; align-items:flex-start; }
         }
     </style>
 </head>
@@ -96,76 +112,149 @@
     <div class="admin-wrap">
         <div class="admin-header">
             <h1>⚙️ Espace Administration</h1>
-            <p>Contrôlez et personnalisez tous les contenus, images, créations, comparaisons IA et tarifs de PIXORA STUDIO.</p>
+            <p>Visualisez, modifiez et contrôlez tous les contenus de PIXORA STUDIO.</p>
         </div>
 
-        <div class="msg-success" id="msg-success">✓ Modifications enregistrées avec succès !</div>
+        <div class="msg-success" id="msg-success"></div>
 
-        <!-- === 1. LOGO === -->
+        <!-- ══════════════════════════════════════════════════════
+             1. LOGO
+        ═══════════════════════════════════════════════════════ -->
         <div class="admin-panel">
             <div class="admin-panel-title">🖼️ Mon Logo</div>
-            <p style="color:var(--c-text-muted); margin-bottom:18px;">Importez votre logo pour qu'il apparaisse en grand sur l'accueil et dans la barre de navigation.</p>
+            <p style="color:var(--c-text-muted);margin-bottom:18px;">Le logo s'affiche en grand sur l'accueil et dans la navigation. Il est enregistré même après actualisation.</p>
 
-            <!-- Aperçu du logo actuel -->
-            <div id="logo-current-label" style="display:none;">
-                <p class="logo-current-label" style="font-size:0.82rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">📌 Logo actuel enregistré :</p>
-                <div class="logo-current-box">
-                    <img id="logo-preview" class="logo-preview" src="" alt="Aperçu du logo">
-                    <div>
-                        <p style="font-size:0.9rem; color:#334155; font-weight:600; margin-bottom:6px;">Logo importé ✓</p>
-                        <p style="font-size:0.82rem; color:#64748b;">Ce logo s'affiche sur la page d'accueil et dans la navigation.</p>
+            <!-- Logo actuel (visible si déjà enregistré) -->
+            <div id="logo-current-box">
+                <img id="logo-preview" alt="Logo actuel">
+                <div>
+                    <p style="font-size:0.8rem;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">✓ Logo actuel enregistré</p>
+                    <p style="font-size:0.88rem;color:#334155;margin-bottom:10px;">Ce logo s'affiche sur votre site. Vous pouvez le remplacer ou le supprimer.</p>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <label class="file-label" for="logo-file-input" style="font-size:0.88rem;padding:7px 16px;">
+                            🔄 Remplacer le logo
+                            <input type="file" id="logo-file-input" accept=".png,.jpg,.jpeg,.svg,image/*" style="display:none;">
+                        </label>
+                        <button class="btn btn-outline" id="btn-remove-logo" style="border-color:#ef4444;color:#ef4444;font-size:0.88rem;padding:7px 16px;">🗑 Supprimer</button>
                     </div>
                 </div>
             </div>
 
-            <p id="logo-placeholder" style="color:var(--c-text-muted); margin-bottom:14px; background:#fef9c3; padding:10px 14px; border-radius:8px; border:1px solid #fde68a;">
+            <!-- Placeholder (visible si aucun logo) -->
+            <div id="logo-placeholder">
                 ⚠️ Aucun logo importé. Le texte "PIXORA STUDIO" s'affiche par défaut.
-            </p>
+            </div>
 
-            <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-top:10px;">
-                <label class="file-label" for="logo-file-input">
-                    📁 Importer / Remplacer le logo
-                    <input type="file" id="logo-file-input" accept=".png,.jpg,.jpeg,.svg,image/*" style="display:none;">
+            <!-- Bouton import (visible si aucun logo) -->
+            <div id="logo-import-btn" style="margin-top:12px;">
+                <label class="file-label" for="logo-file-input-empty">
+                    📁 Importer votre logo
+                    <input type="file" id="logo-file-input-empty" accept=".png,.jpg,.jpeg,.svg,image/*" style="display:none;">
                 </label>
-                <button class="btn btn-outline" id="btn-remove-logo" style="display:none; border-color:#ef4444; color:#ef4444;">🗑 Supprimer le logo</button>
             </div>
         </div>
 
-        <!-- === 2. GESTION DES DOMAINES === -->
+        <!-- ══════════════════════════════════════════════════════
+             2. DOMAINES
+        ═══════════════════════════════════════════════════════ -->
         <div class="admin-panel">
             <div class="admin-panel-title">🏷️ Gestion des Domaines (Métiers / Thématiques)</div>
-            <p style="color:var(--c-text-muted); margin-bottom:18px;">Définissez les domaines disponibles pour catégoriser vos créations (ex : Plomberie, Fast-food, Typographie...).</p>
-            <form id="add-domain-form" style="display:flex; gap:10px; max-width:500px; margin-bottom:16px;">
+            <p style="color:var(--c-text-muted);margin-bottom:18px;">Ces domaines sont disponibles lors de l'ajout ou de la modification de vos créations.</p>
+            <form id="add-domain-form" style="display:flex;gap:10px;max-width:500px;margin-bottom:16px;">
                 <input type="text" id="new-domain-input" class="form-control" placeholder="Nom du nouveau domaine (ex: Plomberie)" required>
                 <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ Ajouter</button>
             </form>
             <div id="domains-tag-list" class="tag-list"></div>
         </div>
 
-        <!-- === 3. GESTION DES SERVICES & IMAGES DE COUVERTURE === -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">🎨 Gestion des Services & Images de Couverture</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Ajoutez ou modifiez vos services, et personnalisez l'image affichée sur chaque carte de service de la page d'accueil.</p>
+        <!-- ══════════════════════════════════════════════════════
+             3. SERVICES & IMAGES
+        ═══════════════════════════════════════════════════════ -->
+        <div class="admin-panel" id="section-services">
+            <div class="admin-panel-title">🎨 Gestion des Services & Remplacement des Images</div>
+            <p style="color:var(--c-text-muted);margin-bottom:20px;">Sélectionnez un service, visualisez son image actuelle, importez une nouvelle image depuis votre appareil, prévisualisez-la puis enregistrez-la.</p>
 
-            <form id="add-service-form" style="display:flex; gap:10px; max-width:500px; margin-bottom:24px;">
+            <!-- ÉDITEUR D'IMAGE PAR SERVICE (Fonctionnement similaire au logo) -->
+            <div class="service-editor-box">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+                    <label for="svc-select" style="font-weight:700;color:var(--c-primary-dark);font-size:0.95rem;margin:0;">
+                        📌 Sélectionner un service :
+                    </label>
+                    <select id="svc-select" class="form-control" style="max-width:340px;font-weight:600;font-size:0.95rem;"></select>
+                </div>
+
+                <!-- 1. IMAGE ACTUELLE (visible si une image est déjà enregistrée) -->
+                <div id="svc-current-box" class="svc-current-box" style="display:none;">
+                    <img id="svc-current-preview" class="svc-preview-img" alt="Image actuelle">
+                    <div style="flex:1;min-width:200px;">
+                        <p style="font-size:0.8rem;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+                            ✓ Image actuelle enregistrée
+                        </p>
+                        <p id="svc-current-name" style="font-weight:700;font-size:1.05rem;color:var(--c-primary-dark);margin-bottom:8px;"></p>
+                        <p style="font-size:0.88rem;color:#334155;margin-bottom:12px;">Cette image s'affiche actuellement sur la carte de ce service côté public.</p>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <label class="file-label" for="svc-file-replace" style="font-size:0.88rem;padding:8px 18px;">
+                                🔄 Remplacer l'image
+                                <input type="file" id="svc-file-replace" accept="image/*" style="display:none;">
+                            </label>
+                            <button type="button" class="btn btn-outline" id="svc-btn-remove" style="border-color:#ef4444;color:#ef4444;font-size:0.88rem;padding:7px 16px;">
+                                🗑 Retirer l'image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. PLACEHOLDER SI AUCUNE IMAGE -->
+                <div id="svc-placeholder-box" class="svc-placeholder-box" style="display:none;">
+                    <p style="font-weight:700;margin-bottom:6px;">⚠️ Aucune image personnalisée enregistrée pour ce service.</p>
+                    <p style="margin-bottom:12px;font-size:0.88rem;">Ce service utilise une icône de secours sur le site. Importez une image ci-dessous.</p>
+                    <label class="file-label" for="svc-file-empty" style="font-size:0.88rem;padding:8px 18px;">
+                        📁 Choisir une nouvelle image depuis mon appareil
+                        <input type="file" id="svc-file-empty" accept="image/*" style="display:none;">
+                    </label>
+                </div>
+
+                <!-- 3. ZONE DE PRÉVISUALISATION DE LA NOUVELLE IMAGE IMPORTÉE -->
+                <div id="svc-pending-box" class="svc-pending-box">
+                    <img id="svc-pending-preview" class="svc-preview-img" alt="Nouvelle image importée">
+                    <div style="flex:1;min-width:200px;">
+                        <span style="display:inline-block;background:#3b82f6;color:white;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:4px;text-transform:uppercase;margin-bottom:6px;">
+                            📸 Nouvelle image importée (Prévisualisation)
+                        </span>
+                        <p style="font-weight:700;font-size:0.95rem;color:#1e3a8a;margin-bottom:6px;">Vérifiez que c'est bien la bonne image avant d'enregistrer.</p>
+                        <p style="font-size:0.85rem;color:#475569;margin-bottom:12px;">En cliquant sur Enregistrer, cette nouvelle image remplacera l'ancienne et sera conservée même après actualisation.</p>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button type="button" class="btn btn-primary" id="svc-btn-save-pending" style="font-size:0.9rem;padding:8px 20px;">
+                                💾 Enregistrer la nouvelle image
+                            </button>
+                            <button type="button" class="btn btn-outline" id="svc-btn-cancel-pending" style="font-size:0.9rem;padding:8px 14px;">
+                                ✕ Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ajout d'un nouveau service -->
+            <form id="add-service-form" style="display:flex;gap:10px;max-width:500px;margin-bottom:24px;">
                 <input type="text" id="new-service-input" class="form-control" placeholder="Nom du nouveau service (ex: Flyer)" required>
                 <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ Nouveau Service</button>
             </form>
 
-            <h3 style="font-size:0.95rem; font-weight:600; color:var(--c-primary-dark); margin-bottom:12px;">Images des cartes de services :</h3>
+            <h3 style="font-size:0.95rem;font-weight:600;color:var(--c-primary-dark);margin-bottom:12px;">Vue d'ensemble de tous les services :</h3>
             <div id="service-images-list"></div>
         </div>
 
-        <!-- === 4. COMPARAISON MA CRÉATION VS IA === -->
+        <!-- ══════════════════════════════════════════════════════
+             4. COMPARAISON MA CRÉATION VS IA
+        ═══════════════════════════════════════════════════════ -->
         <div class="admin-panel">
             <div class="admin-panel-title">⚡ Section « La Différence » (Ma Création vs IA)</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Personnalisez les deux créations présentées en face-à-face sur la page d'accueil.</p>
-
+            <p style="color:var(--c-text-muted);margin-bottom:20px;">Les images et informations déjà enregistrées sont affichées ci-dessous. Modifiez-les et enregistrez.</p>
             <form id="diff-form">
                 <div class="grid-2">
-                    <!-- Côté Ma Création -->
-                    <div style="border:1px solid #bfdbfe; background:#eff6ff; padding:18px; border-radius:10px;">
-                        <h4 style="color:#1e40af; margin-bottom:12px; font-size:1rem; font-weight:700;">👤 Ma Création (Artisanale)</h4>
+                    <div style="border:1px solid #bfdbfe;background:#eff6ff;padding:18px;border-radius:10px;">
+                        <h4 style="color:#1e40af;margin-bottom:12px;font-size:1rem;font-weight:700;">👤 Ma Création (Artisanale)</h4>
                         <div class="form-group" style="margin-bottom:10px;">
                             <label>Titre</label>
                             <input type="text" id="diff-mine-title" class="form-control" placeholder="Ex: AFFICHE BY PIXORA">
@@ -180,17 +269,15 @@
                         </div>
                         <div class="form-group" style="margin-bottom:0;">
                             <label>Image</label>
-                            <label class="file-label" for="diff-mine-file" style="margin-bottom:8px; font-size:0.85rem; padding:6px 14px;">
+                            <label class="file-label" for="diff-mine-file" style="margin-bottom:8px;font-size:0.85rem;padding:6px 14px;">
                                 📁 Changer l'image
                                 <input type="file" id="diff-mine-file" accept="image/*" style="display:none;">
                             </label>
-                            <img id="diff-mine-preview" src="" style="max-height:100px; display:none; border-radius:6px; border:1px solid #cbd5e1; margin-top:6px; max-width:100%;" alt="Aperçu">
+                            <img id="diff-mine-preview" src="" style="max-height:100px;display:none;border-radius:6px;border:1px solid #cbd5e1;margin-top:6px;max-width:100%;" alt="Aperçu">
                         </div>
                     </div>
-
-                    <!-- Côté IA -->
-                    <div style="border:1px solid #e9d5ff; background:#faf5ff; padding:18px; border-radius:10px;">
-                        <h4 style="color:#6b21a8; margin-bottom:12px; font-size:1rem; font-weight:700;">🤖 Création par IA</h4>
+                    <div style="border:1px solid #e9d5ff;background:#faf5ff;padding:18px;border-radius:10px;">
+                        <h4 style="color:#6b21a8;margin-bottom:12px;font-size:1rem;font-weight:700;">🤖 Création par IA</h4>
                         <div class="form-group" style="margin-bottom:10px;">
                             <label>Titre</label>
                             <input type="text" id="diff-ai-title" class="form-control" placeholder="Ex: AFFICHE BY IA">
@@ -205,29 +292,31 @@
                         </div>
                         <div class="form-group" style="margin-bottom:0;">
                             <label>Image</label>
-                            <label class="file-label" for="diff-ai-file" style="margin-bottom:8px; font-size:0.85rem; padding:6px 14px;">
+                            <label class="file-label" for="diff-ai-file" style="margin-bottom:8px;font-size:0.85rem;padding:6px 14px;">
                                 📁 Changer l'image
                                 <input type="file" id="diff-ai-file" accept="image/*" style="display:none;">
                             </label>
-                            <img id="diff-ai-preview" src="" style="max-height:100px; display:none; border-radius:6px; border:1px solid #cbd5e1; margin-top:6px; max-width:100%;" alt="Aperçu">
+                            <img id="diff-ai-preview" src="" style="max-height:100px;display:none;border-radius:6px;border:1px solid #cbd5e1;margin-top:6px;max-width:100%;" alt="Aperçu">
                         </div>
                     </div>
                 </div>
-                <div style="margin-top:18px; display:flex; gap:10px;">
+                <div style="margin-top:18px;display:flex;gap:10px;">
                     <button type="submit" class="btn btn-primary">💾 Enregistrer la comparaison</button>
-                    <button type="button" class="btn btn-outline" id="btn-reset-diff">↺ Réinitialiser (Rotation automatique)</button>
+                    <button type="button" class="btn btn-outline" id="btn-reset-diff">↺ Réinitialiser</button>
                 </div>
             </form>
         </div>
 
-        <!-- === 5. GESTION DU CATALOGUE / CRÉATIONS & VISUELS IA === -->
+        <!-- ══════════════════════════════════════════════════════
+             5. CATALOGUE COMPLET
+        ═══════════════════════════════════════════════════════ -->
         <div class="admin-panel">
-            <div class="admin-panel-title">📁 Gestion Complète du Catalogue (Créations & Visuels IA)</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Ajoutez, modifiez, remplacez ou supprimez n'importe quelle création avec son image, ses informations et son prix.</p>
+            <div class="admin-panel-title">📁 Gestion Complète du Catalogue</div>
+            <p style="color:var(--c-text-muted);margin-bottom:24px;">Visualisez toutes vos créations enregistrées. Cliquez sur une image pour l'agrandir. Utilisez ✏️ Modifier pour voir et gérer toutes les images d'une création.</p>
 
             <!-- Formulaire d'ajout -->
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:22px; margin-bottom:30px;">
-                <h3 style="font-size:1rem; font-weight:700; color:var(--c-primary-dark); margin-bottom:18px;">➕ Ajouter une nouvelle création</h3>
+            <div class="add-form-box">
+                <h3>➕ Ajouter une nouvelle création</h3>
                 <form id="creation-form" class="grid-2">
                     <div class="form-group">
                         <label>Type de création</label>
@@ -256,27 +345,32 @@
                         <label>Description (facultatif)</label>
                         <input type="text" id="c-desc" class="form-control" placeholder="Description courte...">
                     </div>
+
+                    <!-- Images — sélection multiple -->
                     <div class="form-group" style="grid-column:1/-1;">
-                        <label>Image de la création <span style="color:#ef4444;">*</span></label>
-                        <label class="file-label" for="c-img-file" style="margin-bottom:10px;">
-                            📁 Importer une image depuis l'ordinateur
-                            <input type="file" id="c-img-file" accept="image/*" style="display:none;">
-                        </label>
-                        <input type="url" id="c-img-url" class="form-control" placeholder="Ou coller une URL d'image..." style="margin-top:8px;">
-                        <img id="c-img-preview" src="" style="display:none; max-height:150px; max-width:100%; margin-top:10px; border-radius:8px; border:1px solid var(--c-border);" alt="Aperçu">
+                        <label>Images <span style="color:#ef4444;">*</span> <span style="font-size:0.8rem;color:#64748b;">(vous pouvez en ajouter plusieurs)</span></label>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+                            <label class="file-label" for="c-img-file">
+                                📁 Importer depuis l'ordinateur
+                                <input type="file" id="c-img-file" accept="image/*" multiple style="display:none;">
+                            </label>
+                        </div>
+                        <input type="url" id="c-img-url" class="form-control" placeholder="Ou coller une URL d'image puis appuyer sur Entrée...">
+                        <div id="add-images-preview"></div>
                     </div>
+
                     <div class="form-group" style="grid-column:1/-1;">
-                        <button type="submit" class="btn btn-primary" style="padding:12px 28px; font-size:1rem;">✅ Ajouter au catalogue</button>
+                        <button type="submit" class="btn btn-primary" style="padding:12px 28px;font-size:1rem;">✅ Ajouter au catalogue</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Liste des créations -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
-                <h3 style="font-size:1.05rem; font-weight:600; color:var(--c-primary-dark); margin:0;">
-                    Catalogue actuel (<span id="creations-count">0</span> créations)
+            <!-- Liste des créations existantes -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+                <h3 style="font-size:1.05rem;font-weight:700;color:var(--c-primary-dark);margin:0;">
+                    Catalogue (<span id="creations-count">0</span> créations enregistrées)
                 </h3>
-                <div style="display:flex; gap:6px;">
+                <div style="display:flex;gap:6px;">
                     <button type="button" class="filter-tab-btn active" data-cat="ALL">Toutes</button>
                     <button type="button" class="filter-tab-btn" data-cat="MY_CREATION">Mes Créations</button>
                     <button type="button" class="filter-tab-btn" data-cat="AI_CREATION">Créations IA</button>
@@ -285,10 +379,12 @@
             <div id="creations-list"></div>
         </div>
 
-        <!-- === 6. TARIFS === -->
+        <!-- ══════════════════════════════════════════════════════
+             6. TARIFS
+        ═══════════════════════════════════════════════════════ -->
         <div class="admin-panel">
             <div class="admin-panel-title">💰 Gestion des Tarifs par Service</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Définissez les prix (en F CFA) pour chaque formule (Basic, Standard, Premium) de vos services.</p>
+            <p style="color:var(--c-text-muted);margin-bottom:20px;">Définissez les prix (en F CFA) pour chaque formule (Basic, Standard, Premium) de vos services.</p>
             <form id="prices-form">
                 <div id="prices-list" class="grid-2"></div>
                 <div style="margin-top:24px;">
@@ -297,7 +393,9 @@
             </form>
         </div>
 
-        <!-- === 7. WHATSAPP === -->
+        <!-- ══════════════════════════════════════════════════════
+             7. WHATSAPP
+        ═══════════════════════════════════════════════════════ -->
         <div class="admin-panel">
             <div class="admin-panel-title">📱 Numéro WhatsApp de Commande</div>
             <form id="settings-form" style="max-width:400px;">
@@ -310,23 +408,28 @@
         </div>
     </div>
 
-    <!-- MODAL MODIFICATION CREATION -->
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL MODIFICATION CRÉATION (multi-images)
+    ══════════════════════════════════════════════════════════ -->
     <div class="modal-edit" id="edit-creation-modal">
         <div class="modal-edit-card">
             <h3>✏️ Modifier la création</h3>
             <form id="edit-creation-form">
                 <input type="hidden" id="edit-c-id">
 
-                <!-- Image actuelle bien visible en haut -->
-                <div class="modal-img-current">
-                    <span class="modal-img-current-label">📌 Image actuelle</span>
-                    <img id="edit-c-img-preview" src="" alt="Image actuelle">
-                    <label class="file-label" for="edit-c-img-file" style="font-size:0.85rem; padding:7px 16px; margin-top:4px;">
-                        🔄 Remplacer l'image
-                        <input type="file" id="edit-c-img-file" accept="image/*" style="display:none;">
-                    </label>
+                <!-- Galerie des images existantes -->
+                <div class="modal-gallery-box">
+                    <span class="modal-gallery-label">📸 Images enregistrées — cliquez pour agrandir, 🔄 pour remplacer, ✕ pour supprimer</span>
+                    <div id="edit-images-gallery"></div>
+                    <div style="margin-top:12px;">
+                        <label class="file-label" for="edit-add-img-file" style="font-size:0.85rem;padding:7px 16px;">
+                            ➕ Ajouter une image
+                            <input type="file" id="edit-add-img-file" accept="image/*" multiple style="display:none;">
+                        </label>
+                    </div>
                 </div>
 
+                <!-- Informations de la création -->
                 <div class="grid-2" style="gap:14px;">
                     <div class="form-group" style="margin-bottom:0;">
                         <label>Type</label>
@@ -357,7 +460,7 @@
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:22px;">
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:22px;">
                     <button type="button" class="btn btn-outline" id="btn-cancel-edit">✕ Annuler</button>
                     <button type="submit" class="btn btn-primary">💾 Enregistrer les modifications</button>
                 </div>
@@ -365,14 +468,23 @@
         </div>
     </div>
 
-    <!-- OVERLAY IMAGE PLEIN ÉCRAN -->
+    <!-- ══════════════════════════════════════════════════════════
+         OVERLAY PLEIN ÉCRAN
+    ══════════════════════════════════════════════════════════ -->
     <div id="img-fullscreen-overlay">
-        <button id="img-fullscreen-close" title="Fermer">✕</button>
-        <img id="img-fullscreen-img" src="" alt="Aperçu de la création">
+        <button id="img-fullscreen-close" title="Fermer (ou cliquer en dehors)">✕</button>
+        <img id="img-fullscreen-img" src="" alt="Aperçu">
         <p id="img-fullscreen-title"></p>
     </div>
 
     <script src="js/data.js"></script>
+    <script>
+        // Gestion du second input logo (quand aucun logo)
+        document.getElementById('logo-file-input-empty').addEventListener('change', function(e) {
+            document.getElementById('logo-file-input').files = e.target.files;
+            document.getElementById('logo-file-input').dispatchEvent(new Event('change'));
+        });
+    </script>
     <script src="js/admin.js"></script>
 </body>
 </html>
