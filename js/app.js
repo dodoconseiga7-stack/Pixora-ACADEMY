@@ -85,19 +85,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.getElementById('lightbox-close');
 
-    function openLightbox(src) {
+    function openLightbox(src, title = '') {
+        if (!lightbox || !lightboxImg) return;
         lightboxImg.src = src;
+        lightboxImg.alt = title;
         lightbox.classList.add('active');
     }
     function closeLightbox() {
+        if (!lightbox) return;
         lightbox.classList.remove('active');
-        lightboxImg.src = '';
+        if (lightboxImg) lightboxImg.src = '';
     }
     if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
     if (lightbox) lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
+        if (e.target === lightbox || e.target === lightboxClose) closeLightbox();
     });
-
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
+            closeLightbox();
+        }
+    });
 
     // ============================================================
     // 4. NOS SERVICES (cartes visuelles)
@@ -158,8 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         creationsGrid.innerHTML = list.map(c => `
-            <div class="creation-item">
-                <img src="${c.image}" alt="${c.title}">
+            <div class="creation-item" data-img="${c.image}" data-title="${c.title}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
+                <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
                 <div class="creation-info">
                     <h4>${c.title}</h4>
                     <p>${c.description || ''}</p>
@@ -167,6 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `).join('');
+
+        creationsGrid.querySelectorAll('.creation-item').forEach(el => {
+            el.addEventListener('click', () => {
+                openLightbox(el.dataset.img, el.dataset.title);
+            });
+        });
     }
 
     buildFilters();
