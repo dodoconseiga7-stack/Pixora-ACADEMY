@@ -505,4 +505,65 @@ document.addEventListener('DOMContentLoaded', () => {
             showMsg('✓ Tarifs mis à jour !');
         });
     }
+
+    // ============================================================
+    // 7. EXPORT & IMPORT DES DONNÉES (Sauvegarde / Déploiement)
+    // ============================================================
+    const btnExport = document.getElementById('btn-export-data');
+    const importFile = document.getElementById('import-data-file');
+    const exportInfo = document.getElementById('export-info');
+
+    if (btnExport) {
+        btnExport.addEventListener('click', () => {
+            const d = getData();
+            const exportPayload = {
+                _version: 'pixora-studio-v3',
+                _exported_at: new Date().toISOString(),
+                _note: 'Fichier de sauvegarde Pixora Studio — contient toutes les données personnalisées',
+                ...d
+            };
+            const json = JSON.stringify(exportPayload, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pixora-data-export_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            if (exportInfo) exportInfo.style.display = 'block';
+            showMsg('✓ Données exportées avec succès ! Fichier téléchargé.');
+        });
+    }
+
+    if (importFile) {
+        importFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    // Validation basique
+                    if (!parsed.settings || !parsed.creations) {
+                        alert('❌ Ce fichier ne semble pas être une sauvegarde Pixora Studio valide.');
+                        return;
+                    }
+                    if (!confirm(`Importer cette sauvegarde du ${parsed._exported_at ? new Date(parsed._exported_at).toLocaleString('fr-FR') : 'date inconnue'} ?\n\nCela remplacera toutes vos données actuelles par les données de la sauvegarde.`)) return;
+                    // Supprimer les champs de métadonnées d'export
+                    delete parsed._version;
+                    delete parsed._exported_at;
+                    delete parsed._note;
+                    saveData(parsed);
+                    showMsg('✓ Sauvegarde importée ! Rechargement de la page...');
+                    setTimeout(() => location.reload(), 1500);
+                } catch (err) {
+                    alert('❌ Erreur lors de la lecture du fichier. Assurez-vous que c\'est un fichier JSON valide.');
+                }
+            };
+            reader.readAsText(file);
+            importFile.value = '';
+        });
+    }
 });

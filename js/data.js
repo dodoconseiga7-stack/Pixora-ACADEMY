@@ -18,7 +18,6 @@ const defaultData = {
         logoUrl: ''   // vide = affiche le texte "PIXORA STUDIO" en grand
     },
     serviceImages: {
-        // Images par défaut pour chaque service (remplaçables depuis l'administration)
         'Carte de visite':      'assets/images/services/business-cards/business-card-01.jpg',
         'Flyer':                'assets/images/services/flyers/flyer-01.jpg',
         'Affiche publicitaire': 'assets/images/services/posters/poster-01.jpg',
@@ -71,12 +70,10 @@ function initData() {
         let parsed = JSON.parse(stored);
         let updated = false;
 
-        // Migration : ajouter serviceImages si absent
         if (!parsed.serviceImages) {
             parsed.serviceImages = defaultData.serviceImages;
             updated = true;
         } else {
-            // Migration : remplacer les images vides par les images par défaut
             Object.keys(defaultData.serviceImages).forEach(key => {
                 if (!parsed.serviceImages[key] || parsed.serviceImages[key] === '') {
                     parsed.serviceImages[key] = defaultData.serviceImages[key];
@@ -98,4 +95,43 @@ function saveData(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-initData();
+// ============================================================
+// INITIALISATION : charger les données de déploiement si disponibles
+// Le fichier deploy-data.json est généré depuis l'admin (bouton Export)
+// et déposé à la racine du projet avant déploiement.
+// ============================================================
+(function loadDeployData() {
+    // Ne tente pas de fetch en local (file://)
+    if (window.location.protocol === 'file:') {
+        initData();
+        return;
+    }
+
+    fetch('deploy-data.json?v=' + Date.now())
+        .then(r => {
+            if (!r.ok) throw new Error('No deploy-data.json');
+            return r.json();
+        })
+        .then(deployData => {
+            // Nettoyer les métadonnées d'export
+            delete deployData._version;
+            delete deployData._note;
+            delete deployData._exported_at;
+
+            // Si le fichier de déploiement contient des données personnalisées
+            // (logo ou créations), on les utilise comme données de référence
+            const deployHasCustom = (deployData.creations && deployData.creations.length > 0)
+                                 || (deployData.settings && deployData.settings.logoUrl);
+
+            if (deployHasCustom) {
+                saveData(deployData);
+                console.log('[Pixora] ✅ Données personnalisées chargées depuis deploy-data.json');
+            } else {
+                initData();
+            }
+        })
+        .catch(() => {
+            // Pas de fichier deploy-data.json → comportement normal (localStorage)
+            initData();
+        });
+})();

@@ -184,6 +184,31 @@
                 </div>
             </form>
         </div>
+
+        <!-- === 7. SAUVEGARDE & DÉPLOIEMENT === -->
+        <div class="admin-panel" style="border: 2px solid #2563eb; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+            <div class="admin-panel-title" style="color:#1e40af;">🚀 Sauvegarde & Déploiement en ligne</div>
+            <p style="color:#1e40af; margin-bottom:20px; font-weight:500;">Exportez toutes vos données (logo, créations, services, tarifs) pour les mettre en ligne. Partagez le fichier généré avec votre développeur pour déployer votre vraie version personnalisée.</p>
+            
+            <div style="display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px;">
+                <button type="button" id="btn-export-data" class="btn btn-primary" style="background:#2563eb; font-size:1rem; padding:12px 24px;">
+                    📤 Exporter toutes mes données
+                </button>
+                <label class="file-label" for="import-data-file" style="background:#dcfce7; color:#166534; border-color:#16a34a; padding:12px 24px; font-size:1rem;">
+                    📥 Importer une sauvegarde
+                    <input type="file" id="import-data-file" accept=".json" style="display:none;">
+                </label>
+            </div>
+
+            <div id="export-info" style="display:none; background:white; border:1.5px solid #2563eb; border-radius:10px; padding:18px; margin-top:10px;">
+                <p style="font-weight:700; color:#1e40af; margin-bottom:8px;">✅ Fichier généré avec succès !</p>
+                <p style="color:#374151; font-size:0.9rem;">Le fichier <strong>pixora-data-export.json</strong> a été téléchargé. Envoyez ce fichier à votre développeur pour mettre à jour la version en ligne avec toutes vos données personnalisées.</p>
+            </div>
+
+            <div style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:14px; margin-top:10px;">
+                <p style="color:#92400e; font-size:0.85rem; margin:0;"><strong>⚠️ Important :</strong> Le logo et les images de créations importés depuis votre ordinateur sont inclus dans l'export (encodés en base64). Le fichier peut donc être volumineux si vous avez beaucoup d'images.</p>
+            </div>
+        </div>
     </div>
 
     <script src="js/data.js"></script>
