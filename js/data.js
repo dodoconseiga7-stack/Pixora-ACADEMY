@@ -22,12 +22,25 @@ function initData() {
         let parsed = JSON.parse(stored);
         let updated = false;
 
+        // Migration : domaines
+        if (!parsed.domains || parsed.domains.length === 0) {
+            parsed.domains = defaultData.domains || [
+                'Plomberie', 'Typographie', 'Fast-food', 'Carte de visite', 'Affiche publicitaire', 'Ã‰tiquette', 'Flyer', 'KakÃ©mono', 'Logo', 'Packaging', 'Restaurant / DÃ©lice', 'Fashion', 'Market', 'Boulangerie / PÃ¢tisserie', 'Ã‰lectricitÃ© / BÃ¢timent', 'Salon de coiffure', 'Show-biz / Ã‰vÃ©nements', 'Autres'
+            ];
+            updated = true;
+        }
+
+        // Migration : services
+        if (!parsed.services || parsed.services.length === 0) {
+            parsed.services = defaultData.services || ['Carte de visite', 'Flyer', 'Affiche publicitaire', 'Visuel publicitaire', 'Affiche / KakÃ©mono', 'Ã‰tiquette', 'Logo', 'Autres'];
+            updated = true;
+        }
+
         // Migration : ajouter serviceImages si absent
         if (!parsed.serviceImages && defaultData.serviceImages) {
             parsed.serviceImages = defaultData.serviceImages;
             updated = true;
         } else if (defaultData.serviceImages) {
-            // Migration : remplacer les images vides par les images par dÃ©faut
             Object.keys(defaultData.serviceImages).forEach(key => {
                 if (!parsed.serviceImages[key] || parsed.serviceImages[key] === '') {
                     parsed.serviceImages[key] = defaultData.serviceImages[key];

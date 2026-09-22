@@ -9,31 +9,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        body { background: #f0f2f5; }
-        .admin-wrap { max-width: 940px; margin: 40px auto; padding: 0 20px 60px; }
-        .admin-header { text-align:center; margin-bottom: 40px; padding: 30px; background:white; border-radius:12px; border:1px solid var(--c-border); }
+        body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
+        .admin-wrap { max-width: 960px; margin: 40px auto; padding: 0 20px 80px; }
+        .admin-header { text-align:center; margin-bottom: 30px; padding: 30px; background:white; border-radius:12px; border:1px solid var(--c-border); box-shadow: var(--shadow-sm); }
         .admin-header h1 { font-size: 1.8rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); }
         .admin-header p { color: var(--c-text-muted); margin-top: 6px; }
+        
         .admin-panel { background: var(--c-white); padding: 30px; border-radius: 12px; margin-bottom: 28px; border: 1px solid var(--c-border); box-shadow: var(--shadow-sm); }
-        .admin-panel-title { font-size: 1.2rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); border-bottom: 1px solid var(--c-border); padding-bottom: 12px; margin-bottom: 24px; }
+        .admin-panel-title { font-size: 1.25rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); border-bottom: 1px solid var(--c-border); padding-bottom: 12px; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; }
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .msg-success { display:none; background:#d4edda; color:#155724; padding:12px 18px; border-radius:8px; margin-bottom:24px; font-weight:var(--fw-semibold); text-align:center; }
-        .item-row { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; gap: 12px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        
+        .msg-success { display:none; background:#d4edda; color:#155724; padding:12px 18px; border-radius:8px; margin-bottom:24px; font-weight:600; text-align:center; border: 1px solid #c3e6cb; }
+        
+        .item-row { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; gap: 12px; background:#fff; transition: background 0.2s; }
+        .item-row:hover { background:#f8fafc; }
         .item-info { display:flex; align-items:center; gap:14px; min-width:0; }
-        .item-info img { width:56px; height:56px; object-fit:cover; border-radius:6px; flex-shrink:0; }
+        .item-info img { width:56px; height:56px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid var(--c-border); }
         .item-meta { min-width: 0; }
-        .item-meta strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .item-meta strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.95rem; color:#1e293b; }
         .item-meta small { color:var(--c-text-muted); font-size:0.82rem; }
-        .badge-type { display:inline-block; background:var(--c-primary-light); color:var(--c-primary-dark); font-size:0.75rem; font-weight:var(--fw-semibold); padding:2px 8px; border-radius:4px; margin-left:6px; }
-        .badge-ai { background:#f0f0f0; color:#555; }
-        .btn-delete { background:#e53935; color:white; border:none; padding:7px 14px; border-radius:6px; cursor:pointer; font-family:var(--font); font-weight:var(--fw-semibold); font-size:0.85rem; white-space:nowrap; flex-shrink:0; }
-        .logo-preview { max-width:220px; max-height:120px; object-fit:contain; border:1px solid var(--c-border); border-radius:8px; padding:10px; background:white; display:block; margin-bottom:14px; }
-        .file-label { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; background:var(--c-primary-light); color:var(--c-primary-dark); border-radius:8px; font-weight:var(--fw-semibold); cursor:pointer; border:1.5px dashed var(--c-primary); transition:background 0.2s; font-size:0.95rem; }
-        .file-label:hover { background:#d0e3f5; }
-        .service-img-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
-        .service-img-name { font-weight:var(--fw-medium); min-width:170px; }
-        .service-img-thumb { width:48px; height:48px; object-fit:cover; border-radius:6px; border:1px solid var(--c-border); background:var(--c-bg); display:none; }
-        @media(max-width:680px) { .grid-2{grid-template-columns:1fr;} .item-row{flex-wrap:wrap;} }
+        
+        .badge-type { display:inline-block; background:var(--c-primary-light); color:var(--c-primary-dark); font-size:0.75rem; font-weight:600; padding:2px 8px; border-radius:4px; margin-left:6px; }
+        .badge-ai { background:#f1f5f9; color:#475569; }
+        
+        .btn-delete { background:#ef4444; color:white; border:none; padding:7px 12px; border-radius:6px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
+        .btn-delete:hover { background:#dc2626; }
+        .btn-edit { background:#3b82f6; color:white; border:none; padding:7px 12px; border-radius:6px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; margin-right:6px; transition:background 0.2s; }
+        .btn-edit:hover { background:#2563eb; }
+        
+        .logo-preview { max-width:260px; max-height:140px; object-fit:contain; border:1px solid var(--c-border); border-radius:8px; padding:12px; background:white; display:block; margin-bottom:14px; }
+        
+        .file-label { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; background:var(--c-primary-light); color:var(--c-primary-dark); border-radius:8px; font-weight:600; cursor:pointer; border:1.5px dashed var(--c-primary); transition:all 0.2s; font-size:0.9rem; }
+        .file-label:hover { background:#d0e3f5; border-color:var(--c-primary-dark); }
+        
+        .service-img-row { display:flex; align-items:center; gap:16px; padding:12px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:12px; background:#fff; flex-wrap:wrap; }
+        .service-img-name { font-weight:600; min-width:180px; font-size:0.95rem; }
+        .service-img-thumb { width:52px; height:52px; object-fit:cover; border-radius:6px; border:1px solid var(--c-border); background:var(--c-bg); display:none; }
+        
+        .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+        .tag-item { display:inline-flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:20px; font-size:0.88rem; font-weight:500; border:1px solid #e2e8f0; }
+        .tag-del { color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem; line-height:1; }
+        .tag-del:hover { color:#b91c1c; }
+        
+        .modal-edit { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; }
+        .modal-edit.active { display:flex; }
+        .modal-edit-card { background:white; border-radius:12px; padding:28px; width:90%; max-width:600px; max-height:90vh; overflow-y:auto; }
+        
+        @media(max-width:768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .item-row { flex-wrap:wrap; }
+        }
     </style>
 </head>
 <body>
@@ -47,17 +74,17 @@
     <div class="admin-wrap">
         <div class="admin-header">
             <h1>Espace Administration</h1>
-            <p>Gérez votre logo, vos créations, vos images de services et vos tarifs sans toucher au code.</p>
+            <p>Gérez votre logo, vos domaines, vos services, votre catalogue et vos tarifs.</p>
         </div>
 
         <div class="msg-success" id="msg-success">✓ Modifications enregistrées avec succès !</div>
 
-        <!-- === LOGO === -->
+        <!-- === 1. LOGO === -->
         <div class="admin-panel">
             <div class="admin-panel-title">🖼️ Mon Logo</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Importez votre logo directement depuis votre ordinateur. Les formats PNG, JPG, JPEG et SVG sont acceptés.</p>
+            <p style="color:var(--c-text-muted); margin-bottom:18px;">Importez votre logo pour qu'il apparaisse en grand sur l'accueil et dans la barre de navigation.</p>
             <img id="logo-preview" class="logo-preview" src="" alt="Aperçu du logo" style="display:none;">
-            <p id="logo-placeholder" style="color:var(--c-text-muted); margin-bottom:14px;">Aucun logo importé. Le nom "PIXORA STUDIO" s'affiche à la place.</p>
+            <p id="logo-placeholder" style="color:var(--c-text-muted); margin-bottom:14px;">Aucun logo importé. Le texte "PIXORA STUDIO" s'affiche par défaut.</p>
             <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
                 <label class="file-label" for="logo-file-input">
                     📁 Choisir un fichier image
@@ -67,29 +94,36 @@
             </div>
         </div>
 
-        <!-- === WHATSAPP === -->
+        <!-- === 2. GESTION DES DOMAINES === -->
         <div class="admin-panel">
-            <div class="admin-panel-title">📱 Numéro WhatsApp</div>
-            <form id="settings-form" style="max-width:400px;">
-                <div class="form-group">
-                    <label for="admin-wa">Numéro (avec indicatif, ex: +226 03 24 95 48)</label>
-                    <input type="text" id="admin-wa" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <div class="admin-panel-title">🏷️ Gestion des Domaines (Métiers / Thématiques)</div>
+            <p style="color:var(--c-text-muted); margin-bottom:18px;">Définissez les domaines disponibles pour catégoriser vos créations (ex : Plomberie, Fast-food, Typographie...).</p>
+            <form id="add-domain-form" style="display:flex; gap:10px; max-width:500px; margin-bottom:16px;">
+                <input type="text" id="new-domain-input" class="form-control" placeholder="Nom du nouveau domaine (ex: Plomberie)" required>
+                <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ Ajouter</button>
             </form>
+            <div id="domains-tag-list" class="tag-list"></div>
         </div>
 
-        <!-- === IMAGES SERVICES === -->
+        <!-- === 3. GESTION DES SERVICES & IMAGES DE COUVERTURE === -->
         <div class="admin-panel">
-            <div class="admin-panel-title">🎨 Images des Cartes de Services (Page d'accueil)</div>
-            <p style="color:var(--c-text-muted); margin-bottom:24px;">Pour chaque service, importez une image qui sera affichée sur la carte dans la section "Nos Services" de la page d'accueil.</p>
+            <div class="admin-panel-title">🎨 Gestion des Services & Images de Couverture</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Ajoutez ou modifiez vos services, et personnalisez l'image affichée sur chaque carte de service de la page d'accueil (ex : Carte de visite, Flyer...).</p>
+            
+            <form id="add-service-form" style="display:flex; gap:10px; max-width:500px; margin-bottom:24px;">
+                <input type="text" id="new-service-input" class="form-control" placeholder="Nom du nouveau service" required>
+                <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ Nouveau Service</button>
+            </form>
+
+            <h3 style="font-size:0.95rem; font-weight:600; color:var(--c-primary-dark); margin-bottom:12px;">Images des cartes de services sur la page d'accueil</h3>
             <div id="service-images-list"></div>
-            <button class="btn btn-primary" id="btn-save-service-images" style="margin-top:20px;">Enregistrer les images des services</button>
         </div>
 
-        <!-- === CRÉATIONS (Portfolio + IA) === -->
+        <!-- === 4. GESTION DU CATALOGUE / CRÉATIONS === -->
         <div class="admin-panel">
-            <div class="admin-panel-title">📁 Gestion des Créations</div>
+            <div class="admin-panel-title">📁 Gestion du Catalogue & Créations</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Ajoutez des créations à votre portfolio avec leur domaine, service et image.</p>
+            
             <form id="creation-form" class="grid-2">
                 <div class="form-group">
                     <label>Type de création</label>
@@ -99,46 +133,104 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Titre</label>
-                    <input type="text" id="c-title" class="form-control" required>
+                    <label>Titre de la création</label>
+                    <input type="text" id="c-title" class="form-control" placeholder="Ex: FLYERS BY PIXORA" required>
                 </div>
                 <div class="form-group">
                     <label>Domaine</label>
-                    <select id="c-domain" class="form-control"></select>
+                    <select id="c-domain" class="form-control" required></select>
                 </div>
                 <div class="form-group">
                     <label>Service</label>
-                    <select id="c-service" class="form-control"></select>
+                    <select id="c-service" class="form-control" required></select>
                 </div>
                 <div class="form-group" style="grid-column:1/-1;">
-                    <label>Image — Importer depuis votre ordinateur ou coller un lien URL</label>
+                    <label>Image de la création</label>
                     <label class="file-label" for="c-img-file" style="margin-bottom:10px;">
-                        📁 Choisir depuis l'ordinateur
+                        📁 Importer une image depuis l'ordinateur
                         <input type="file" id="c-img-file" accept="image/*" style="display:none;">
                     </label>
                     <input type="url" id="c-img-url" class="form-control" placeholder="Ou coller une URL d'image...">
-                    <img id="c-img-preview" src="" style="display:none; max-height:100px; margin-top:10px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
+                    <img id="c-img-preview" src="" style="display:none; max-height:120px; margin-top:10px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
                 </div>
                 <div class="form-group" style="grid-column:1/-1;">
                     <label>Description (facultatif)</label>
-                    <input type="text" id="c-desc" class="form-control">
+                    <input type="text" id="c-desc" class="form-control" placeholder="Description courte...">
                 </div>
                 <div class="form-group" style="grid-column:1/-1;">
                     <button type="submit" class="btn btn-primary">Ajouter au catalogue</button>
                 </div>
             </form>
 
-            <h3 style="font-size:1rem; font-weight:var(--fw-semibold); margin:30px 0 16px;">Catalogue actuel</h3>
+            <h3 style="font-size:1rem; font-weight:600; margin:36px 0 16px; color:var(--c-primary-dark);">Catalogue actuel (<span id="creations-count">0</span>)</h3>
             <div id="creations-list"></div>
         </div>
 
-        <!-- === TARIFS === -->
+        <!-- === 5. TARIFS === -->
         <div class="admin-panel">
             <div class="admin-panel-title">💰 Gestion des Tarifs</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Définissez les prix (en F CFA) pour chaque formule de vos services.</p>
             <form id="prices-form">
                 <div id="prices-list" class="grid-2"></div>
                 <div style="margin-top:24px;">
                     <button type="submit" class="btn btn-primary">Enregistrer les tarifs</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- === 6. WHATSAPP === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">📱 Numéro WhatsApp de Commande</div>
+            <form id="settings-form" style="max-width:400px;">
+                <div class="form-group">
+                    <label for="admin-wa">Numéro avec indicatif (ex: +226 03 24 95 48)</label>
+                    <input type="text" id="admin-wa" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer le numéro</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL MODIFICATION CREATION -->
+    <div class="modal-edit" id="edit-creation-modal">
+        <div class="modal-edit-card">
+            <h3 style="font-size:1.15rem; font-weight:bold; margin-bottom:16px; color:var(--c-primary-dark);">Modifier la création</h3>
+            <form id="edit-creation-form">
+                <input type="hidden" id="edit-c-id">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>Type</label>
+                    <select id="edit-c-type" class="form-control">
+                        <option value="MY_CREATION">Ma Création (Portfolio)</option>
+                        <option value="AI_CREATION">Création par IA (Comparaison)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>Titre</label>
+                    <input type="text" id="edit-c-title" class="form-control" required>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>Domaine</label>
+                    <select id="edit-c-domain" class="form-control" required></select>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>Service</label>
+                    <select id="edit-c-service" class="form-control" required></select>
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>Changer l'image (optionnel)</label>
+                    <label class="file-label" for="edit-c-img-file" style="margin-bottom:8px;">
+                        📁 Choisir un fichier
+                        <input type="file" id="edit-c-img-file" accept="image/*" style="display:none;">
+                    </label>
+                    <img id="edit-c-img-preview" src="" style="max-height:90px; display:block; margin-top:8px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
+                </div>
+                <div class="form-group" style="margin-bottom:18px;">
+                    <label>Description</label>
+                    <input type="text" id="edit-c-desc" class="form-control">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-edit">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
         </div>
