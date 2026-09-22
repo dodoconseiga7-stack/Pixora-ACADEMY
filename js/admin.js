@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let data = getData();
 
     const msgSuccess = document.getElementById('msg-success');
-    function showMsg(txt) {
+    function showMsg(txt, isError) {
         msgSuccess.textContent = txt || '✓ Modifications enregistrées !';
+        msgSuccess.style.background = isError ? '#fee2e2' : '#d4edda';
+        msgSuccess.style.color = isError ? '#991b1b' : '#155724';
+        msgSuccess.style.borderColor = isError ? '#fca5a5' : '#c3e6cb';
         msgSuccess.style.display = 'block';
         msgSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         setTimeout(() => msgSuccess.style.display = 'none', 3500);
@@ -11,28 +14,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Assurer que data.domains existe
     const defaultDomains = [
-        'Plomberie',
-        'Typographie',
-        'Fast-food',
-        'Carte de visite',
-        'Affiche publicitaire',
-        'Étiquette',
-        'Flyer',
-        'Kakémono',
-        'Logo',
-        'Packaging',
-        'Restaurant / Délice',
-        'Fashion',
-        'Market',
-        'Boulangerie / Pâtisserie',
-        'Électricité / Bâtiment',
-        'Salon de coiffure',
-        'Show-biz / Événements',
-        'Autres'
+        'Plomberie', 'Typographie', 'Fast-food', 'Carte de visite',
+        'Affiche publicitaire', 'Étiquette', 'Flyer', 'Kakémono',
+        'Logo', 'Packaging', 'Restaurant / Délice', 'Fashion',
+        'Market', 'Boulangerie / Pâtisserie', 'Électricité / Bâtiment',
+        'Salon de coiffure', 'Show-biz / Événements', 'Autres'
     ];
     if (!data.domains || data.domains.length === 0) {
         data.domains = defaultDomains;
         saveData(data);
+    }
+
+    // ============================================================
+    // UTILITAIRE : Remplir un <select> avec des options
+    // ============================================================
+    function fillSelect(selectEl, items, selectedValue) {
+        if (!selectEl) return;
+        selectEl.innerHTML = items.map(item =>
+            `<option value="${item}" ${item === selectedValue ? 'selected' : ''}>${item}</option>`
+        ).join('');
     }
 
     // ============================================================
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoPlaceholder = document.getElementById('logo-placeholder');
     const btnRemoveLogo   = document.getElementById('btn-remove-logo');
     const logoFileInput   = document.getElementById('logo-file-input');
+    const logoCurrent     = document.getElementById('logo-current-label');
 
     function refreshLogoAdmin() {
         const d = getData();
@@ -50,10 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
             logoPreview.style.display = 'block';
             logoPlaceholder.style.display = 'none';
             btnRemoveLogo.style.display = 'inline-flex';
+            if (logoCurrent) logoCurrent.style.display = 'block';
         } else {
             logoPreview.style.display = 'none';
             logoPlaceholder.style.display = 'block';
             btnRemoveLogo.style.display = 'none';
+            if (logoCurrent) logoCurrent.style.display = 'none';
         }
     }
     refreshLogoAdmin();
@@ -88,24 +91,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. GESTION DES DOMAINES
     // ============================================================
     const domainsTagList = document.getElementById('domains-tag-list');
-    const cDomain = document.getElementById('c-domain');
-    const editCDomain = document.getElementById('edit-c-domain');
 
     function renderDomains() {
         const d = getData();
         const domains = d.domains || [];
 
-        domainsTagList.innerHTML = domains.map((dm, idx) => `
-            <span class="tag-item">
-                ${dm}
-                <span class="tag-del" onclick="deleteDomain(${idx})" title="Supprimer ce domaine">&times;</span>
-            </span>
-        `).join('');
+        domainsTagList.innerHTML = domains.length === 0
+            ? '<p style="color:var(--c-text-muted); font-size:0.9rem;">Aucun domaine défini. Ajoutez-en un ci-dessus.</p>'
+            : domains.map((dm, idx) => `
+                <span class="tag-item">
+                    ${dm}
+                    <span class="tag-del" onclick="deleteDomain(${idx})" title="Supprimer ce domaine">&times;</span>
+                </span>
+            `).join('');
 
-        cDomain.innerHTML = domains.map(dm => `<option value="${dm}">${dm}</option>`).join('');
-        if (editCDomain) {
-            editCDomain.innerHTML = domains.map(dm => `<option value="${dm}">${dm}</option>`).join('');
-        }
+        // Mettre à jour tous les selects domaine de la page
+        const selects = document.querySelectorAll('.select-domain');
+        selects.forEach(sel => {
+            const current = sel.value;
+            sel.innerHTML = domains.map(dm => `<option value="${dm}">${dm}</option>`).join('');
+            if (domains.includes(current)) sel.value = current;
+        });
     }
 
     window.deleteDomain = (index) => {
@@ -126,10 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!val) return;
         const d = getData();
         if (!d.domains) d.domains = [];
-        if (d.domains.includes(val)) {
-            alert('Ce domaine existe déjà.');
-            return;
-        }
+        if (d.domains.includes(val)) { alert('Ce domaine existe déjà.'); return; }
         d.domains.push(val);
         saveData(d);
         renderDomains();
@@ -143,31 +146,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. GESTION DES SERVICES & IMAGES DE COUVERTURE
     // ============================================================
     const serviceImgList = document.getElementById('service-images-list');
-    const cService = document.getElementById('c-service');
-    const editCService = document.getElementById('edit-c-service');
 
     function renderServices() {
         const d = getData();
         const services = d.services || [];
 
-        cService.innerHTML = services.map(s => `<option value="${s}">${s}</option>`).join('');
-        if (editCService) {
-            editCService.innerHTML = services.map(s => `<option value="${s}">${s}</option>`).join('');
-        }
+        // Mettre à jour tous les selects service de la page
+        const selects = document.querySelectorAll('.select-service');
+        selects.forEach(sel => {
+            const current = sel.value;
+            sel.innerHTML = services.map(s => `<option value="${s}">${s}</option>`).join('');
+            if (services.includes(current)) sel.value = current;
+        });
 
         serviceImgList.innerHTML = services.map(s => {
             const imgUrl = d.serviceImages ? (d.serviceImages[s] || '') : '';
             const isDefaultSvc = ['Carte de visite', 'Flyer', 'Affiche publicitaire', 'Visuel publicitaire', 'Affiche / Kakémono', 'Étiquette', 'Logo', 'Autres'].includes(s);
+            const safeId = s.replace(/[^a-zA-Z0-9]/g, '_');
             return `
                 <div class="service-img-row">
                     <span class="service-img-name">${s}</span>
-                    <img id="simg-thumb-${s.replace(/[^a-zA-Z0-9]/g,'_')}" src="${imgUrl}" class="service-img-thumb" style="${imgUrl ? 'display:block;' : 'display:none;'}" alt="${s}">
-                    <label class="file-label" style="font-size:0.82rem; padding:6px 14px;" for="simg-file-${s.replace(/[^a-zA-Z0-9]/g,'_')}">
-                        📁 Changer l'image
-                        <input type="file" id="simg-file-${s.replace(/[^a-zA-Z0-9]/g,'_')}" data-service="${s}" accept="image/*" style="display:none;" class="simg-file-input">
+                    ${imgUrl
+                        ? `<img id="simg-thumb-${safeId}" src="${imgUrl}" class="service-img-thumb" style="display:block;" alt="${s}">`
+                        : `<span style="font-size:0.78rem; color:#94a3b8; min-width:52px;">Pas d'image</span>`
+                    }
+                    <label class="file-label" style="font-size:0.82rem; padding:6px 14px;" for="simg-file-${safeId}">
+                        ${imgUrl ? '🔄 Remplacer' : '📁 Ajouter'}
+                        <input type="file" id="simg-file-${safeId}" data-service="${s}" accept="image/*" style="display:none;" class="simg-file-input">
                     </label>
-                    ${imgUrl ? `<button type="button" class="simg-remove-btn" data-service="${s}" style="background:none; border:none; color:#ef4444; font-size:0.82rem; cursor:pointer; font-weight:600;">✕ Retirer l'image</button>` : ''}
-                    ${!isDefaultSvc ? `<button type="button" class="btn-delete" onclick="deleteService('${s}')" style="margin-left:auto; padding:4px 10px; font-size:0.75rem;">Supprimer service</button>` : ''}
+                    ${imgUrl ? `<button type="button" class="simg-remove-btn" data-service="${s}" style="background:none; border:none; color:#ef4444; font-size:0.82rem; cursor:pointer; font-weight:600;">✕ Retirer</button>` : ''}
+                    ${!isDefaultSvc ? `<button type="button" class="btn-delete" onclick="deleteService('${s}')" style="margin-left:auto; padding:4px 10px; font-size:0.75rem;">Supprimer</button>` : ''}
                 </div>
             `;
         }).join('');
@@ -223,10 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!val) return;
         const d = getData();
         if (!d.services) d.services = [];
-        if (d.services.includes(val)) {
-            alert('Ce service existe déjà.');
-            return;
-        }
+        if (d.services.includes(val)) { alert('Ce service existe déjà.'); return; }
         d.services.push(val);
         if (!d.prices) d.prices = {};
         if (!d.prices[val]) d.prices[val] = { basic: 5000, standard: 7500, premium: 10000 };
@@ -241,17 +246,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
     // 4. COMPARAISON MA CRÉATION VS IA (Section La Différence)
     // ============================================================
-    const diffMineTitle = document.getElementById('diff-mine-title');
+    const diffMineTitle   = document.getElementById('diff-mine-title');
     const diffMineService = document.getElementById('diff-mine-service');
-    const diffMineDesc = document.getElementById('diff-mine-desc');
-    const diffMineFile = document.getElementById('diff-mine-file');
+    const diffMineDesc    = document.getElementById('diff-mine-desc');
+    const diffMineFile    = document.getElementById('diff-mine-file');
     const diffMinePreview = document.getElementById('diff-mine-preview');
-
-    const diffAiTitle = document.getElementById('diff-ai-title');
-    const diffAiService = document.getElementById('diff-ai-service');
-    const diffAiDesc = document.getElementById('diff-ai-desc');
-    const diffAiFile = document.getElementById('diff-ai-file');
-    const diffAiPreview = document.getElementById('diff-ai-preview');
+    const diffAiTitle     = document.getElementById('diff-ai-title');
+    const diffAiService   = document.getElementById('diff-ai-service');
+    const diffAiDesc      = document.getElementById('diff-ai-desc');
+    const diffAiFile      = document.getElementById('diff-ai-file');
+    const diffAiPreview   = document.getElementById('diff-ai-preview');
 
     let diffMineImg = '';
     let diffAiImg = '';
@@ -262,53 +266,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const aiList = d.creations.filter(c => c.type === 'AI_CREATION');
 
         const mine = (d.difference && d.difference.myCreation) || (myList[0] || {});
-        const ai = (d.difference && d.difference.aiCreation) || (aiList[0] || {});
+        const ai   = (d.difference && d.difference.aiCreation) || (aiList[0] || {});
 
-        diffMineTitle.value = mine.title || '';
+        diffMineTitle.value   = mine.title || '';
         diffMineService.value = mine.service || '';
-        diffMineDesc.value = mine.description || '';
+        diffMineDesc.value    = mine.description || '';
         if (mine.image) {
             diffMineImg = mine.image;
             diffMinePreview.src = mine.image;
             diffMinePreview.style.display = 'block';
-        } else {
-            diffMinePreview.style.display = 'none';
-        }
+        } else { diffMinePreview.style.display = 'none'; }
 
-        diffAiTitle.value = ai.title || '';
+        diffAiTitle.value   = ai.title || '';
         diffAiService.value = ai.service || '';
-        diffAiDesc.value = ai.description || '';
+        diffAiDesc.value    = ai.description || '';
         if (ai.image) {
             diffAiImg = ai.image;
             diffAiPreview.src = ai.image;
             diffAiPreview.style.display = 'block';
-        } else {
-            diffAiPreview.style.display = 'none';
-        }
+        } else { diffAiPreview.style.display = 'none'; }
     }
     refreshDiffAdmin();
 
     diffMineFile.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => {
-            diffMineImg = ev.target.result;
-            diffMinePreview.src = diffMineImg;
-            diffMinePreview.style.display = 'block';
-        };
+        reader.onload = (ev) => { diffMineImg = ev.target.result; diffMinePreview.src = diffMineImg; diffMinePreview.style.display = 'block'; };
         reader.readAsDataURL(file);
     });
-
     diffAiFile.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => {
-            diffAiImg = ev.target.result;
-            diffAiPreview.src = diffAiImg;
-            diffAiPreview.style.display = 'block';
-        };
+        reader.onload = (ev) => { diffAiImg = ev.target.result; diffAiPreview.src = diffAiImg; diffAiPreview.style.display = 'block'; };
         reader.readAsDataURL(file);
     });
 
@@ -316,21 +305,18 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const d = getData();
         if (!d.difference) d.difference = {};
-
         d.difference.myCreation = {
             title: diffMineTitle.value.trim() || 'Ma Création',
             service: diffMineService.value.trim() || 'Création graphique',
             description: diffMineDesc.value.trim(),
             image: diffMineImg || (d.creations.find(c => c.type === 'MY_CREATION') || {}).image || ''
         };
-
         d.difference.aiCreation = {
             title: diffAiTitle.value.trim() || 'Création par IA',
             service: diffAiService.value.trim() || 'Génération automatique',
             description: diffAiDesc.value.trim(),
             image: diffAiImg || (d.creations.find(c => c.type === 'AI_CREATION') || {}).image || ''
         };
-
         saveData(d);
         showMsg('✓ Comparaison « Ma Création vs IA » enregistrée avec succès !');
     });
@@ -340,8 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const d = getData();
             delete d.difference;
             saveData(d);
-            diffMineImg = '';
-            diffAiImg = '';
+            diffMineImg = ''; diffAiImg = '';
             refreshDiffAdmin();
             showMsg('✓ Comparaison réinitialisée (rotation automatique activée).');
         }
@@ -350,17 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
     // 5. GESTION DU CATALOGUE / CRÉATIONS & VISUELS IA
     // ============================================================
-    const cImgFile = document.getElementById('c-img-file');
-    const cImgUrl  = document.getElementById('c-img-url');
+    const cImgFile    = document.getElementById('c-img-file');
+    const cImgUrl     = document.getElementById('c-img-url');
     const cImgPreview = document.getElementById('c-img-preview');
     let pendingImgBase64 = '';
     let currentCategoryFilter = 'ALL';
 
     cImgFile.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
         if (file.size > 8 * 1024 * 1024) {
-            alert('L\\'image dépasse la limite de 8 Mo.');
+            alert('L\'image dépasse la limite de 8 Mo.');
             e.target.value = '';
             return;
         }
@@ -384,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const creationsList = document.getElementById('creations-list');
+    const creationsList  = document.getElementById('creations-list');
     const creationsCount = document.getElementById('creations-count');
 
     function renderCreations() {
@@ -398,36 +382,56 @@ document.addEventListener('DOMContentLoaded', () => {
         creationsCount.textContent = list.length;
 
         if (list.length === 0) {
-            creationsList.innerHTML = `<p style="color:var(--c-text-muted); text-align:center; padding:20px;">Aucune création dans cette catégorie.</p>`;
+            creationsList.innerHTML = `<p style="color:var(--c-text-muted); text-align:center; padding:30px;">Aucune création dans cette catégorie.</p>`;
             return;
         }
 
         creationsList.innerHTML = list.map(c => {
-            const priceTag = c.price ? `<span style="font-weight:700; color:#059669; font-size:0.85rem; margin-left:6px;">💰 ${Number(c.price).toLocaleString('fr-FR')} F CFA</span>` : '';
+            const priceTag = c.price
+                ? `<span style="font-weight:700; color:#059669; font-size:0.82rem;">💰 ${Number(c.price).toLocaleString('fr-FR')} F CFA</span>`
+                : '';
+            const imgSrc = c.image || 'https://placehold.co/80x80?text=Image';
             return `
                 <div class="item-row">
                     <div class="item-info">
-                        <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=Image';">
+                        <img src="${imgSrc}" alt="${c.title}"
+                             style="width:72px; height:72px; object-fit:cover; border-radius:8px; border:1px solid var(--c-border); cursor:pointer;"
+                             onclick="previewCreationImage('${c.id}')"
+                             title="Cliquer pour agrandir"
+                             onerror="this.onerror=null; this.src='https://placehold.co/80x80?text=Image';">
                         <div class="item-meta">
-                            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
-                                <strong>${c.title}</strong>
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px; margin-bottom:3px;">
+                                <strong style="font-size:0.95rem;">${c.title}</strong>
                                 <span class="badge-type ${c.type === 'AI_CREATION' ? 'badge-ai' : ''}">${c.type === 'MY_CREATION' ? 'Ma création' : 'IA'}</span>
-                                ${priceTag}
                             </div>
-                            <small style="display:block; margin-top:2px; color:#64748b;">${c.service} &bull; <span style="color:#0284c7; font-weight:600;">${c.domain}</span></small>
-                            ${c.description ? `<small style="display:block; color:#94a3b8; font-style:italic;">${c.description}</small>` : ''}
+                            <small style="display:block; color:#475569;">📂 ${c.domain || '—'} &nbsp;|&nbsp; 🎨 ${c.service || '—'}</small>
+                            ${priceTag ? `<div style="margin-top:2px;">${priceTag}</div>` : ''}
+                            ${c.description ? `<small style="display:block; color:#94a3b8; font-style:italic; margin-top:2px;">${c.description}</small>` : ''}
                         </div>
                     </div>
-                    <div style="display:flex; align-items:center;">
-                        <button type="button" class="btn-edit" onclick="openEditModal('${c.id}')">Modifier</button>
-                        <button type="button" class="btn-delete" onclick="deleteCreation('${c.id}')">Supprimer</button>
+                    <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                        <button type="button" class="btn-edit" onclick="openEditModal('${c.id}')">✏️ Modifier</button>
+                        <button type="button" class="btn-delete" onclick="deleteCreation('${c.id}')">🗑 Supprimer</button>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    // Gestion des onglets de filtrage du catalogue
+    // Prévisualisation agrandie d'image depuis la liste
+    window.previewCreationImage = (id) => {
+        const d = getData();
+        const c = d.creations.find(item => item.id === id);
+        if (!c || !c.image) return;
+        const overlay = document.getElementById('img-fullscreen-overlay');
+        if (overlay) {
+            document.getElementById('img-fullscreen-img').src = c.image;
+            document.getElementById('img-fullscreen-title').textContent = c.title;
+            overlay.style.display = 'flex';
+        }
+    };
+
+    // Filtres catalogue
     document.querySelectorAll('.filter-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
@@ -450,21 +454,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('creation-form').addEventListener('submit', (e) => {
         e.preventDefault();
-        const imgFinal = pendingImgBase64 || cImgUrl.value;
-        if (!imgFinal) {
-            alert('Veuillez choisir une image pour votre création.');
-            return;
-        }
+        const imgFinal = pendingImgBase64 || cImgUrl.value.trim();
+        if (!imgFinal) { alert('Veuillez choisir une image pour votre création.'); return; }
         const d = getData();
         if (!d.creations) d.creations = [];
         const priceVal = document.getElementById('c-price').value.trim();
-
+        const domainSel = document.getElementById('c-domain');
+        const serviceSel = document.getElementById('c-service');
         d.creations.unshift({
             id: 'c_' + Date.now(),
             type: document.getElementById('c-type').value,
             title: document.getElementById('c-title').value.trim(),
-            domain: cDomain.value,
-            service: cService.value,
+            domain: domainSel ? domainSel.value : '',
+            service: serviceSel ? serviceSel.value : '',
             price: priceVal ? parseInt(priceVal) : null,
             image: imgFinal,
             description: document.getElementById('c-desc').value.trim()
@@ -483,14 +485,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
     // MODAL MODIFICATION CREATION
     // ============================================================
-    const editModal = document.getElementById('edit-creation-modal');
-    const editId = document.getElementById('edit-c-id');
-    const editType = document.getElementById('edit-c-type');
-    const editTitle = document.getElementById('edit-c-title');
-    const editPrice = document.getElementById('edit-c-price');
-    const editImgFile = document.getElementById('edit-c-img-file');
+    const editModal      = document.getElementById('edit-creation-modal');
+    const editId         = document.getElementById('edit-c-id');
+    const editType       = document.getElementById('edit-c-type');
+    const editTitle      = document.getElementById('edit-c-title');
+    const editPrice      = document.getElementById('edit-c-price');
+    const editDomain     = document.getElementById('edit-c-domain');
+    const editService    = document.getElementById('edit-c-service');
+    const editImgFile    = document.getElementById('edit-c-img-file');
     const editImgPreview = document.getElementById('edit-c-img-preview');
-    const editDesc = document.getElementById('edit-c-desc');
+    const editDesc       = document.getElementById('edit-c-desc');
     let editPendingImg = '';
 
     window.openEditModal = (id) => {
@@ -498,30 +502,50 @@ document.addEventListener('DOMContentLoaded', () => {
         const c = d.creations.find(item => item.id === id);
         if (!c) return;
 
-        editId.value = c.id;
-        editType.value = c.type;
+        editId.value    = c.id;
+        editType.value  = c.type;
         editTitle.value = c.title;
         editPrice.value = c.price || '';
-        editCDomain.value = c.domain || (d.domains && d.domains[0]) || '';
-        editCService.value = c.service || (d.services && d.services[0]) || '';
-        editDesc.value = c.description || '';
-        editImgPreview.src = c.image;
-        editPendingImg = c.image;
+        editDesc.value  = c.description || '';
+
+        // Remplir les selects avec les valeurs actuelles AVANT d'assigner la valeur
+        fillSelect(editDomain, d.domains || [], c.domain || '');
+        fillSelect(editService, d.services || [], c.service || '');
+
+        // Afficher l'image actuelle bien visible
+        if (c.image) {
+            editImgPreview.src = c.image;
+            editImgPreview.style.display = 'block';
+        } else {
+            editImgPreview.src = '';
+            editImgPreview.style.display = 'none';
+        }
+        editPendingImg = c.image || '';
 
         editModal.classList.add('active');
     };
 
     document.getElementById('btn-cancel-edit').addEventListener('click', () => {
         editModal.classList.remove('active');
+        editPendingImg = '';
+    });
+
+    // Fermer la modal en cliquant sur le fond sombre
+    editModal.addEventListener('click', (e) => {
+        if (e.target === editModal) {
+            editModal.classList.remove('active');
+            editPendingImg = '';
+        }
     });
 
     editImgFile.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+        const file = e.target.files[0]; if (!file) return;
+        if (file.size > 8 * 1024 * 1024) { alert('Image trop grande (max 8 Mo).'); return; }
         const reader = new FileReader();
         reader.onload = (ev) => {
             editPendingImg = ev.target.result;
             editImgPreview.src = editPendingImg;
+            editImgPreview.style.display = 'block';
         };
         reader.readAsDataURL(file);
     });
@@ -533,23 +557,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const idx = d.creations.findIndex(c => c.id === id);
         if (idx === -1) return;
 
-        d.creations[idx].type = editType.value;
-        d.creations[idx].title = editTitle.value.trim();
-        d.creations[idx].domain = editCDomain.value;
-        d.creations[idx].service = editCService.value;
+        d.creations[idx].type        = editType.value;
+        d.creations[idx].title       = editTitle.value.trim();
+        d.creations[idx].domain      = editDomain ? editDomain.value : d.creations[idx].domain;
+        d.creations[idx].service     = editService ? editService.value : d.creations[idx].service;
         const pVal = editPrice.value.trim();
-        d.creations[idx].price = pVal ? parseInt(pVal) : null;
+        d.creations[idx].price       = pVal ? parseInt(pVal) : null;
         d.creations[idx].description = editDesc.value.trim();
-        if (editPendingImg) {
-            d.creations[idx].image = editPendingImg;
-        }
+        if (editPendingImg) d.creations[idx].image = editPendingImg;
 
         saveData(d);
         renderCreations();
         refreshDiffAdmin();
         editModal.classList.remove('active');
+        editPendingImg = '';
         showMsg('✓ Création modifiée avec succès !');
     });
+
+    // ============================================================
+    // OVERLAY IMAGE PLEIN ÉCRAN (depuis la liste catalogue)
+    // ============================================================
+    const imgOverlay = document.getElementById('img-fullscreen-overlay');
+    if (imgOverlay) {
+        imgOverlay.addEventListener('click', (e) => {
+            if (e.target === imgOverlay || e.target.id === 'img-fullscreen-close') {
+                imgOverlay.style.display = 'none';
+            }
+        });
+    }
 
     // ============================================================
     // 6. TARIFS
@@ -558,7 +593,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderPrices() {
         const d = getData();
-        pricesList.innerHTML = (d.services || []).map(s => {
+        const services = d.services || [];
+        if (services.length === 0) {
+            pricesList.innerHTML = '<p style="color:var(--c-text-muted); font-size:0.9rem;">Aucun service défini. Ajoutez des services ci-dessus.</p>';
+            return;
+        }
+        pricesList.innerHTML = services.map(s => {
             const p = (d.prices && d.prices[s]) ? d.prices[s] : { basic: 5000, standard: 7500, premium: 10000 };
             return `
                 <div style="border:1px solid var(--c-border); padding:16px; border-radius:10px; background:var(--c-bg);">
@@ -585,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const d = getData();
         if (!d.prices) d.prices = {};
         document.querySelectorAll('.price-in').forEach(input => {
-            const svc = input.dataset.s;
+            const svc  = input.dataset.s;
             const tier = input.dataset.t;
             if (!d.prices[svc]) d.prices[svc] = {};
             d.prices[svc][tier] = parseInt(input.value) || 0;
