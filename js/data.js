@@ -1,4 +1,4 @@
-﻿const STORAGE_KEY = 'pixora_studio_data_v4';
+﻿const STORAGE_KEY = 'pixora_studio_data_v3';
 
 // Emojis pour les cartes de services (icÃ´ne de secours quand aucune image n'est uploadÃ©e)
 const SERVICE_ICONS = {
@@ -19,71 +19,45 @@ function initData() {
     if (!stored) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
     } else {
-        try {
-            let parsed = JSON.parse(stored);
-            let updated = false;
+        let parsed = JSON.parse(stored);
+        let updated = false;
 
-            // Si les donnÃ©es en localStorage n'ont pas de crÃ©ations mais que defaultData en a
-            if ((!parsed.creations || parsed.creations.length === 0) && (defaultData.creations && defaultData.creations.length > 0)) {
-                parsed = JSON.parse(JSON.stringify(defaultData));
-                updated = true;
-            }
-            if ((!parsed.settings || !parsed.settings.logoUrl) && (defaultData.settings && defaultData.settings.logoUrl)) {
-                if (!parsed.settings) parsed.settings = {};
-                parsed.settings.logoUrl = defaultData.settings.logoUrl;
-                updated = true;
-            }
-
-            if (updated) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-        } catch (e) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+        // Migration : ajouter serviceImages si absent
+        if (!parsed.serviceImages && defaultData.serviceImages) {
+            parsed.serviceImages = defaultData.serviceImages;
+            updated = true;
+        } else if (defaultData.serviceImages) {
+            // Migration : remplacer les images vides par les images par dÃ©faut
+            Object.keys(defaultData.serviceImages).forEach(key => {
+                if (!parsed.serviceImages[key] || parsed.serviceImages[key] === '') {
+                    parsed.serviceImages[key] = defaultData.serviceImages[key];
+                    updated = true;
+                }
+            });
         }
+
+        // Migration : ajouter crÃ©ations et logo si absents dans localStorage
+        if ((!parsed.creations || parsed.creations.length === 0) && defaultData.creations && defaultData.creations.length > 0) {
+            parsed.creations = defaultData.creations;
+            updated = true;
+        }
+        if ((!parsed.settings || !parsed.settings.logoUrl) && defaultData.settings && defaultData.settings.logoUrl) {
+            if (!parsed.settings) parsed.settings = {};
+            parsed.settings.logoUrl = defaultData.settings.logoUrl;
+            updated = true;
+        }
+
+        if (updated) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
     }
 }
 
 function getData() {
     initData();
-    try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
-    } catch(e) {
-        return defaultData;
-    }
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
 }
 
 function saveData(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    try {
-        window.dispatchEvent(new CustomEvent('pixora-data-updated', { detail: data }));
-    } catch(e) {}
 }
 
-(function loadDeployData() {
-    if (window.location.protocol === 'file:') {
-        initData();
-        return;
-    }
-
-    fetch('deploy-data.json?v=' + Date.now())
-        .then(r => {
-            if (!r.ok) throw new Error('No deploy-data.json');
-            return r.json();
-        })
-        .then(deployData => {
-            delete deployData._version;
-            delete deployData._note;
-            delete deployData._exported_at;
-
-            const deployHasCustom = (deployData.creations && deployData.creations.length > 0)
-                                 || (deployData.settings && deployData.settings.logoUrl);
-
-            if (deployHasCustom) {
-                saveData(deployData);
-                console.log('[Pixora] âœ… DonnÃ©es personnalisÃ©es chargÃ©es depuis deploy-data.json');
-            } else {
-                initData();
-            }
-        })
-        .catch(() => {
-            initData();
-        });
-})();
+initData();
