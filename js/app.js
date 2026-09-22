@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h4>${r.title}</h4>
                 <p>${r.service} — ${r.domain}</p>
             `;
+            myEl.style.cursor = 'pointer';
+            myEl.onclick = () => openLightbox(r.image, r.title, r.description || '');
         } else {
             myEl.innerHTML = `<div class="diff-placeholder"><span>Ajoutez vos créations depuis l'administration.</span></div>`;
         }
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aiList.length > 0) {
             // Affichage de la galerie IA (grille)
             const galleryHtml = aiList.map(item => `
-                <div class="ai-gallery-item" data-fullimg="${item.image}">
+                <div class="ai-gallery-item" data-fullimg="${item.image}" data-title="${item.title}" data-desc="${item.description || ''}">
                     <img src="${item.image}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+Indisponible';">
                     <div class="ai-gallery-info">
                         <h4>${item.title}</h4>
@@ -70,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Attacher événements lightbox aux nouveaux items
             aiEl.querySelectorAll('.ai-gallery-item').forEach(el => {
-                el.addEventListener('click', () => openLightbox(el.dataset.fullimg));
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', () => openLightbox(el.dataset.fullimg, el.dataset.title, el.dataset.desc));
             });
         } else {
             aiEl.innerHTML = `<div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>`;
@@ -85,17 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.getElementById('lightbox-close');
 
-    function openLightbox(src) {
+    function openLightbox(src, title = '', desc = '') {
+        if (!lightbox || !lightboxImg) return;
         lightboxImg.src = src;
+        
+        let caption = lightbox.querySelector('.lightbox-caption');
+        if (!caption) {
+            caption = document.createElement('div');
+            caption.className = 'lightbox-caption';
+            caption.style.cssText = 'color:white; text-align:center; margin-top:14px; font-weight:600; font-size:1.1rem;';
+            const contentBox = lightbox.querySelector('.lightbox-content');
+            if (contentBox) contentBox.appendChild(caption);
+        }
+        caption.innerHTML = title ? `<div>${title}</div><small style="font-weight:400; opacity:0.8; font-size:0.9rem;">${desc}</small>` : '';
+        
         lightbox.classList.add('active');
     }
     function closeLightbox() {
+        if (!lightbox) return;
         lightbox.classList.remove('active');
-        lightboxImg.src = '';
+        if (lightboxImg) lightboxImg.src = '';
     }
     if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
     if (lightbox) lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) closeLightbox();
+        if (e.target === lightbox || e.target.classList.contains('lightbox-content')) closeLightbox();
     });
 
 
@@ -158,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         creationsGrid.innerHTML = list.map(c => `
-            <div class="creation-item">
+            <div class="creation-item" data-fullimg="${c.image}" data-title="${c.title}" data-desc="${c.description || ''}">
                 <img src="${c.image}" alt="${c.title}">
                 <div class="creation-info">
                     <h4>${c.title}</h4>
@@ -167,6 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `).join('');
+
+        // Clic sur création -> Ouvrir en grand dans la Lightbox
+        creationsGrid.querySelectorAll('.creation-item').forEach(el => {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', () => {
+                openLightbox(el.dataset.fullimg, el.dataset.title, el.dataset.desc);
+            });
+        });
     }
 
     buildFilters();
@@ -257,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const logo     = document.getElementById('order-logo').value;
 
         const freshData = getData();
+        let orderedServices = [];
         let servicesHtml = '';
         let idx = 1;
         document.querySelectorAll('.service-row').forEach(row => {
@@ -264,6 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const f = row.querySelector('.input-formule').value;
             const fTitle = f.charAt(0).toUpperCase() + f.slice(1);
             const price = freshData.prices[s] ? freshData.prices[s][f] : 0;
+            orderedServices.push({ service: s, formule: f, price: price });
+
             servicesHtml += `
                 <div class="recap-row">
                     <div><strong>${idx}. ${s}</strong><br><small style="color:var(--c-text-muted)">Formule : ${fTitle}</small></div>
@@ -273,6 +300,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const total = calcTotal();
+
+        // Enregistrement dans les commandes admin
+        const orderPayload = {
+            id: 'ord_' + Date.now(),
+            nom, prenom, tel, adresse, domaine, logo,
+            services: orderedServices,
+            total,
+            status: 'new',
+            created_at: new Date().toISOString()
+        };
+        if (!freshData.orders) freshData.orders = [];
+        freshData.orders.unshift(orderPayload);
+        saveData(freshData);
 
         recapContent.innerHTML = `
             <div class="recap-section">

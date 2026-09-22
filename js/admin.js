@@ -10,6 +10,99 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================================
+    // 0. CARNET DE COMMANDES CLIENTS
+    // ============================================================
+    const ordersList = document.getElementById('orders-list');
+    const btnRefreshOrders = document.getElementById('btn-refresh-orders');
+
+    function renderOrdersList() {
+        if (!ordersList) return;
+        const d = getData();
+        const orders = d.orders || [];
+
+        if (orders.length === 0) {
+            ordersList.innerHTML = `<p style="color:var(--c-text-muted); text-align:center; padding:20px 0;">Aucune demande de commande enregistrée pour le moment.</p>`;
+            return;
+        }
+
+        ordersList.innerHTML = orders.map(o => {
+            const dateStr = o.created_at ? new Date(o.created_at).toLocaleString('fr-FR') : 'Date non précisée';
+            const isNew = o.status === 'new';
+
+            let servicesHtml = '';
+            if (Array.isArray(o.services)) {
+                servicesHtml = o.services.map(s => `• ${s.service} (Formule : ${s.formule}) — ${s.price ? s.price.toLocaleString('fr-FR') + ' F' : ''}`).join('<br>');
+            }
+
+            const cleanPhone = (o.tel || '').replace(/[^0-9]/g, '');
+            const waMsg = `Bonjour ${o.prenom || ''}, nous avons bien reçu votre demande concernant le domaine ${o.domaine || ''}.`;
+            const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
+
+            return `
+                <div style="background:white; border:1.5px solid ${isNew ? '#2563eb' : 'var(--c-border)'}; border-radius:10px; padding:18px; margin-bottom:14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--c-border); padding-bottom:8px; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                        <div>
+                            <strong>${o.nom || ''} ${o.prenom || ''}</strong>
+                            <small style="color:var(--c-text-muted); margin-left:10px;">📅 ${dateStr}</small>
+                        </div>
+                        <span style="background:${isNew ? '#dbeafe' : '#dcfce7'}; color:${isNew ? '#1e40af' : '#166534'}; padding:3px 10px; border-radius:12px; font-size:0.78rem; font-weight:700;">
+                            ${isNew ? '⚡ NOUVELLE DEMANDE' : '✓ TRAITÉE'}
+                        </span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:12px; font-size:0.9rem;">
+                        <div><strong>📞 Téléphone :</strong> ${o.tel || 'N/A'}</div>
+                        <div><strong>📍 Adresse :</strong> ${o.adresse || 'N/A'}</div>
+                        <div><strong>🏢 Domaine :</strong> ${o.domaine || 'N/A'}</div>
+                        <div><strong>🏷️ Logo existant :</strong> ${o.logo || 'Non'}</div>
+                    </div>
+                    <div style="background:var(--c-bg); padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:0.88rem;">
+                        <strong>🎨 Services commandés :</strong><br>
+                        ${servicesHtml || 'Non spécifié'}
+                        <div style="font-weight:700; margin-top:6px; font-size:0.95rem; color:var(--c-primary-dark);">
+                            TOTAL : ${o.total ? o.total.toLocaleString('fr-FR') + ' F CFA' : 'Sur devis'}
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                        <a href="${waUrl}" target="_blank" class="btn" style="background:#25D366; color:white; font-size:0.82rem; padding:6px 14px; text-decoration:none;">💬 Contacter WhatsApp</a>
+                        <button class="btn btn-outline" style="font-size:0.82rem; padding:6px 14px;" onclick="toggleOrderStatus('${o.id}')">
+                            ${isNew ? 'Marquer comme traitée' : 'Remettre en nouvelle'}
+                        </button>
+                        <button class="btn-delete" style="font-size:0.82rem; padding:6px 14px;" onclick="removeOrder('${o.id}')">Supprimer</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.toggleOrderStatus = (id) => {
+        const d = getData();
+        if (d.orders) {
+            const idx = d.orders.findIndex(o => o.id === id);
+            if (idx !== -1) {
+                d.orders[idx].status = d.orders[idx].status === 'new' ? 'done' : 'new';
+                saveData(d);
+                renderOrdersList();
+                showMsg('✓ Statut de la commande mis à jour !');
+            }
+        }
+    };
+
+    window.removeOrder = (id) => {
+        if (confirm('Supprimer cette commande ?')) {
+            const d = getData();
+            if (d.orders) {
+                d.orders = d.orders.filter(o => o.id !== id);
+                saveData(d);
+                renderOrdersList();
+                showMsg('✓ Commande supprimée.');
+            }
+        }
+    };
+
+    if (btnRefreshOrders) btnRefreshOrders.addEventListener('click', renderOrdersList);
+    renderOrdersList();
+
+    // ============================================================
     // 1. GESTION DU LOGO (import fichier local → Base64)
     // ============================================================
     const logoPreview     = document.getElementById('logo-preview');
