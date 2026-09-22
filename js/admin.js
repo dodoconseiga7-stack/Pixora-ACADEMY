@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const d = getData();
         const domains = d.domains || [];
 
-        // Rendu des tags
         domainsTagList.innerHTML = domains.map((dm, idx) => `
             <span class="tag-item">
                 ${dm}
@@ -103,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </span>
         `).join('');
 
-        // Rendu des sélecteurs
         cDomain.innerHTML = domains.map(dm => `<option value="${dm}">${dm}</option>`).join('');
         if (editCDomain) {
             editCDomain.innerHTML = domains.map(dm => `<option value="${dm}">${dm}</option>`).join('');
@@ -152,13 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const d = getData();
         const services = d.services || [];
 
-        // Rendu sélecteurs
         cService.innerHTML = services.map(s => `<option value="${s}">${s}</option>`).join('');
         if (editCService) {
             editCService.innerHTML = services.map(s => `<option value="${s}">${s}</option>`).join('');
         }
 
-        // Rendu liste images de couverture
         serviceImgList.innerHTML = services.map(s => {
             const imgUrl = d.serviceImages ? (d.serviceImages[s] || '') : '';
             const isDefaultSvc = ['Carte de visite', 'Flyer', 'Affiche publicitaire', 'Visuel publicitaire', 'Affiche / Kakémono', 'Étiquette', 'Logo', 'Autres'].includes(s);
@@ -176,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Attacher les écouteurs pour les fichiers d'image des services
         document.querySelectorAll('.simg-file-input').forEach(input => {
             input.addEventListener('change', (e) => {
                 const svc = e.target.dataset.service;
@@ -195,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Attacher écouteurs retirer image
         document.querySelectorAll('.simg-remove-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const svc = btn.dataset.service;
@@ -207,7 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Mettre à jour la grille des tarifs
         renderPrices();
     }
 
@@ -246,12 +239,122 @@ document.addEventListener('DOMContentLoaded', () => {
     renderServices();
 
     // ============================================================
-    // 4. GESTION DU CATALOGUE / CRÉATIONS
+    // 4. COMPARAISON MA CRÉATION VS IA (Section La Différence)
+    // ============================================================
+    const diffMineTitle = document.getElementById('diff-mine-title');
+    const diffMineService = document.getElementById('diff-mine-service');
+    const diffMineDesc = document.getElementById('diff-mine-desc');
+    const diffMineFile = document.getElementById('diff-mine-file');
+    const diffMinePreview = document.getElementById('diff-mine-preview');
+
+    const diffAiTitle = document.getElementById('diff-ai-title');
+    const diffAiService = document.getElementById('diff-ai-service');
+    const diffAiDesc = document.getElementById('diff-ai-desc');
+    const diffAiFile = document.getElementById('diff-ai-file');
+    const diffAiPreview = document.getElementById('diff-ai-preview');
+
+    let diffMineImg = '';
+    let diffAiImg = '';
+
+    function refreshDiffAdmin() {
+        const d = getData();
+        const myList = d.creations.filter(c => c.type === 'MY_CREATION');
+        const aiList = d.creations.filter(c => c.type === 'AI_CREATION');
+
+        const mine = (d.difference && d.difference.myCreation) || (myList[0] || {});
+        const ai = (d.difference && d.difference.aiCreation) || (aiList[0] || {});
+
+        diffMineTitle.value = mine.title || '';
+        diffMineService.value = mine.service || '';
+        diffMineDesc.value = mine.description || '';
+        if (mine.image) {
+            diffMineImg = mine.image;
+            diffMinePreview.src = mine.image;
+            diffMinePreview.style.display = 'block';
+        } else {
+            diffMinePreview.style.display = 'none';
+        }
+
+        diffAiTitle.value = ai.title || '';
+        diffAiService.value = ai.service || '';
+        diffAiDesc.value = ai.description || '';
+        if (ai.image) {
+            diffAiImg = ai.image;
+            diffAiPreview.src = ai.image;
+            diffAiPreview.style.display = 'block';
+        } else {
+            diffAiPreview.style.display = 'none';
+        }
+    }
+    refreshDiffAdmin();
+
+    diffMineFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            diffMineImg = ev.target.result;
+            diffMinePreview.src = diffMineImg;
+            diffMinePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    diffAiFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            diffAiImg = ev.target.result;
+            diffAiPreview.src = diffAiImg;
+            diffAiPreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('diff-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const d = getData();
+        if (!d.difference) d.difference = {};
+
+        d.difference.myCreation = {
+            title: diffMineTitle.value.trim() || 'Ma Création',
+            service: diffMineService.value.trim() || 'Création graphique',
+            description: diffMineDesc.value.trim(),
+            image: diffMineImg || (d.creations.find(c => c.type === 'MY_CREATION') || {}).image || ''
+        };
+
+        d.difference.aiCreation = {
+            title: diffAiTitle.value.trim() || 'Création par IA',
+            service: diffAiService.value.trim() || 'Génération automatique',
+            description: diffAiDesc.value.trim(),
+            image: diffAiImg || (d.creations.find(c => c.type === 'AI_CREATION') || {}).image || ''
+        };
+
+        saveData(d);
+        showMsg('✓ Comparaison « Ma Création vs IA » enregistrée avec succès !');
+    });
+
+    document.getElementById('btn-reset-diff').addEventListener('click', () => {
+        if (confirm('Réinitialiser la comparaison pour afficher automatiquement vos créations et la galerie IA ?')) {
+            const d = getData();
+            delete d.difference;
+            saveData(d);
+            diffMineImg = '';
+            diffAiImg = '';
+            refreshDiffAdmin();
+            showMsg('✓ Comparaison réinitialisée (rotation automatique activée).');
+        }
+    });
+
+    // ============================================================
+    // 5. GESTION DU CATALOGUE / CRÉATIONS & VISUELS IA
     // ============================================================
     const cImgFile = document.getElementById('c-img-file');
     const cImgUrl  = document.getElementById('c-img-url');
     const cImgPreview = document.getElementById('c-img-preview');
     let pendingImgBase64 = '';
+    let currentCategoryFilter = 'ALL';
 
     cImgFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -286,31 +389,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderCreations() {
         const d = getData();
-        const list = d.creations || [];
+        let list = d.creations || [];
+
+        if (currentCategoryFilter !== 'ALL') {
+            list = list.filter(c => c.type === currentCategoryFilter);
+        }
+
         creationsCount.textContent = list.length;
 
         if (list.length === 0) {
-            creationsList.innerHTML = `<p style="color:var(--c-text-muted);">Aucune création enregistrée.</p>`;
+            creationsList.innerHTML = `<p style="color:var(--c-text-muted); text-align:center; padding:20px;">Aucune création dans cette catégorie.</p>`;
             return;
         }
 
-        creationsList.innerHTML = list.map(c => `
-            <div class="item-row">
-                <div class="item-info">
-                    <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=Image';">
-                    <div class="item-meta">
-                        <strong>${c.title}</strong>
-                        <span class="badge-type ${c.type === 'AI_CREATION' ? 'badge-ai' : ''}">${c.type === 'MY_CREATION' ? 'Ma création' : 'IA'}</span>
-                        <small style="display:block; margin-top:2px;">${c.service} &bull; <span style="color:#0284c7; font-weight:600;">${c.domain}</span></small>
+        creationsList.innerHTML = list.map(c => {
+            const priceTag = c.price ? `<span style="font-weight:700; color:#059669; font-size:0.85rem; margin-left:6px;">💰 ${Number(c.price).toLocaleString('fr-FR')} F CFA</span>` : '';
+            return `
+                <div class="item-row">
+                    <div class="item-info">
+                        <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=Image';">
+                        <div class="item-meta">
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <strong>${c.title}</strong>
+                                <span class="badge-type ${c.type === 'AI_CREATION' ? 'badge-ai' : ''}">${c.type === 'MY_CREATION' ? 'Ma création' : 'IA'}</span>
+                                ${priceTag}
+                            </div>
+                            <small style="display:block; margin-top:2px; color:#64748b;">${c.service} &bull; <span style="color:#0284c7; font-weight:600;">${c.domain}</span></small>
+                            ${c.description ? `<small style="display:block; color:#94a3b8; font-style:italic;">${c.description}</small>` : ''}
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <button type="button" class="btn-edit" onclick="openEditModal('${c.id}')">Modifier</button>
+                        <button type="button" class="btn-delete" onclick="deleteCreation('${c.id}')">Supprimer</button>
                     </div>
                 </div>
-                <div style="display:flex; align-items:center;">
-                    <button type="button" class="btn-edit" onclick="openEditModal('${c.id}')">Modifier</button>
-                    <button type="button" class="btn-delete" onclick="deleteCreation('${c.id}')">Supprimer</button>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
+
+    // Gestion des onglets de filtrage du catalogue
+    document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategoryFilter = btn.dataset.cat;
+            renderCreations();
+        });
+    });
 
     window.deleteCreation = (id) => {
         if (confirm('Supprimer cette création du catalogue ?')) {
@@ -318,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             d.creations = d.creations.filter(c => c.id !== id);
             saveData(d);
             renderCreations();
+            refreshDiffAdmin();
             showMsg('✓ Création supprimée du catalogue.');
         }
     };
@@ -331,17 +457,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const d = getData();
         if (!d.creations) d.creations = [];
+        const priceVal = document.getElementById('c-price').value.trim();
+
         d.creations.unshift({
             id: 'c_' + Date.now(),
             type: document.getElementById('c-type').value,
             title: document.getElementById('c-title').value.trim(),
             domain: cDomain.value,
             service: cService.value,
+            price: priceVal ? parseInt(priceVal) : null,
             image: imgFinal,
             description: document.getElementById('c-desc').value.trim()
         });
         saveData(d);
         renderCreations();
+        refreshDiffAdmin();
         e.target.reset();
         pendingImgBase64 = '';
         cImgPreview.style.display = 'none';
@@ -357,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const editId = document.getElementById('edit-c-id');
     const editType = document.getElementById('edit-c-type');
     const editTitle = document.getElementById('edit-c-title');
+    const editPrice = document.getElementById('edit-c-price');
     const editImgFile = document.getElementById('edit-c-img-file');
     const editImgPreview = document.getElementById('edit-c-img-preview');
     const editDesc = document.getElementById('edit-c-desc');
@@ -370,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editId.value = c.id;
         editType.value = c.type;
         editTitle.value = c.title;
+        editPrice.value = c.price || '';
         editCDomain.value = c.domain || (d.domains && d.domains[0]) || '';
         editCService.value = c.service || (d.services && d.services[0]) || '';
         editDesc.value = c.description || '';
@@ -405,6 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
         d.creations[idx].title = editTitle.value.trim();
         d.creations[idx].domain = editCDomain.value;
         d.creations[idx].service = editCService.value;
+        const pVal = editPrice.value.trim();
+        d.creations[idx].price = pVal ? parseInt(pVal) : null;
         d.creations[idx].description = editDesc.value.trim();
         if (editPendingImg) {
             d.creations[idx].image = editPendingImg;
@@ -412,12 +546,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveData(d);
         renderCreations();
+        refreshDiffAdmin();
         editModal.classList.remove('active');
         showMsg('✓ Création modifiée avec succès !');
     });
 
     // ============================================================
-    // 5. TARIFS
+    // 6. TARIFS
     // ============================================================
     const pricesList = document.getElementById('prices-list');
 
@@ -460,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================================
-    // 6. WHATSAPP
+    // 7. WHATSAPP
     // ============================================================
     const adminWaInput = document.getElementById('admin-wa');
     if (data.settings && data.settings.whatsappNumber) {

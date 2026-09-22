@@ -10,8 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderLogo() {
         const d = getData(); // reload latest data
         if (d.settings.logoUrl) {
-            // Hero : grande image
-            heroLogoZone.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO Logo">`;
+            // Hero : grande image avec zoom
+            heroLogoZone.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO Logo" style="cursor:zoom-in;" title="Cliquer pour voir le logo en grand">`;
+            const heroImg = heroLogoZone.querySelector('img');
+            if (heroImg) {
+                heroImg.addEventListener('click', () => openLightbox(d.settings.logoUrl, 'Logo Pixora Studio'));
+            }
             // Nav : petite image
             siteLogoNav.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO">`;
         } else {
@@ -34,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('wa-contact-btn').href = `https://wa.me/${waNum}`;
 
     // ============================================================
-    // 3. LA DIFFÉRENCE
+    // 3. LA DIFFÉRENCE (Comparaison Ma Création vs IA)
     // ============================================================
     function renderDiff() {
         const freshData = getData();
@@ -44,22 +48,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const myEl = document.getElementById('my-creation-content');
         const aiEl = document.getElementById('ai-creation-content');
 
-        if (myList.length > 0) {
-            const r = myList[Math.floor(Math.random() * myList.length)];
+        // Ma création : soit configurée explicitement, soit première/aléatoire
+        let featuredMine = (freshData.difference && freshData.difference.myCreation && freshData.difference.myCreation.image)
+            ? freshData.difference.myCreation
+            : (myList.length > 0 ? myList[0] : null);
+
+        if (featuredMine) {
             myEl.innerHTML = `
-                <img src="${r.image}" alt="${r.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+Indisponible';">
-                <h4>${r.title}</h4>
-                <p>${r.service} — ${r.domain}</p>
+                <div style="cursor:zoom-in;" title="Cliquer pour voir en grand">
+                    <img src="${featuredMine.image}" alt="${featuredMine.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
+                    <h4>${featuredMine.title}</h4>
+                    <p>${featuredMine.service || 'Création graphique'} — ${featuredMine.domain || 'Pixora Studio'}</p>
+                    ${featuredMine.description ? `<small style="display:block; color:var(--c-text-muted); margin-top:4px;">${featuredMine.description}</small>` : ''}
+                </div>
             `;
+            myEl.onclick = () => openLightbox(featuredMine.image, featuredMine.title, featuredMine.description || '', 'Ma Création • ' + (featuredMine.service || ''));
         } else {
             myEl.innerHTML = `<div class="diff-placeholder"><span>Ajoutez vos créations depuis l'administration.</span></div>`;
         }
 
-        if (aiList.length > 0) {
+        // Création IA : soit configurée explicitement, soit liste galerie IA
+        let featuredAi = (freshData.difference && freshData.difference.aiCreation && freshData.difference.aiCreation.image)
+            ? freshData.difference.aiCreation
+            : null;
+
+        if (featuredAi) {
+            aiEl.innerHTML = `
+                <div style="cursor:zoom-in;" title="Cliquer pour voir en grand">
+                    <img src="${featuredAi.image}" alt="${featuredAi.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+IA';">
+                    <div class="ai-badge">IA</div>
+                    <h4>${featuredAi.title}</h4>
+                    <p>${featuredAi.service || 'Génération IA'} — ${featuredAi.domain || 'Artificiel'}</p>
+                    ${featuredAi.description ? `<small style="display:block; color:var(--c-text-muted); margin-top:4px;">${featuredAi.description}</small>` : ''}
+                </div>
+            `;
+            aiEl.onclick = () => openLightbox(featuredAi.image, featuredAi.title, featuredAi.description || '', 'Création générée par IA');
+        } else if (aiList.length > 0) {
             // Affichage de la galerie IA (grille)
             const galleryHtml = aiList.map(item => `
-                <div class="ai-gallery-item" data-fullimg="${item.image}">
-                    <img src="${item.image}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+Indisponible';">
+                <div class="ai-gallery-item" data-fullimg="${item.image}" data-title="${item.title}" data-desc="${item.description || ''}" data-meta="${item.service || ''}">
+                    <img src="${item.image}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+IA';">
                     <div class="ai-gallery-info">
                         <h4>${item.title}</h4>
                         <div class="ai-badge">IA</div>
@@ -68,9 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `).join('');
             aiEl.innerHTML = `<div class="ai-gallery-grid">${galleryHtml}</div>`;
             
-            // Attacher événements lightbox aux nouveaux items
             aiEl.querySelectorAll('.ai-gallery-item').forEach(el => {
-                el.addEventListener('click', () => openLightbox(el.dataset.fullimg));
+                el.addEventListener('click', () => openLightbox(el.dataset.fullimg, el.dataset.title, el.dataset.desc, 'Création IA • ' + el.dataset.meta));
             });
         } else {
             aiEl.innerHTML = `<div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>`;
@@ -79,16 +106,28 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDiff();
 
     // ============================================================
-    // 3.5 LIGHTBOX
+    // 3.5 LIGHTBOX CONSULTATION PLEIN ÉCRAN
     // ============================================================
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxClose = document.getElementById('lightbox-close');
+    const lightboxCaption = document.getElementById('lightbox-caption');
 
-    function openLightbox(src, title = '') {
+    function openLightbox(src, title = '', desc = '', meta = '') {
         if (!lightbox || !lightboxImg) return;
         lightboxImg.src = src;
         lightboxImg.alt = title;
+
+        let captionHtml = '';
+        if (title) captionHtml += `<div style="font-size:1.15rem; font-weight:700; margin-bottom:4px;">${title}</div>`;
+        if (meta) captionHtml += `<div style="font-size:0.9rem; opacity:0.85; margin-bottom:4px;">${meta}</div>`;
+        if (desc) captionHtml += `<div style="font-size:0.85rem; opacity:0.75; font-weight:normal;">${desc}</div>`;
+
+        if (lightboxCaption) {
+            lightboxCaption.innerHTML = captionHtml;
+            lightboxCaption.style.display = captionHtml ? 'block' : 'none';
+        }
+
         lightbox.classList.add('active');
     }
     function closeLightbox() {
@@ -107,13 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================================
-    // 4. NOS SERVICES (cartes visuelles)
+    // 4. NOS SERVICES (cartes visuelles avec consultation en grand)
     // ============================================================
     const serviceCardsGrid = document.getElementById('service-cards-grid');
 
     function renderServiceCards() {
         const freshData = getData();
-        // Exclure "Autres" des cartes visuelles
         const displayServices = freshData.services.filter(s => s !== 'Autres');
 
         serviceCardsGrid.innerHTML = displayServices.map(s => {
@@ -122,24 +160,37 @@ document.addEventListener('DOMContentLoaded', () => {
             const icon = (typeof SERVICE_ICONS !== 'undefined' && SERVICE_ICONS[s]) ? SERVICE_ICONS[s] : '🎨';
 
             const imageHtml = imgUrl
-                ? `<img src="${imgUrl}" alt="${s}" class="service-card-img">`
+                ? `<div class="service-img-wrap" style="position:relative; overflow:hidden;">
+                     <img src="${imgUrl}" alt="${s}" class="service-card-img" style="cursor:zoom-in;" title="Cliquer pour voir l'image en grand" data-zoom-img="${imgUrl}" data-zoom-title="${s}">
+                   </div>`
                 : `<div class="service-card-img-placeholder">${icon}</div>`;
 
             return `
-                <a href="#commander" class="service-visual-card">
+                <div class="service-visual-card">
                     ${imageHtml}
                     <div class="service-card-body">
                         <div class="service-card-name">${s}</div>
                         <div class="service-card-price">À partir de ${price.toLocaleString('fr-FR')} F CFA</div>
+                        <a href="#commander" class="btn btn-outline" style="width:100%; margin-top:12px; font-size:0.85rem; padding:8px 12px; text-align:center; display:block;">Commander</a>
                     </div>
-                </a>
+                </div>
             `;
         }).join('');
+
+        // Clic sur l'image du service pour zoomer
+        serviceCardsGrid.querySelectorAll('[data-zoom-img]').forEach(imgEl => {
+            imgEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const svcName = imgEl.dataset.zoomTitle;
+                const p = freshData.prices[svcName] ? freshData.prices[svcName].basic : 0;
+                openLightbox(imgEl.dataset.zoomImg, svcName, `Tarif à partir de ${p.toLocaleString('fr-FR')} F CFA`, 'Service Pixora Studio');
+            });
+        });
     }
     renderServiceCards();
 
     // ============================================================
-    // 5. MES CRÉATIONS (Portfolio)
+    // 5. MES CRÉATIONS (Portfolio + Prix + Informations)
     // ============================================================
     const domainFilters = document.getElementById('domain-filters');
     const creationsGrid = document.getElementById('creations-grid');
@@ -164,20 +215,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 </p>`;
             return;
         }
-        creationsGrid.innerHTML = list.map(c => `
-            <div class="creation-item" data-img="${c.image}" data-title="${c.title}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
-                <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
-                <div class="creation-info">
-                    <h4>${c.title}</h4>
-                    <p>${c.description || ''}</p>
-                    <span class="creation-tag">${c.service}</span>
+        creationsGrid.innerHTML = list.map(c => {
+            const priceHtml = c.price ? `<span style="font-weight:700; color:var(--c-primary); font-size:0.88rem; margin-left:8px;">${Number(c.price).toLocaleString('fr-FR')} F CFA</span>` : '';
+            return `
+                <div class="creation-item" data-img="${c.image}" data-title="${c.title}" data-desc="${c.description || ''}" data-service="${c.service}" data-domain="${c.domain}" data-price="${c.price || ''}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
+                    <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
+                    <div class="creation-info">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <h4 style="margin:0;">${c.title}</h4>
+                            ${priceHtml}
+                        </div>
+                        <p style="margin-bottom:8px;">${c.description || ''}</p>
+                        <span class="creation-tag">${c.service}</span>
+                        <span class="creation-tag" style="background:#f1f5f9; color:#475569; margin-left:4px;">${c.domain}</span>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         creationsGrid.querySelectorAll('.creation-item').forEach(el => {
             el.addEventListener('click', () => {
-                openLightbox(el.dataset.img, el.dataset.title);
+                const meta = `${el.dataset.service} • ${el.dataset.domain}` + (el.dataset.price ? ` • ${Number(el.dataset.price).toLocaleString('fr-FR')} F CFA` : '');
+                openLightbox(el.dataset.img, el.dataset.title, el.dataset.desc, meta);
             });
         });
     }

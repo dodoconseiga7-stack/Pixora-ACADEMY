@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
-        .admin-wrap { max-width: 960px; margin: 40px auto; padding: 0 20px 80px; }
+        .admin-wrap { max-width: 980px; margin: 40px auto; padding: 0 20px 80px; }
         .admin-header { text-align:center; margin-bottom: 30px; padding: 30px; background:white; border-radius:12px; border:1px solid var(--c-border); box-shadow: var(--shadow-sm); }
-        .admin-header h1 { font-size: 1.8rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); }
+        .admin-header h1 { font-size: 1.85rem; font-weight: var(--fw-bold); color: var(--c-primary-dark); }
         .admin-header p { color: var(--c-text-muted); margin-top: 6px; }
         
         .admin-panel { background: var(--c-white); padding: 30px; border-radius: 12px; margin-bottom: 28px; border: 1px solid var(--c-border); box-shadow: var(--shadow-sm); }
@@ -23,10 +23,10 @@
         
         .msg-success { display:none; background:#d4edda; color:#155724; padding:12px 18px; border-radius:8px; margin-bottom:24px; font-weight:600; text-align:center; border: 1px solid #c3e6cb; }
         
-        .item-row { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; gap: 12px; background:#fff; transition: background 0.2s; }
+        .item-row { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; gap: 14px; background:#fff; transition: background 0.2s; }
         .item-row:hover { background:#f8fafc; }
         .item-info { display:flex; align-items:center; gap:14px; min-width:0; }
-        .item-info img { width:56px; height:56px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid var(--c-border); }
+        .item-info img { width:60px; height:60px; object-fit:cover; border-radius:6px; flex-shrink:0; border:1px solid var(--c-border); }
         .item-meta { min-width: 0; }
         .item-meta strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:0.95rem; color:#1e293b; }
         .item-meta small { color:var(--c-text-muted); font-size:0.82rem; }
@@ -53,6 +53,9 @@
         .tag-del { color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem; line-height:1; }
         .tag-del:hover { color:#b91c1c; }
         
+        .filter-tab-btn { background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:6px 14px; border-radius:6px; font-weight:600; font-size:0.85rem; cursor:pointer; }
+        .filter-tab-btn.active { background:var(--c-primary); color:white; border-color:var(--c-primary); }
+        
         .modal-edit { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; }
         .modal-edit.active { display:flex; }
         .modal-edit-card { background:white; border-radius:12px; padding:28px; width:90%; max-width:600px; max-height:90vh; overflow-y:auto; }
@@ -74,7 +77,7 @@
     <div class="admin-wrap">
         <div class="admin-header">
             <h1>Espace Administration</h1>
-            <p>Gérez votre logo, vos domaines, vos services, votre catalogue et vos tarifs.</p>
+            <p>Contrôlez et personnalisez tous les contenus, images, créations, comparaisons IA et tarifs de PIXORA STUDIO.</p>
         </div>
 
         <div class="msg-success" id="msg-success">✓ Modifications enregistrées avec succès !</div>
@@ -119,10 +122,74 @@
             <div id="service-images-list"></div>
         </div>
 
-        <!-- === 4. GESTION DU CATALOGUE / CRÉATIONS === -->
+        <!-- === 4. COMPARAISON MA CRÉATION VS IA === -->
         <div class="admin-panel">
-            <div class="admin-panel-title">📁 Gestion du Catalogue & Créations</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Ajoutez des créations à votre portfolio avec leur domaine, service et image.</p>
+            <div class="admin-panel-title">⚡ Section « La Différence » (Ma Création vs IA)</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Personnalisez les deux créations présentées en face-à-face sur la page d'accueil.</p>
+            
+            <form id="diff-form">
+                <div class="grid-2">
+                    <!-- Côté Ma Création -->
+                    <div style="border:1px solid #bfdbfe; background:#eff6ff; padding:18px; border-radius:10px;">
+                        <h4 style="color:#1e40af; margin-bottom:12px; font-size:1rem; font-weight:700;">👤 Ma Création (Artisanale)</h4>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Titre</label>
+                            <input type="text" id="diff-mine-title" class="form-control" placeholder="Ex: AFFICHE BY PIXORA">
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Service / Domaine</label>
+                            <input type="text" id="diff-mine-service" class="form-control" placeholder="Ex: Affiche publicitaire — Plombier">
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Description</label>
+                            <input type="text" id="diff-mine-desc" class="form-control" placeholder="Ex: Design soigné et vectoriel">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Image</label>
+                            <label class="file-label" for="diff-mine-file" style="margin-bottom:8px; font-size:0.85rem; padding:6px 14px;">
+                                📁 Changer l'image
+                                <input type="file" id="diff-mine-file" accept="image/*" style="display:none;">
+                            </label>
+                            <img id="diff-mine-preview" src="" style="max-height:100px; display:none; border-radius:6px; border:1px solid #cbd5e1; margin-top:6px;" alt="Aperçu">
+                        </div>
+                    </div>
+
+                    <!-- Côté IA -->
+                    <div style="border:1px solid #e9d5ff; background:#faf5ff; padding:18px; border-radius:10px;">
+                        <h4 style="color:#6b21a8; margin-bottom:12px; font-size:1rem; font-weight:700;">🤖 Création par IA</h4>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Titre</label>
+                            <input type="text" id="diff-ai-title" class="form-control" placeholder="Ex: AFFICHE BY IA">
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Service / Domaine</label>
+                            <input type="text" id="diff-ai-service" class="form-control" placeholder="Ex: Affiche publicitaire — Restaurant">
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Description</label>
+                            <input type="text" id="diff-ai-desc" class="form-control" placeholder="Ex: Génération automatique par algorithme">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Image</label>
+                            <label class="file-label" for="diff-ai-file" style="margin-bottom:8px; font-size:0.85rem; padding:6px 14px;">
+                                📁 Changer l'image
+                                <input type="file" id="diff-ai-file" accept="image/*" style="display:none;">
+                            </label>
+                            <img id="diff-ai-preview" src="" style="max-height:100px; display:none; border-radius:6px; border:1px solid #cbd5e1; margin-top:6px;" alt="Aperçu">
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:18px; display:flex; gap:10px;">
+                    <button type="submit" class="btn btn-primary">Enregistrer la comparaison</button>
+                    <button type="button" class="btn btn-outline" id="btn-reset-diff">Réinitialiser (Rotation automatique)</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- === 5. GESTION DU CATALOGUE / CRÉATIONS & VISUELS IA === -->
+        <div class="admin-panel">
+            <div class="admin-panel-title">📁 Gestion Complète du Catalogue (Créations & Visuels IA)</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Ajoutez, modifiez, remplacez ou supprimez n'importe quelle création avec son image, ses informations et son prix.</p>
             
             <form id="creation-form" class="grid-2">
                 <div class="form-group">
@@ -133,7 +200,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Titre de la création</label>
+                    <label>Titre</label>
                     <input type="text" id="c-title" class="form-control" placeholder="Ex: FLYERS BY PIXORA" required>
                 </div>
                 <div class="form-group">
@@ -143,6 +210,14 @@
                 <div class="form-group">
                     <label>Service</label>
                     <select id="c-service" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Prix (F CFA — facultatif)</label>
+                    <input type="number" id="c-price" class="form-control" placeholder="Ex: 5000">
+                </div>
+                <div class="form-group">
+                    <label>Description (facultatif)</label>
+                    <input type="text" id="c-desc" class="form-control" placeholder="Description courte...">
                 </div>
                 <div class="form-group" style="grid-column:1/-1;">
                     <label>Image de la création</label>
@@ -154,22 +229,25 @@
                     <img id="c-img-preview" src="" style="display:none; max-height:120px; margin-top:10px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
                 </div>
                 <div class="form-group" style="grid-column:1/-1;">
-                    <label>Description (facultatif)</label>
-                    <input type="text" id="c-desc" class="form-control" placeholder="Description courte...">
-                </div>
-                <div class="form-group" style="grid-column:1/-1;">
                     <button type="submit" class="btn btn-primary">Ajouter au catalogue</button>
                 </div>
             </form>
 
-            <h3 style="font-size:1rem; font-weight:600; margin:36px 0 16px; color:var(--c-primary-dark);">Catalogue actuel (<span id="creations-count">0</span>)</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin:36px 0 16px; flex-wrap:wrap; gap:10px;">
+                <h3 style="font-size:1.05rem; font-weight:600; color:var(--c-primary-dark); margin:0;">Catalogue actuel (<span id="creations-count">0</span>)</h3>
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="filter-tab-btn active" data-cat="ALL">Toutes</button>
+                    <button type="button" class="filter-tab-btn" data-cat="MY_CREATION">Mes Créations</button>
+                    <button type="button" class="filter-tab-btn" data-cat="AI_CREATION">Créations IA</button>
+                </div>
+            </div>
             <div id="creations-list"></div>
         </div>
 
-        <!-- === 5. TARIFS === -->
+        <!-- === 6. TARIFS === -->
         <div class="admin-panel">
-            <div class="admin-panel-title">💰 Gestion des Tarifs</div>
-            <p style="color:var(--c-text-muted); margin-bottom:20px;">Définissez les prix (en F CFA) pour chaque formule de vos services.</p>
+            <div class="admin-panel-title">💰 Gestion des Tarifs par Service</div>
+            <p style="color:var(--c-text-muted); margin-bottom:20px;">Définissez les prix (en F CFA) pour chaque formule (Basic, Standard, Premium) de vos services.</p>
             <form id="prices-form">
                 <div id="prices-list" class="grid-2"></div>
                 <div style="margin-top:24px;">
@@ -178,7 +256,7 @@
             </form>
         </div>
 
-        <!-- === 6. WHATSAPP === -->
+        <!-- === 7. WHATSAPP === -->
         <div class="admin-panel">
             <div class="admin-panel-title">📱 Numéro WhatsApp de Commande</div>
             <form id="settings-form" style="max-width:400px;">
@@ -217,12 +295,16 @@
                     <select id="edit-c-service" class="form-control" required></select>
                 </div>
                 <div class="form-group" style="margin-bottom:12px;">
-                    <label>Changer l'image (optionnel)</label>
+                    <label>Prix (F CFA — facultatif)</label>
+                    <input type="number" id="edit-c-price" class="form-control">
+                </div>
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label>Remplacer l'image (optionnel)</label>
                     <label class="file-label" for="edit-c-img-file" style="margin-bottom:8px;">
-                        📁 Choisir un fichier
+                        📁 Choisir une nouvelle image
                         <input type="file" id="edit-c-img-file" accept="image/*" style="display:none;">
                     </label>
-                    <img id="edit-c-img-preview" src="" style="max-height:90px; display:block; margin-top:8px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
+                    <img id="edit-c-img-preview" src="" style="max-height:100px; display:block; margin-top:8px; border-radius:6px; border:1px solid var(--c-border);" alt="Aperçu">
                 </div>
                 <div class="form-group" style="margin-bottom:18px;">
                     <label>Description</label>
@@ -230,7 +312,7 @@
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button type="button" class="btn btn-outline" id="btn-cancel-edit">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
                 </div>
             </form>
         </div>
