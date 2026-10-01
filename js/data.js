@@ -1,4 +1,4 @@
-﻿const STORAGE_KEY = 'pixora_studio_data_v3';
+const STORAGE_KEY = 'pixora_studio_data_v3';
 
 // Emojis pour les cartes de services (icÃ´ne de secours quand aucune image n'est uploadÃ©e)
 const SERVICE_ICONS = {
@@ -60,9 +60,47 @@ function initData() {
             updated = true;
         }
 
+        // Migration paramètres par défaut
+        if (!parsed.settings) parsed.settings = {};
+        if (!parsed.settings.adminPassword || parsed.settings.adminPassword === 'admin') {
+            parsed.settings.adminPassword = 'PIXORA';
+            updated = true;
+        }
+        if (!parsed.settings.phoneNumber) {
+            parsed.settings.phoneNumber = parsed.settings.whatsappNumber || '+226 03 24 95 48';
+            updated = true;
+        }
+        if (!parsed.settings.reservationNumber) {
+            parsed.settings.reservationNumber = parsed.settings.whatsappNumber || '+226 03 24 95 48';
+            updated = true;
+        }
+        if (!parsed.settings.texts) {
+            parsed.settings.texts = {
+                heroTitle: "BIENVENUE CHEZ PIXORA STUDIO",
+                heroSubtitle: "Des créations graphiques pensées pour donner une vraie image professionnelle à votre activité.",
+                servicesTitle: "NOS SERVICES",
+                btnCreations: "VOIR TOUTES MES CRÉATIONS",
+                btnCommander: "COMMANDER",
+                diffTitle: "LA DIFFÉRENCE",
+                diffSubtitle: "Voyez par vous-même la différence entre une création artisanale et une image générée automatiquement.",
+                creationsTitle: "MES CRÉATIONS",
+                tarifsTitle: "SERVICES & TARIFS",
+                tarifsSubtitle: "Chaque création est disponible en trois niveaux adaptés à votre budget et à vos besoins.",
+                contactTitle: "UNE QUESTION ? CONTACTEZ-NOUS",
+                footerText: "© 2026 Pixora Studio — Studio de création graphique. Tous droits réservés."
+            };
+            updated = true;
+        }
+        if (!parsed.servicesMeta) {
+            parsed.servicesMeta = {};
+            updated = true;
+        }
+
         if (updated) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
     }
 }
+
+const ORDERS_STORAGE_KEY = 'pixora_studio_orders_v1';
 
 function getData() {
     initData();
@@ -71,6 +109,83 @@ function getData() {
 
 function saveData(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if (window.FirebaseSync && typeof window.FirebaseSync.syncData === 'function') {
+        window.FirebaseSync.syncData(data);
+    }
+}
+
+function saveDataLocalOnly(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getOrders() {
+    try {
+        const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveOrders(orders) {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+}
+
+function addOrder(order) {
+    const orders = getOrders();
+    const orderId = order.id || ('CMD-' + Date.now());
+    const fullOrder = {
+        id: orderId,
+        date: order.date || new Date().toLocaleDateString('fr-FR'),
+        time: order.time || new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: order.timestamp || Date.now(),
+        client: order.client || {},
+        projet: order.projet || {},
+        services: order.services || [],
+        total: order.total || 0,
+        message: order.message || '',
+        details: order.details || '',
+        status: order.status || 'Nouvelle',
+        history: order.history || [{ status: 'Nouvelle', date: new Date().toLocaleString('fr-FR') }]
+    };
+    orders.unshift(fullOrder);
+    saveOrders(orders);
+
+    if (window.FirebaseSync && typeof window.FirebaseSync.saveOrder === 'function') {
+        window.FirebaseSync.saveOrder(fullOrder);
+    }
+
+    document.dispatchEvent(new CustomEvent('pixora-order-created', { detail: fullOrder }));
+    return fullOrder;
+}
+
+function updateOrderStatus(orderId, newStatus) {
+    const orders = getOrders();
+    const idx = orders.findIndex(o => o.id === orderId);
+    if (idx !== -1) {
+        orders[idx].status = newStatus;
+        if (!orders[idx].history) orders[idx].history = [];
+        orders[idx].history.push({ status: newStatus, date: new Date().toLocaleString('fr-FR') });
+        saveOrders(orders);
+
+        if (window.FirebaseSync && typeof window.FirebaseSync.updateOrderStatus === 'function') {
+            window.FirebaseSync.updateOrderStatus(orderId, newStatus);
+        }
+        document.dispatchEvent(new CustomEvent('pixora-orders-updated', { detail: orders }));
+        return true;
+    }
+    return false;
+}
+
+function deleteOrder(orderId) {
+    let orders = getOrders();
+    orders = orders.filter(o => o.id !== orderId);
+    saveOrders(orders);
+    if (window.FirebaseSync && typeof window.FirebaseSync.deleteOrder === 'function') {
+        window.FirebaseSync.deleteOrder(orderId);
+    }
+    document.dispatchEvent(new CustomEvent('pixora-orders-updated', { detail: orders }));
+    return true;
 }
 
 initData();

@@ -3,488 +3,1763 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration — PIXORA STUDIO</title>
+    <title>Administration — PIXORA ACADEMY</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ─── Layout général ─────────────────────────────────── */
-        body { background:#f0f2f5; font-family:'Inter',sans-serif; }
-        .admin-wrap { max-width:980px; margin:40px auto; padding:0 20px 80px; }
+/* ══════════════════════════════════════════════════════════════
+   PIXORA ACADEMY — ADMINISTRATION — Design cohérent avec vitrine
+   Fond sombre #080C24 | Cartes #121A3A | Accents logo Pixora
+══════════════════════════════════════════════════════════════ */
+:root {
+    --c-bg:         #080C24;
+    --c-surface:    #0E1436;
+    --c-card:       #121A3A;
+    --c-card-hover: #161F45;
+    --c-border:     rgba(108, 43, 255, 0.22);
+    --c-border-s:   rgba(255,255,255,0.08);
+    --c-primary:    #1769FF;
+    --c-violet:     #6C2BFF;
+    --c-magenta:    #D82D9B;
+    --c-cyan:       #00D2FF;
+    --c-orange:     #FF7A1A;
+    --c-yellow:     #FFD200;
+    --c-green:      #25D366;
+    --c-text:       #FFFFFF;
+    --c-muted:      #8892AD;
+    --c-danger:     #FF4D4F;
+    --grad-pixora:  linear-gradient(135deg, #FF7A1A 0%, #D82D9B 35%, #6C2BFF 70%, #00D2FF 100%);
+    --grad-primary: linear-gradient(135deg, #1769FF 0%, #6C2BFF 100%);
+    --sidebar-w:    260px;
+    --r-sm:         8px;
+    --r-md:         14px;
+    --r-lg:         20px;
+    --font:         'Inter', system-ui, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{
+    font-family: var(--font);
+    background: var(--c-bg);
+    color: var(--c-text);
+    min-height: 100vh;
+    background-image:
+        radial-gradient(ellipse at 10% 5%,  rgba(108,43,255,0.09) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(216,45,155,0.07) 0%, transparent 50%);
+    background-attachment: fixed;
+}
+img{max-width:100%;height:auto;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
 
-        .admin-header { text-align:center; margin-bottom:30px; padding:30px; background:white; border-radius:14px; border:1px solid var(--c-border); box-shadow:var(--shadow-sm); }
-        .admin-header h1 { font-size:1.85rem; font-weight:var(--fw-bold); color:var(--c-primary-dark); }
-        .admin-header p  { color:var(--c-text-muted); margin-top:6px; }
+/* ── LAYOUT ───────────────────────────────────────────────── */
+.admin-layout{ display:flex; min-height:100vh; }
 
-        .admin-panel { background:white; padding:28px 30px; border-radius:14px; margin-bottom:28px; border:1px solid var(--c-border); box-shadow:var(--shadow-sm); }
-        .admin-panel-title { font-size:1.2rem; font-weight:700; color:var(--c-primary-dark); border-bottom:1px solid var(--c-border); padding-bottom:12px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+.admin-sidebar{
+    width: var(--sidebar-w);
+    background: #050818;
+    border-right: 1px solid var(--c-border);
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    z-index: 300;
+    overflow-y: auto;
+    transition: transform 0.28s ease;
+}
+.admin-sidebar::-webkit-scrollbar{width:4px;}
+.admin-sidebar::-webkit-scrollbar-thumb{background:rgba(108,43,255,0.3);border-radius:4px;}
 
-        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.sidebar-logo-zone{
+    padding: 22px 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--c-border-s);
+    flex-shrink: 0;
+}
+.sidebar-logo-zone img{ width:120px; object-fit:contain; }
+.sidebar-admin-tag{
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 50px;
+    background: rgba(108,43,255,0.2);
+    border: 1px solid rgba(108,43,255,0.4);
+    color: #C4ADFF;
+    white-space: nowrap;
+}
 
-        /* ─── Message succès/erreur ───────────────────────────── */
-        .msg-success { display:none; padding:12px 18px; border-radius:8px; margin-bottom:20px; font-weight:600; text-align:center; border:1px solid; position:sticky; top:10px; z-index:200; box-shadow:0 4px 12px rgba(0,0,0,0.12); }
+.sidebar-section-label{
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.28);
+    padding: 16px 22px 6px;
+    display: block;
+}
+.sidebar-nav{ padding: 8px 0; flex: 1; }
+.sidebar-nav a{
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 22px;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.72);
+    border-left: 3px solid transparent;
+    transition: all 0.18s;
+}
+.sidebar-nav a:hover, .sidebar-nav a.active{
+    background: rgba(23,105,255,0.12);
+    color: #fff;
+    border-left-color: var(--c-cyan);
+}
+.sidebar-nav a .nav-ic{ font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
 
-        /* ─── Lignes de créations ─────────────────────────────── */
-        .item-row { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1px solid var(--c-border); border-radius:10px; margin-bottom:10px; gap:14px; background:#fff; transition:background 0.2s, box-shadow 0.2s; }
-        .item-row:hover { background:#f8fafc; box-shadow:0 2px 10px rgba(0,0,0,0.07); }
-        .item-info  { display:flex; align-items:center; gap:14px; min-width:0; flex:1; }
-        .item-meta  { min-width:0; flex:1; }
+.sidebar-bottom{
+    padding: 14px 16px 20px;
+    border-top: 1px solid var(--c-border-s);
+    flex-shrink: 0;
+}
+.sidebar-vitrine-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--grad-primary);
+    border: none;
+    border-radius: var(--r-sm);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: filter 0.2s, transform 0.2s;
+}
+.sidebar-vitrine-btn:hover{ filter:brightness(1.12); transform:translateY(-1px); }
 
-        .badge-type { display:inline-block; background:var(--c-primary-light); color:var(--c-primary-dark); font-size:0.73rem; font-weight:600; padding:2px 8px; border-radius:4px; }
-        .badge-ai   { background:#f1f5f9; color:#475569; }
+/* ── MAIN WRAPPER ──────────────────────────────────────────── */
+.admin-main{
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-width: 0;
+}
 
-        .btn-delete { background:#ef4444; color:white; border:none; padding:8px 14px; border-radius:7px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
-        .btn-delete:hover { background:#dc2626; }
-        .btn-edit   { background:#3b82f6; color:white; border:none; padding:8px 14px; border-radius:7px; cursor:pointer; font-weight:600; font-size:0.82rem; white-space:nowrap; flex-shrink:0; transition:background 0.2s; }
-        .btn-edit:hover { background:#2563eb; }
+/* ── TOPBAR ───────────────────────────────────────────────── */
+.admin-topbar{
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(8,12,36,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--c-border-s);
+    padding: 0 28px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.topbar-title{
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+}
+.topbar-sync{
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.sync-dot{
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #25D366;
+    box-shadow: 0 0 8px #25D366;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.4;} }
 
-        /* ─── Logo ────────────────────────────────────────────── */
-        #logo-current-box { display:none; background:#f0fdf4; border:1.5px solid #86efac; border-radius:12px; padding:18px 22px; margin-bottom:18px; align-items:center; gap:20px; flex-wrap:wrap; }
-        #logo-preview { max-width:220px; max-height:120px; object-fit:contain; border-radius:8px; border:1px solid #d1fae5; background:white; padding:8px; display:none; }
-        #logo-placeholder { background:#fef9c3; border:1px solid #fde68a; border-radius:8px; padding:10px 16px; color:#78350f; font-size:0.9rem; margin-bottom:14px; }
+/* ── CONTENU DES PAGES ─────────────────────────────────────── */
+.admin-page{ display:none; padding: 28px 28px 60px; }
+.admin-page.active{ display:block; }
 
-        /* ─── File label ──────────────────────────────────────── */
-        .file-label { display:inline-flex; align-items:center; gap:8px; padding:9px 18px; background:var(--c-primary-light); color:var(--c-primary-dark); border-radius:8px; font-weight:600; cursor:pointer; border:1.5px dashed var(--c-primary); transition:all 0.2s; font-size:0.9rem; }
-        .file-label:hover { background:#d0e3f5; border-color:var(--c-primary-dark); }
+/* ── CARTES SECTION ───────────────────────────────────────── */
+.section-card{
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    padding: 28px 28px;
+    margin-bottom: 24px;
+}
+.section-card-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.section-card-title{
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.card-badge{
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 50px;
+}
+.badge-blue  { background: rgba(23,105,255,0.18); border:1px solid rgba(23,105,255,0.4); color:#82B1FF; }
+.badge-violet{ background: rgba(108,43,255,0.18); border:1px solid rgba(108,43,255,0.4); color:#C4ADFF; }
+.badge-pink  { background: rgba(216,45,155,0.18); border:1px solid rgba(216,45,155,0.4); color:#FBB6CE; }
+.badge-green { background: rgba(37,211,102,0.18); border:1px solid rgba(37,211,102,0.4); color:#6EE7B7; }
+.badge-orange{ background: rgba(255,122,26,0.18); border:1px solid rgba(255,122,26,0.4); color:#FBD38D; }
 
-        /* ─── Services ────────────────────────────────────────── */
-        .service-editor-box { background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:12px; padding:20px; margin-bottom:24px; }
-        .svc-current-box { background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:16px 20px; margin-top:14px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
-        .svc-preview-img { max-width:240px; max-height:140px; width:auto; height:auto; object-fit:contain; border-radius:8px; border:1px solid #cbd5e1; background:white; padding:6px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-        .svc-pending-box { background:#eff6ff; border:1.5px solid #93c5fd; border-radius:10px; padding:16px 20px; margin-top:14px; display:none; align-items:center; gap:20px; flex-wrap:wrap; }
-        .svc-placeholder-box { background:#fef9c3; border:1px solid #fde68a; border-radius:8px; padding:12px 18px; color:#78350f; font-size:0.9rem; margin-top:14px; }
-        .service-img-row { display:flex; align-items:center; gap:14px; padding:12px 14px; border:1px solid var(--c-border); border-radius:8px; margin-bottom:10px; background:#fff; flex-wrap:wrap; }
-        .service-img-name  { font-weight:600; min-width:160px; font-size:0.92rem; }
-        .service-img-thumb { width:64px; height:64px; object-fit:cover; border-radius:6px; border:1px solid var(--c-border); background:#f1f5f9; cursor:pointer; }
+/* ── DASHBOARD STATS ─────────────────────────────────────── */
+.stats-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+.stat-card{
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    padding: 20px 18px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover{ transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
+.stat-value{
+    font-size: 2rem;
+    font-weight: 800;
+    background: var(--grad-pixora);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+.stat-label{
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
-        /* ─── Tags domaines ───────────────────────────────────── */
-        .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
-        .tag-item { display:inline-flex; align-items:center; gap:8px; background:#f1f5f9; padding:6px 12px; border-radius:20px; font-size:0.88rem; font-weight:500; border:1px solid #e2e8f0; }
-        .tag-del  { color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem; line-height:1; }
-        .tag-del:hover { color:#b91c1c; }
+/* ── BOUTONS ─────────────────────────────────────────────── */
+.btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px 20px;
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 0.84rem;
+    border-radius: var(--r-sm);
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.btn-primary{ background: var(--grad-primary); color:#fff; border:none; }
+.btn-primary:hover{ filter:brightness(1.12); transform:translateY(-1px); }
+.btn-gradient{ background: var(--grad-pixora); color:#fff; border:none; }
+.btn-gradient:hover{ filter:brightness(1.1); transform:translateY(-1px); }
+.btn-outline{ background:transparent; color:rgba(255,255,255,0.8); border-color:rgba(255,255,255,0.2); }
+.btn-outline:hover{ background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.4); color:#fff; }
+.btn-danger{ background:rgba(255,77,79,0.15); color:#FF4D4F; border-color:rgba(255,77,79,0.4); }
+.btn-danger:hover{ background:rgba(255,77,79,0.28); }
+.btn-success{ background:rgba(37,211,102,0.15); color:#25D366; border-color:rgba(37,211,102,0.4); }
+.btn-success:hover{ background:rgba(37,211,102,0.28); }
+.btn-sm{ padding:6px 14px; font-size:0.78rem; }
+.btn-xs{ padding:4px 10px; font-size:0.72rem; border-radius:6px; }
+.btn-full{ width:100%; }
 
-        /* ─── Filtres catalogue ───────────────────────────────── */
-        .filter-tab-btn { background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:7px 16px; border-radius:7px; font-weight:600; font-size:0.85rem; cursor:pointer; transition:all 0.15s; }
-        .filter-tab-btn.active { background:var(--c-primary); color:white; border-color:var(--c-primary); }
-        .filter-tab-btn:hover:not(.active) { background:#e2e8f0; }
+/* ── FORMULAIRES ─────────────────────────────────────────── */
+.form-group{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.form-label{ font-size:0.82rem; font-weight:600; color:rgba(255,255,255,0.75); }
+.form-control{
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1.5px solid var(--c-border-s);
+    border-radius: var(--r-sm);
+    color: #fff;
+    font-family: var(--font);
+    font-size: 0.86rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-control:focus{ border-color: var(--c-primary); box-shadow:0 0 0 3px rgba(23,105,255,0.15); }
+.form-control option{ background:#121A3A; }
+.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 
-        /* ─── Galerie prévisualisation ajout ──────────────────── */
-        #add-images-preview { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; padding:10px; min-height:50px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; }
+/* ── FILTRES CATÉGORIES ───────────────────────────────────── */
+.cat-filters{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.cat-btn{
+    padding: 7px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.72);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.cat-btn:hover{ background:rgba(255,255,255,0.12); color:#fff; }
+.cat-btn.active{ background:var(--grad-pixora); border-color:transparent; color:#fff; box-shadow:0 4px 14px rgba(216,45,155,0.35); }
 
-        /* ─── Modal modification ──────────────────────────────── */
-        .modal-edit { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; }
-        .modal-edit.active { display:flex; }
-        .modal-edit-card { background:white; border-radius:16px; padding:28px; width:92%; max-width:680px; max-height:93vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,0.3); }
-        .modal-edit-card h3 { font-size:1.15rem; font-weight:700; margin-bottom:20px; color:var(--c-primary-dark); }
+/* ── GRILLE CRÉATIONS ─────────────────────────────────────── */
+.creations-admin-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 18px;
+}
+.creation-admin-card{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--c-border-s);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+    position: relative;
+}
+.creation-admin-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.4);
+    border-color: rgba(108,43,255,0.45);
+}
+.creation-admin-img-wrap{
+    width: 100%;
+    height: 160px;
+    background: #0a0f2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: zoom-in;
+}
+.creation-admin-img-wrap img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+    transition: transform 0.3s;
+}
+.creation-admin-card:hover .creation-admin-img-wrap img{ transform:scale(1.04); }
+.img-overlay{
+    position: absolute;
+    inset: 0;
+    background: rgba(8,12,36,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.creation-admin-card:hover .img-overlay{ opacity:1; }
+.img-overlay-icon{ font-size:1.8rem; }
 
-        /* Galerie images dans la modal */
-        .modal-gallery-box { background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:18px; }
-        .modal-gallery-label { font-size:0.78rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px; display:block; }
-        #edit-images-gallery { display:flex; flex-wrap:wrap; gap:8px; min-height:40px; }
+.creation-admin-body{
+    padding: 12px 14px;
+}
+.creation-admin-title{
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.creation-admin-tags{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+.tag-chip{
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 50px;
+    background: rgba(23,105,255,0.15);
+    color: #82B1FF;
+    border: 1px solid rgba(23,105,255,0.3);
+}
+.tag-chip.domain{ background:rgba(216,45,155,0.12); color:#FBB6CE; border-color:rgba(216,45,155,0.3); }
+.creation-admin-actions{
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
 
-        /* ─── Overlay fullscreen image ────────────────────────── */
-        #img-fullscreen-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:10000; align-items:center; justify-content:center; flex-direction:column; gap:14px; }
-        #img-fullscreen-img { max-width:90vw; max-height:80vh; object-fit:contain; border-radius:10px; box-shadow:0 0 60px rgba(0,0,0,0.5); }
-        #img-fullscreen-title { color:white; font-size:1rem; font-weight:600; text-align:center; }
-        #img-fullscreen-close { position:fixed; top:18px; right:22px; background:rgba(255,255,255,0.12); border:none; color:white; font-size:1.6rem; cursor:pointer; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:background 0.2s; z-index:10001; }
-        #img-fullscreen-close:hover { background:rgba(255,255,255,0.28); }
+/* ── ZONE D'UPLOAD ────────────────────────────────────────── */
+.upload-zone{
+    border: 2px dashed rgba(108,43,255,0.4);
+    border-radius: var(--r-md);
+    padding: 36px 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    background: rgba(108,43,255,0.04);
+}
+.upload-zone:hover, .upload-zone.drag-over{
+    border-color: var(--c-violet);
+    background: rgba(108,43,255,0.1);
+}
+.upload-zone input[type=file]{ position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+.upload-icon{ font-size:2.4rem; margin-bottom:10px; }
+.upload-text{ font-size:0.95rem; font-weight:700; color:#fff; margin-bottom:4px; }
+.upload-sub{ font-size:0.8rem; color:var(--c-muted); }
 
-        /* ─── Bloc formulaire ajout ───────────────────────────── */
-        .add-form-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:22px; margin-bottom:28px; }
-        .add-form-box h3 { font-size:1rem; font-weight:700; color:var(--c-primary-dark); margin-bottom:18px; }
+/* ── PRÉVISUALISATIONS UPLOAD ─────────────────────────────── */
+.previews-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+.preview-item{
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--c-border-s);
+    position: relative;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.preview-item img{ max-width:100%; max-height:100%; object-fit:contain; padding:4px; }
+.preview-remove{
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(255,77,79,0.85);
+    border: none;
+    color: #fff;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+}
 
-        @media(max-width:768px) {
-            .grid-2 { grid-template-columns:1fr; }
-            .item-row { flex-wrap:wrap; }
-            #logo-current-box { flex-direction:column; align-items:flex-start; }
-        }
-    </style>
+/* ── BARRE DE PROGRESSION ─────────────────────────────────── */
+.progress-bar-wrap{
+    background: rgba(255,255,255,0.08);
+    border-radius: 50px;
+    height: 8px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+.progress-bar-fill{
+    height: 100%;
+    background: var(--grad-pixora);
+    border-radius: 50px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+
+/* ── TARIFS ──────────────────────────────────────────────── */
+.price-card-admin{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--c-border-s);
+    border-radius: var(--r-md);
+    padding: 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.price-card-admin h4{
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid var(--c-border-s);
+    padding-bottom: 8px;
+}
+.price-row-admin{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.price-row-admin label{
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--c-muted);
+    width: 70px;
+    flex-shrink: 0;
+}
+.price-row-admin input{
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--c-border-s);
+    border-radius: var(--r-sm);
+    color: #fff;
+    font-family: var(--font);
+    font-size: 0.84rem;
+    outline: none;
+}
+.price-row-admin input:focus{ border-color:var(--c-primary); }
+.prices-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
+
+/* ── COMMANDES ───────────────────────────────────────────── */
+.orders-table{ width:100%; border-collapse:collapse; }
+.orders-table th{
+    text-align:left;
+    padding:10px 14px;
+    font-size:0.75rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--c-muted);
+    border-bottom:1px solid var(--c-border-s);
+}
+.orders-table td{
+    padding:12px 14px;
+    font-size:0.84rem;
+    border-bottom:1px solid var(--c-border-s);
+    color:rgba(255,255,255,0.85);
+    vertical-align:middle;
+}
+.orders-table tr:hover td{ background:rgba(255,255,255,0.03); }
+.status-badge{
+    font-size:0.7rem;
+    font-weight:700;
+    padding:3px 10px;
+    border-radius:50px;
+    display:inline-block;
+}
+.status-new      { background:rgba(23,105,255,0.2);  color:#82B1FF; }
+.status-progress { background:rgba(255,210,0,0.2);   color:#FFD200; }
+.status-done     { background:rgba(37,211,102,0.2);  color:#25D366; }
+.status-cancel   { background:rgba(255,77,79,0.2);   color:#FF4D4F; }
+
+/* ── PARAMÈTRES ──────────────────────────────────────────── */
+.settings-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--c-border-s);
+}
+.settings-row:last-child{ border:none; }
+.settings-label{
+    width: 180px;
+    flex-shrink: 0;
+}
+.settings-label strong{ display:block; font-size:0.88rem; color:#fff; margin-bottom:2px; }
+.settings-label span{ font-size:0.76rem; color:var(--c-muted); }
+.settings-control{ flex:1; }
+
+/* ── LIGHTBOX ADMIN ──────────────────────────────────────── */
+.admin-lightbox{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.94);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    cursor: zoom-out;
+}
+.admin-lightbox.active{ display:flex; animation:lbIn 0.2s ease; }
+@keyframes lbIn{ from{opacity:0;} to{opacity:1;} }
+.lightbox-inner{
+    position: relative;
+    max-width: 960px;
+    width: 100%;
+    text-align: center;
+    cursor: default;
+}
+.lightbox-inner img{ max-height:82vh; max-width:100%; object-fit:contain; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.7); }
+.lightbox-close-btn{
+    position: absolute;
+    top: -48px; right: 0;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.lightbox-close-btn:hover{ background:rgba(255,255,255,0.25); }
+.lightbox-caption{ color:#fff; margin-top:14px; font-weight:600; text-shadow:0 2px 6px rgba(0,0,0,0.8); }
+
+/* ── CONFIRM MODAL ───────────────────────────────────────── */
+.confirm-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.7);
+    display:none; align-items:center; justify-content:center;
+    z-index:3000; padding:20px;
+    backdrop-filter:blur(4px);
+}
+.confirm-overlay.active{ display:flex; }
+.confirm-card{
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    padding: 32px 28px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+}
+.confirm-card h3{ font-size:1.15rem; font-weight:800; margin-bottom:10px; }
+.confirm-card p{ color:var(--c-muted); font-size:0.88rem; margin-bottom:24px; }
+.confirm-actions{ display:flex; gap:12px; justify-content:center; }
+
+/* ── EDIT MODAL ──────────────────────────────────────────── */
+.modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.7);
+    display:none; align-items:center; justify-content:center;
+    z-index:3000; padding:20px;
+    backdrop-filter:blur(4px);
+}
+.modal-overlay.active{ display:flex; }
+.modal-card{
+    background: var(--c-card);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-lg);
+    padding: 30px 26px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-card h3{ font-size:1.1rem; font-weight:800; margin-bottom:20px; }
+
+/* ── MOBILE TOPBAR ───────────────────────────────────────── */
+.mobile-topbar{
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 250;
+    background: #050818;
+    padding: 0 16px;
+    height: 58px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--c-border-s);
+}
+.sidebar-overlay-admin{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(8,12,36,0.65);
+    z-index:299;
+    backdrop-filter:blur(3px);
+}
+.sidebar-overlay-admin.active{ display:block; }
+.toggle-btn{
+    background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; padding:6px;
+}
+.toast{
+    position:fixed; bottom:24px; right:24px;
+    background:var(--c-card); border:1px solid var(--c-border);
+    color:#fff; padding:14px 22px;
+    border-radius:var(--r-md);
+    font-size:0.86rem; font-weight:600;
+    box-shadow:0 10px 36px rgba(0,0,0,0.4);
+    z-index:9999;
+    transform:translateY(100px); opacity:0;
+    transition:all 0.35s cubic-bezier(0.2,0.8,0.2,1);
+    display:flex; align-items:center; gap:10px;
+}
+.toast.show{ transform:translateY(0); opacity:1; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:900px){
+    :root{ --sidebar-w:260px; }
+    .admin-layout{ display:block; }
+    .admin-sidebar{ transform:translateX(-100%); }
+    .admin-sidebar.open{ transform:translateX(0); box-shadow:4px 0 40px rgba(0,0,0,0.6); }
+    .admin-main{ margin-left:0; }
+    .admin-topbar{ display:none; }
+    .mobile-topbar{ display:flex; }
+    .admin-page{ padding:18px 14px 50px; }
+    .section-card{ padding:18px 16px; }
+    .form-row{ grid-template-columns:1fr; }
+    .stats-grid{ grid-template-columns:repeat(2,1fr); }
+    .prices-grid{ grid-template-columns:1fr; }
+    .orders-table th:nth-child(3), .orders-table td:nth-child(3){ display:none; }
+}
+@media(max-width:560px){
+    .creations-admin-grid{ grid-template-columns:repeat(2,1fr); }
+    .stats-grid{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* ── EMPTY STATE ─────────────────────────────────────────── */
+.empty-state{
+    text-align:center;
+    padding:48px 20px;
+    color:var(--c-muted);
+}
+.empty-state .empty-icon{ font-size:2.8rem; margin-bottom:12px; }
+.empty-state p{ font-size:0.92rem; }
+</style>
 </head>
 <body>
-    <header class="site-header">
-        <div class="container header-container">
-            <a href="index.html" class="logo-nav-container"><span class="logo-text">PIXORA STUDIO</span></a>
-            <nav><ul class="nav-links"><li><a href="index.html">← Retour au site</a></li></ul></nav>
+
+<!-- OVERLAY MOBILE -->
+<div class="sidebar-overlay-admin" id="sidebarOverlay"></div>
+
+<!-- TOPBAR MOBILE -->
+<div class="mobile-topbar">
+    <button class="toggle-btn" id="sidebarToggle">☰</button>
+    <span style="font-size:0.9rem;font-weight:800;background:var(--grad-pixora);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">PIXORA ADMIN</span>
+    <a href="index.html" target="_blank" style="font-size:0.75rem;background:var(--grad-primary);color:#fff;padding:6px 12px;border-radius:6px;font-weight:700;">↗ Vitrine</a>
+</div>
+
+<div class="admin-layout">
+
+    <!-- ══════════════ SIDEBAR ══════════════ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-logo-zone">
+            <img src="assets/images/logo.png" alt="Pixora Academy" id="sidebarLogo">
+            <span class="sidebar-admin-tag">ADMIN</span>
         </div>
-    </header>
 
-    <div class="admin-wrap">
-        <div class="admin-header">
-            <h1>⚙️ Espace Administration</h1>
-            <p>Visualisez, modifiez et contrôlez tous les contenus de PIXORA STUDIO.</p>
+        <nav class="sidebar-nav">
+            <span class="sidebar-section-label">Navigation</span>
+            <a href="#" class="active" data-page="dashboard" id="nav-dashboard">
+                <span class="nav-ic">📊</span> Tableau de bord
+            </a>
+            <a href="#" data-page="creations" id="nav-creations">
+                <span class="nav-ic">🎨</span> Mes Créations
+            </a>
+            <a href="#" data-page="services" id="nav-services">
+                <span class="nav-ic">✨</span> Services & Tarifs
+            </a>
+            <a href="#" data-page="orders" id="nav-orders">
+                <span class="nav-ic">🛒</span> Commandes
+                <span id="orders-badge" style="margin-left:auto;background:rgba(216,45,155,0.25);color:#FBB6CE;font-size:0.65rem;padding:2px 7px;border-radius:50px;font-weight:700;display:none;">0</span>
+            </a>
+            <a href="#" data-page="settings" id="nav-settings">
+                <span class="nav-ic">⚙️</span> Paramètres
+            </a>
+
+            <span class="sidebar-section-label" style="margin-top:8px;">Liens</span>
+            <a href="index.html" target="_blank">
+                <span class="nav-ic">🌐</span> Ouvrir la Vitrine
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="index.html" target="_blank" class="sidebar-vitrine-btn">
+                <span>↗</span> Voir la Vitrine Client
+            </a>
+        </div>
+    </aside>
+
+    <!-- ══════════════ MAIN ══════════════ -->
+    <main class="admin-main">
+
+        <!-- TOPBAR desktop -->
+        <div class="admin-topbar">
+            <div class="topbar-title" id="topbar-title">Tableau de bord</div>
+            <div class="topbar-sync">
+                <div class="sync-dot" id="syncDot"></div>
+                <span id="syncStatus">Synchronisé</span>
+            </div>
         </div>
 
-        <div class="msg-success" id="msg-success"></div>
+        <!-- ══════════════ PAGE: DASHBOARD ══════════════ -->
+        <div class="admin-page active" id="page-dashboard">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="stat-value" id="stat-creations">0</div><div class="stat-label">Créations</div></div>
+                <div class="stat-card"><div class="stat-value" id="stat-services">0</div><div class="stat-label">Services</div></div>
+                <div class="stat-card"><div class="stat-value" id="stat-orders">0</div><div class="stat-label">Commandes</div></div>
+                <div class="stat-card"><div class="stat-value" id="stat-categories">0</div><div class="stat-label">Catégories</div></div>
+            </div>
 
-        <!-- ══════════════════════════════════════════════════════
-             1. LOGO
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">🖼️ Mon Logo</div>
-            <p style="color:var(--c-text-muted);margin-bottom:18px;">Le logo s'affiche en grand sur l'accueil et dans la navigation. Il est enregistré même après actualisation.</p>
-
-            <!-- Logo actuel (visible si déjà enregistré) -->
-            <div id="logo-current-box">
-                <img id="logo-preview" alt="Logo actuel">
-                <div>
-                    <p style="font-size:0.8rem;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">✓ Logo actuel enregistré</p>
-                    <p style="font-size:0.88rem;color:#334155;margin-bottom:10px;">Ce logo s'affiche sur votre site. Vous pouvez le remplacer ou le supprimer.</p>
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                        <label class="file-label" for="logo-file-input" style="font-size:0.88rem;padding:7px 16px;">
-                            🔄 Remplacer le logo
-                            <input type="file" id="logo-file-input" accept=".png,.jpg,.jpeg,.svg,image/*" style="display:none;">
-                        </label>
-                        <button class="btn btn-outline" id="btn-remove-logo" style="border-color:#ef4444;color:#ef4444;font-size:0.88rem;padding:7px 16px;">🗑 Supprimer</button>
-                    </div>
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">🚀 Accès rapide</div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;">
+                    <button class="btn btn-gradient" onclick="showPage('creations')">🎨 Gérer les Créations</button>
+                    <button class="btn btn-primary" onclick="showPage('services')">🏷️ Modifier les Tarifs</button>
+                    <button class="btn btn-outline" onclick="showPage('orders')">🛒 Voir les Commandes</button>
+                    <a href="index.html" target="_blank" class="btn btn-outline">🌐 Ouvrir la Vitrine</a>
                 </div>
             </div>
 
-            <!-- Placeholder (visible si aucun logo) -->
-            <div id="logo-placeholder">
-                ⚠️ Aucun logo importé. Le texte "PIXORA STUDIO" s'affiche par défaut.
-            </div>
-
-            <!-- Bouton import (visible si aucun logo) -->
-            <div id="logo-import-btn" style="margin-top:12px;">
-                <label class="file-label" for="logo-file-input-empty">
-                    📁 Importer votre logo
-                    <input type="file" id="logo-file-input-empty" accept=".png,.jpg,.jpeg,.svg,image/*" style="display:none;">
-                </label>
-            </div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════
-             2. DOMAINES
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">🏷️ Gestion des Domaines (Métiers / Thématiques)</div>
-            <p style="color:var(--c-text-muted);margin-bottom:18px;">Ces domaines sont disponibles lors de l'ajout ou de la modification de vos créations.</p>
-            <form id="add-domain-form" style="display:flex;gap:10px;max-width:500px;margin-bottom:16px;">
-                <input type="text" id="new-domain-input" class="form-control" placeholder="Nom du nouveau domaine (ex: Plomberie)" required>
-                <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ Ajouter</button>
-            </form>
-            <div id="domains-tag-list" class="tag-list"></div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════
-             3. SERVICES & IMAGES
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel" id="section-services">
-            <div class="admin-panel-title">🎨 Gestion des Services & Remplacement des Images</div>
-            <p style="color:var(--c-text-muted);margin-bottom:20px;">Sélectionnez un service, visualisez son image actuelle, importez une nouvelle image depuis votre appareil, prévisualisez-la puis enregistrez-la.</p>
-
-            <!-- ÉDITEUR D'IMAGE PAR SERVICE (Fonctionnement similaire au logo) -->
-            <div class="service-editor-box">
-                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
-                    <label for="svc-select" style="font-weight:700;color:var(--c-primary-dark);font-size:0.95rem;margin:0;">
-                        📌 Sélectionner un service :
-                    </label>
-                    <select id="svc-select" class="form-control" style="max-width:340px;font-weight:600;font-size:0.95rem;"></select>
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">📋 Dernières commandes</div>
+                    <button class="btn btn-outline btn-sm" onclick="showPage('orders')">Voir tout</button>
                 </div>
-
-                <!-- 1. IMAGE ACTUELLE (visible si une image est déjà enregistrée) -->
-                <div id="svc-current-box" class="svc-current-box" style="display:none;">
-                    <img id="svc-current-preview" class="svc-preview-img" alt="Image actuelle">
-                    <div style="flex:1;min-width:200px;">
-                        <p style="font-size:0.8rem;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
-                            ✓ Image actuelle enregistrée
-                        </p>
-                        <p id="svc-current-name" style="font-weight:700;font-size:1.05rem;color:var(--c-primary-dark);margin-bottom:8px;"></p>
-                        <p style="font-size:0.88rem;color:#334155;margin-bottom:12px;">Cette image s'affiche actuellement sur la carte de ce service côté public.</p>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                            <label class="file-label" for="svc-file-replace" style="font-size:0.88rem;padding:8px 18px;">
-                                🔄 Remplacer l'image
-                                <input type="file" id="svc-file-replace" accept="image/*" style="display:none;">
-                            </label>
-                            <button type="button" class="btn btn-outline" id="svc-btn-remove" style="border-color:#ef4444;color:#ef4444;font-size:0.88rem;padding:7px 16px;">
-                                🗑 Retirer l'image
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. PLACEHOLDER SI AUCUNE IMAGE -->
-                <div id="svc-placeholder-box" class="svc-placeholder-box" style="display:none;">
-                    <p style="font-weight:700;margin-bottom:6px;">⚠️ Aucune image personnalisée enregistrée pour ce service.</p>
-                    <p style="margin-bottom:12px;font-size:0.88rem;">Ce service utilise une icône de secours sur le site. Importez une image ci-dessous.</p>
-                    <label class="file-label" for="svc-file-empty" style="font-size:0.88rem;padding:8px 18px;">
-                        📁 Choisir une nouvelle image depuis mon appareil
-                        <input type="file" id="svc-file-empty" accept="image/*" style="display:none;">
-                    </label>
-                </div>
-
-                <!-- 3. ZONE DE PRÉVISUALISATION DE LA NOUVELLE IMAGE IMPORTÉE -->
-                <div id="svc-pending-box" class="svc-pending-box">
-                    <img id="svc-pending-preview" class="svc-preview-img" alt="Nouvelle image importée">
-                    <div style="flex:1;min-width:200px;">
-                        <span style="display:inline-block;background:#3b82f6;color:white;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:4px;text-transform:uppercase;margin-bottom:6px;">
-                            📸 Nouvelle image importée (Prévisualisation)
-                        </span>
-                        <p style="font-weight:700;font-size:0.95rem;color:#1e3a8a;margin-bottom:6px;">Vérifiez que c'est bien la bonne image avant d'enregistrer.</p>
-                        <p style="font-size:0.85rem;color:#475569;margin-bottom:12px;">En cliquant sur Enregistrer, cette nouvelle image remplacera l'ancienne et sera conservée même après actualisation.</p>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                            <button type="button" class="btn btn-primary" id="svc-btn-save-pending" style="font-size:0.9rem;padding:8px 20px;">
-                                💾 Enregistrer la nouvelle image
-                            </button>
-                            <button type="button" class="btn btn-outline" id="svc-btn-cancel-pending" style="font-size:0.9rem;padding:8px 14px;">
-                                ✕ Annuler
-                            </button>
-                        </div>
-                    </div>
+                <div id="recent-orders-list">
+                    <div class="empty-state"><div class="empty-icon">📭</div><p>Aucune commande reçue.</p></div>
                 </div>
             </div>
-
-            <!-- Ajout d'un nouveau service -->
-            <form id="add-service-form" style="display:flex;gap:10px;max-width:500px;margin-bottom:24px;">
-                <input type="text" id="new-service-input" class="form-control" placeholder="Nom du nouveau service (ex: Flyer)" required>
-                <button type="submit" class="btn btn-primary" style="white-space:nowrap;">+ Nouveau Service</button>
-            </form>
-
-            <h3 style="font-size:0.95rem;font-weight:600;color:var(--c-primary-dark);margin-bottom:12px;">Vue d'ensemble de tous les services :</h3>
-            <div id="service-images-list"></div>
         </div>
 
-        <!-- ══════════════════════════════════════════════════════
-             4. COMPARAISON MA CRÉATION VS IA
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">⚡ Section « La Différence » (Ma Création vs IA)</div>
-            <p style="color:var(--c-text-muted);margin-bottom:20px;">Les images et informations déjà enregistrées sont affichées ci-dessous. Modifiez-les et enregistrez.</p>
-            <form id="diff-form">
-                <div class="grid-2">
-                    <div style="border:1px solid #bfdbfe;background:#eff6ff;padding:18px;border-radius:10px;">
-                        <h4 style="color:#1e40af;margin-bottom:12px;font-size:1rem;font-weight:700;">👤 Ma Création (Artisanale)</h4>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Titre</label>
-                            <input type="text" id="diff-mine-title" class="form-control" placeholder="Ex: AFFICHE BY PIXORA">
-                        </div>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Service / Domaine</label>
-                            <input type="text" id="diff-mine-service" class="form-control" placeholder="Ex: Affiche publicitaire — Plombier">
-                        </div>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Description</label>
-                            <input type="text" id="diff-mine-desc" class="form-control" placeholder="Ex: Design soigné et vectoriel">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Image</label>
-                            <label class="file-label" for="diff-mine-file" style="margin-bottom:8px;font-size:0.85rem;padding:6px 14px;">
-                                📁 Changer l'image
-                                <input type="file" id="diff-mine-file" accept="image/*" style="display:none;">
-                            </label>
-                            <img id="diff-mine-preview" src="" style="max-height:100px;display:none;border-radius:6px;border:1px solid #cbd5e1;margin-top:6px;max-width:100%;" alt="Aperçu">
-                        </div>
-                    </div>
-                    <div style="border:1px solid #e9d5ff;background:#faf5ff;padding:18px;border-radius:10px;">
-                        <h4 style="color:#6b21a8;margin-bottom:12px;font-size:1rem;font-weight:700;">🤖 Création par IA</h4>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Titre</label>
-                            <input type="text" id="diff-ai-title" class="form-control" placeholder="Ex: AFFICHE BY IA">
-                        </div>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Service / Domaine</label>
-                            <input type="text" id="diff-ai-service" class="form-control" placeholder="Ex: Affiche publicitaire — Restaurant">
-                        </div>
-                        <div class="form-group" style="margin-bottom:10px;">
-                            <label>Description</label>
-                            <input type="text" id="diff-ai-desc" class="form-control" placeholder="Ex: Génération automatique par algorithme">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Image</label>
-                            <label class="file-label" for="diff-ai-file" style="margin-bottom:8px;font-size:0.85rem;padding:6px 14px;">
-                                📁 Changer l'image
-                                <input type="file" id="diff-ai-file" accept="image/*" style="display:none;">
-                            </label>
-                            <img id="diff-ai-preview" src="" style="max-height:100px;display:none;border-radius:6px;border:1px solid #cbd5e1;margin-top:6px;max-width:100%;" alt="Aperçu">
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top:18px;display:flex;gap:10px;">
-                    <button type="submit" class="btn btn-primary">💾 Enregistrer la comparaison</button>
-                    <button type="button" class="btn btn-outline" id="btn-reset-diff">↺ Réinitialiser</button>
-                </div>
-            </form>
-        </div>
+        <!-- ══════════════ PAGE: CRÉATIONS ══════════════ -->
+        <div class="admin-page" id="page-creations">
 
-        <!-- ══════════════════════════════════════════════════════
-             5. CATALOGUE COMPLET
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">📁 Gestion Complète du Catalogue</div>
-            <p style="color:var(--c-text-muted);margin-bottom:24px;">Visualisez toutes vos créations enregistrées. Cliquez sur une image pour l'agrandir. Utilisez ✏️ Modifier pour voir et gérer toutes les images d'une création.</p>
+            <!-- AJOUT RAPIDE -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title"><span class="card-badge badge-violet">Nouveau</span> Ajouter des créations</div>
+                </div>
 
-            <!-- Formulaire d'ajout -->
-            <div class="add-form-box">
-                <h3>➕ Ajouter une nouvelle création</h3>
-                <form id="creation-form" class="grid-2">
-                    <div class="form-group">
-                        <label>Type de création</label>
-                        <select id="c-type" class="form-control">
-                            <option value="MY_CREATION">Ma Création (Portfolio)</option>
-                            <option value="AI_CREATION">Création par IA (Comparaison)</option>
+                <div class="form-row" style="margin-bottom:16px;">
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label">Catégorie / Service *</label>
+                        <select class="form-control" id="upload-category">
+                            <option value="">— Sélectionner —</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Titre <span style="color:#ef4444;">*</span></label>
-                        <input type="text" id="c-title" class="form-control" placeholder="Ex: FLYERS BY PIXORA" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Domaine <span style="color:#ef4444;">*</span></label>
-                        <select id="c-domain" class="form-control select-domain"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Service <span style="color:#ef4444;">*</span></label>
-                        <select id="c-service" class="form-control select-service"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Prix (F CFA — facultatif)</label>
-                        <input type="number" id="c-price" class="form-control" placeholder="Ex: 5000" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Description (facultatif)</label>
-                        <input type="text" id="c-desc" class="form-control" placeholder="Description courte...">
-                    </div>
-
-                    <!-- Images — sélection multiple -->
-                    <div class="form-group" style="grid-column:1/-1;">
-                        <label>Images <span style="color:#ef4444;">*</span> <span style="font-size:0.8rem;color:#64748b;">(vous pouvez en ajouter plusieurs)</span></label>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-                            <label class="file-label" for="c-img-file">
-                                📁 Importer depuis l'ordinateur
-                                <input type="file" id="c-img-file" accept="image/*" multiple style="display:none;">
-                            </label>
-                        </div>
-                        <input type="url" id="c-img-url" class="form-control" placeholder="Ou coller une URL d'image puis appuyer sur Entrée...">
-                        <div id="add-images-preview"></div>
-                    </div>
-
-                    <div class="form-group" style="grid-column:1/-1;">
-                        <button type="submit" class="btn btn-primary" style="padding:12px 28px;font-size:1rem;">✅ Ajouter au catalogue</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Liste des créations existantes -->
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-                <h3 style="font-size:1.05rem;font-weight:700;color:var(--c-primary-dark);margin:0;">
-                    Catalogue (<span id="creations-count">0</span> créations enregistrées)
-                </h3>
-                <div style="display:flex;gap:6px;">
-                    <button type="button" class="filter-tab-btn active" data-cat="ALL">Toutes</button>
-                    <button type="button" class="filter-tab-btn" data-cat="MY_CREATION">Mes Créations</button>
-                    <button type="button" class="filter-tab-btn" data-cat="AI_CREATION">Créations IA</button>
-                </div>
-            </div>
-            <div id="creations-list"></div>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════
-             6. TARIFS
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">💰 Gestion des Tarifs par Service</div>
-            <p style="color:var(--c-text-muted);margin-bottom:20px;">Définissez les prix (en F CFA) pour chaque formule (Basic, Standard, Premium) de vos services.</p>
-            <form id="prices-form">
-                <div id="prices-list" class="grid-2"></div>
-                <div style="margin-top:24px;">
-                    <button type="submit" class="btn btn-primary">💾 Enregistrer les tarifs</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- ══════════════════════════════════════════════════════
-             7. WHATSAPP
-        ═══════════════════════════════════════════════════════ -->
-        <div class="admin-panel">
-            <div class="admin-panel-title">📱 Numéro WhatsApp de Commande</div>
-            <form id="settings-form" style="max-width:400px;">
-                <div class="form-group">
-                    <label for="admin-wa">Numéro avec indicatif (ex: +226 03 24 95 48)</label>
-                    <input type="text" id="admin-wa" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary">💾 Enregistrer le numéro</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- ══════════════════════════════════════════════════════════
-         MODAL MODIFICATION CRÉATION (multi-images)
-    ══════════════════════════════════════════════════════════ -->
-    <div class="modal-edit" id="edit-creation-modal">
-        <div class="modal-edit-card">
-            <h3>✏️ Modifier la création</h3>
-            <form id="edit-creation-form">
-                <input type="hidden" id="edit-c-id">
-
-                <!-- Galerie des images existantes -->
-                <div class="modal-gallery-box">
-                    <span class="modal-gallery-label">📸 Images enregistrées — cliquez pour agrandir, 🔄 pour remplacer, ✕ pour supprimer</span>
-                    <div id="edit-images-gallery"></div>
-                    <div style="margin-top:12px;">
-                        <label class="file-label" for="edit-add-img-file" style="font-size:0.85rem;padding:7px 16px;">
-                            ➕ Ajouter une image
-                            <input type="file" id="edit-add-img-file" accept="image/*" multiple style="display:none;">
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Informations de la création -->
-                <div class="grid-2" style="gap:14px;">
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Type</label>
-                        <select id="edit-c-type" class="form-control">
-                            <option value="MY_CREATION">Ma Création (Portfolio)</option>
-                            <option value="AI_CREATION">Création par IA (Comparaison)</option>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label">Domaine d'activité</label>
+                        <select class="form-control" id="upload-domain">
+                            <option value="Général">Général</option>
                         </select>
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Titre <span style="color:#ef4444;">*</span></label>
-                        <input type="text" id="edit-c-title" class="form-control" required>
+                </div>
+
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="fileInput" accept="image/*" multiple>
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Glisser-déposer vos images ici</div>
+                    <div class="upload-sub">ou cliquer pour sélectionner — JPG, PNG, WEBP — Sélection multiple possible</div>
+                </div>
+
+                <div id="previewsContainer" style="display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 10px;">
+                        <span style="font-size:0.84rem;font-weight:600;color:rgba(255,255,255,0.7);" id="previewCount">0 image(s) sélectionnée(s)</span>
+                        <button class="btn btn-outline btn-sm" id="clearPreviewsBtn">✕ Effacer</button>
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Domaine</label>
-                        <select id="edit-c-domain" class="form-control"></select>
+                    <div class="previews-grid" id="previewsGrid"></div>
+                    <div class="progress-bar-wrap" id="progressWrap" style="display:none;">
+                        <div class="progress-bar-fill" id="progressBar"></div>
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Service</label>
-                        <select id="edit-c-service" class="form-control"></select>
+                    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="btn btn-gradient" id="uploadBtn">⬆️ Enregistrer les créations</button>
+                        <span id="uploadInfo" style="font-size:0.8rem;color:var(--c-muted);align-self:center;"></span>
                     </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Prix (F CFA)</label>
-                        <input type="number" id="edit-c-price" class="form-control" min="0">
-                    </div>
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label>Description</label>
-                        <input type="text" id="edit-c-desc" class="form-control">
+                </div>
+            </div>
+
+            <!-- GALERIE DE GESTION -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">🖼️ Gérer les créations existantes</div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                        <select class="form-control" id="filter-category" style="padding:7px 12px;font-size:0.82rem;min-width:140px;">
+                            <option value="ALL">Toutes catégories</option>
+                        </select>
+                        <select class="form-control" id="filter-domain" style="padding:7px 12px;font-size:0.82rem;min-width:140px;">
+                            <option value="ALL">Tous domaines</option>
+                        </select>
+                        <span id="creation-count" style="font-size:0.8rem;color:var(--c-muted);">0 création(s)</span>
                     </div>
                 </div>
 
-                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:22px;">
-                    <button type="button" class="btn btn-outline" id="btn-cancel-edit">✕ Annuler</button>
-                    <button type="submit" class="btn btn-primary">💾 Enregistrer les modifications</button>
+                <div class="creations-admin-grid" id="adminCreationsGrid">
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div class="empty-icon">🎨</div>
+                        <p>Aucune création encore ajoutée.<br>Commencez par importer des images ci-dessus.</p>
+                    </div>
                 </div>
-            </form>
+            </div>
+        </div>
+
+        <!-- ══════════════ PAGE: SERVICES & TARIFS ══════════════ -->
+        <div class="admin-page" id="page-services">
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title"><span class="card-badge badge-orange">Tarifs</span> Services & Tarifs</div>
+                    <button class="btn btn-gradient btn-sm" id="savePricesBtn">💾 Enregistrer les tarifs</button>
+                </div>
+                <p style="color:var(--c-muted);font-size:0.84rem;margin-bottom:20px;">Modifiez les prix Basic / Standard / Premium de chaque service. Les changements sont synchronisés automatiquement avec la vitrine.</p>
+                <div class="prices-grid" id="adminPricesGrid"></div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title"><span class="card-badge badge-blue">Images</span> Image de présentation des services</div>
+                </div>
+                <p style="color:var(--c-muted);font-size:0.84rem;margin-bottom:20px;">Définissez une image d'illustration pour chaque service (affichée dans la vitrine, section "Nos Services").</p>
+                <div class="prices-grid" id="adminServiceImagesGrid"></div>
+            </div>
+        </div>
+
+        <!-- ══════════════ PAGE: COMMANDES ══════════════ -->
+        <div class="admin-page" id="page-orders">
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">📋 Toutes les commandes</div>
+                    <span id="orders-total-count" style="font-size:0.82rem;color:var(--c-muted);">0 commande(s)</span>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="orders-table" id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Client</th>
+                                <th>Services</th>
+                                <th>Total</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--c-muted);">Aucune commande reçue.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════ PAGE: PARAMÈTRES ══════════════ -->
+        <div class="admin-page" id="page-settings">
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">⚙️ Informations générales</div>
+                    <button class="btn btn-gradient btn-sm" id="saveSettingsBtn">💾 Enregistrer</button>
+                </div>
+
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Numéro WhatsApp</strong><span>Utilisé pour les commandes</span></div>
+                    <div class="settings-control"><input class="form-control" id="set-wa" placeholder="+226 03 24 95 48"></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Logo (URL)</strong><span>URL directe de l'image</span></div>
+                    <div class="settings-control"><input class="form-control" id="set-logo" placeholder="https://... ou assets/images/logo.png"></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Titre de la vitrine</strong><span>H1 principal de la page</span></div>
+                    <div class="settings-control"><input class="form-control" id="set-hero-title" placeholder="BIENVENUE CHEZ PIXORA ACADEMY"></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Sous-titre</strong><span>Accroche principale</span></div>
+                    <div class="settings-control"><input class="form-control" id="set-hero-sub" placeholder="Des créations graphiques..."></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Pied de page</strong><span>Texte du footer</span></div>
+                    <div class="settings-control"><input class="form-control" id="set-footer" placeholder="© 2026 Pixora Academy..."></div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">☁️ Synchronisation Firebase (Firestore & Storage)</div>
+                    <div id="fb-status-pill" class="status-badge" style="background:rgba(255,210,0,0.15);color:#FFD200;border:1px solid rgba(255,210,0,0.3);">Mode Local</div>
+                </div>
+                <p style="color:var(--c-muted);font-size:0.84rem;margin-bottom:18px;">
+                    Connectez votre projet Firebase pour que les créations, prix et images soient automatiquement synchronisés en temps réel entre cet espace admin et la vitrine client sur tous les appareils.
+                </p>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Project ID</strong><span>Identifiant du projet Firebase</span></div>
+                    <div class="settings-control"><input class="form-control" id="fb-projectId" placeholder="pixora-studio"></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>API Key</strong><span>Clé d'API Web Firebase</span></div>
+                    <div class="settings-control"><input class="form-control" id="fb-apiKey" placeholder="AIzaSy..."></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Auth Domain</strong><span>ex: pixora-studio.firebaseapp.com</span></div>
+                    <div class="settings-control"><input class="form-control" id="fb-authDomain" placeholder="pixora-studio.firebaseapp.com"></div>
+                </div>
+                <div class="settings-row">
+                    <div class="settings-label"><strong>Storage Bucket</strong><span>ex: pixora-studio.appspot.com</span></div>
+                    <div class="settings-control"><input class="form-control" id="fb-storageBucket" placeholder="pixora-studio.appspot.com ou .firebasestorage.app"></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+                    <button class="btn btn-gradient btn-sm" id="btnSaveFirebase">💾 Enregistrer & Connecter</button>
+                    <button class="btn btn-outline btn-sm" id="btnDisconnectFirebase" style="color:#ff6b6b;border-color:rgba(255,107,107,0.4);">🔌 Déconnecter</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">🔗 Liens permanents</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:14px;">
+                    <div>
+                        <div style="font-size:0.78rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🌐 VITRINE CLIENT (lien public)</div>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                            <code id="vitrine-url" style="background:rgba(255,255,255,0.06);border:1px solid var(--c-border-s);padding:8px 14px;border-radius:8px;font-size:0.84rem;color:var(--c-cyan);flex:1;word-break:break-all;"></code>
+                            <button class="btn btn-outline btn-sm" onclick="copyUrl('vitrine-url')">📋 Copier</button>
+                            <a id="vitrine-open" href="#" target="_blank" class="btn btn-primary btn-sm">↗ Ouvrir</a>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.78rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">🔐 ADMINISTRATION (lien privé)</div>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                            <code id="admin-url" style="background:rgba(255,255,255,0.06);border:1px solid var(--c-border-s);padding:8px 14px;border-radius:8px;font-size:0.84rem;color:#C4ADFF;flex:1;word-break:break-all;"></code>
+                            <button class="btn btn-outline btn-sm" onclick="copyUrl('admin-url')">📋 Copier</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main><!-- /admin-main -->
+</div><!-- /admin-layout -->
+
+<!-- ══════════ LIGHTBOX ══════════ -->
+<div class="admin-lightbox" id="adminLightbox">
+    <div class="lightbox-inner">
+        <button class="lightbox-close-btn" id="lightboxCloseBtn">×</button>
+        <img id="lightboxImg" src="" alt="">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+</div>
+
+<!-- ══════════ CONFIRM DIALOG ══════════ -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-card">
+        <h3 id="confirmTitle">Confirmer la suppression</h3>
+        <p id="confirmMsg">Cette action est irréversible.</p>
+        <div class="confirm-actions">
+            <button class="btn btn-outline" id="confirmCancel">Annuler</button>
+            <button class="btn btn-danger" id="confirmOk">Supprimer</button>
         </div>
     </div>
+</div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         OVERLAY PLEIN ÉCRAN
-    ══════════════════════════════════════════════════════════ -->
-    <div id="img-fullscreen-overlay">
-        <button id="img-fullscreen-close" title="Fermer (ou cliquer en dehors)">✕</button>
-        <img id="img-fullscreen-img" src="" alt="Aperçu">
-        <p id="img-fullscreen-title"></p>
+<!-- ══════════ EDIT MODAL ══════════ -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-card">
+        <h3>✏️ Modifier la création</h3>
+        <input type="hidden" id="editCreationId">
+        <div class="form-group">
+            <label class="form-label">Titre</label>
+            <input class="form-control" id="editTitle" placeholder="Titre de la création">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Catégorie / Service</label>
+            <select class="form-control" id="editCategory"></select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Domaine</label>
+            <select class="form-control" id="editDomain"></select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <input class="form-control" id="editDesc" placeholder="Description optionnelle">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Prix (F CFA)</label>
+            <input class="form-control" id="editPrice" placeholder="Ex: 5000" type="number">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Remplacer l'image</label>
+            <input type="file" id="editImageFile" accept="image/*" class="form-control" style="padding:8px 12px;">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="btn btn-gradient" id="saveEditBtn">💾 Enregistrer</button>
+            <button class="btn btn-outline" onclick="document.getElementById('editModal').classList.remove('active')">Annuler</button>
+        </div>
     </div>
+</div>
 
-    <script src="js/data.js"></script>
-    <script>
-        // Gestion du second input logo (quand aucun logo)
-        document.getElementById('logo-file-input-empty').addEventListener('change', function(e) {
-            document.getElementById('logo-file-input').files = e.target.files;
-            document.getElementById('logo-file-input').dispatchEvent(new Event('change'));
+<!-- ══════════ TOAST ══════════ -->
+<div class="toast" id="toast">
+    <span id="toast-icon">✅</span>
+    <span id="toast-msg"></span>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<!-- Data -->
+<script src="js/data.js"></script>
+<script src="js/data-manager.js"></script>
+<script src="js/ai-seed.js"></script>
+<script src="js/admin-creations.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   PIXORA ACADEMY — Administration JavaScript Principal
+══════════════════════════════════════════════════════════════ */
+
+// ─── Utilitaires ──────────────────────────────────────────────
+function showToast(msg, icon='✅') {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent  = msg;
+    document.getElementById('toast-icon').textContent = icon;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function copyUrl(elemId) {
+    const text = document.getElementById(elemId).textContent.trim();
+    navigator.clipboard.writeText(text).then(() => showToast('Lien copié dans le presse-papiers !', '📋'));
+}
+
+function confirmDialog(title, msg, onOk) {
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent   = msg;
+    const overlay = document.getElementById('confirmOverlay');
+    overlay.classList.add('active');
+    const okBtn = document.getElementById('confirmOk');
+    const newOk = okBtn.cloneNode(true);
+    okBtn.parentNode.replaceChild(newOk, okBtn);
+    newOk.addEventListener('click', () => { overlay.classList.remove('active'); onOk(); });
+    document.getElementById('confirmCancel').onclick = () => overlay.classList.remove('active');
+}
+
+// ─── Navigation entre pages ───────────────────────────────────
+function showPage(pageId) {
+    document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + pageId).classList.add('active');
+    const navLink = document.getElementById('nav-' + pageId);
+    if (navLink) navLink.classList.add('active');
+
+    const titles = { dashboard:'Tableau de bord', creations:'Mes Créations', services:'Services & Tarifs', orders:'Commandes', settings:'Paramètres' };
+    document.getElementById('topbar-title').textContent = titles[pageId] || '';
+
+    closeSidebar();
+    if (pageId === 'creations') renderCreationsGrid();
+    if (pageId === 'services')  renderServices();
+    if (pageId === 'orders')    renderOrders();
+    if (pageId === 'settings')  { loadSettings(); updateSyncStatus(window.FirebaseSync && window.FirebaseSync.isReady()); }
+    if (pageId === 'dashboard') renderDashboard();
+}
+
+// ─── Sidebar mobile ───────────────────────────────────────────
+function openSidebar()  { document.getElementById('adminSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('active'); }
+function closeSidebar() { document.getElementById('adminSidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('active'); }
+document.getElementById('sidebarToggle').onclick = openSidebar;
+document.getElementById('sidebarOverlay').onclick  = closeSidebar;
+document.querySelectorAll('.sidebar-nav a').forEach(a => {
+    a.addEventListener('click', (e) => {
+        const page = a.dataset.page;
+        if (page) { e.preventDefault(); showPage(page); }
+    });
+});
+
+// ─── Lightbox ─────────────────────────────────────────────────
+function openLightbox(src, caption='') {
+    const lb = document.getElementById('adminLightbox');
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxCaption').textContent = caption;
+    lb.classList.add('active');
+}
+function closeLightbox() {
+    const lb = document.getElementById('adminLightbox');
+    lb.classList.remove('active');
+    document.getElementById('lightboxImg').src = '';
+}
+document.getElementById('lightboxCloseBtn').onclick = closeLightbox;
+document.getElementById('adminLightbox').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('adminLightbox')) closeLightbox();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ─── Logo sidebar ─────────────────────────────────────────────
+function renderSidebarLogo() {
+    const d = window.getData();
+    const src = (d.settings && d.settings.logoUrl && !d.settings.logoUrl.startsWith('data:image/svg'))
+        ? d.settings.logoUrl : 'assets/images/logo.png';
+    document.getElementById('sidebarLogo').src = src;
+}
+
+// ─── Remplir les selects catégories/domaines ──────────────────
+function populateSelects() {
+    const data = window.getData();
+    const cats   = data.services || [];
+    const doms   = data.domains  || [];
+
+    ['upload-category','filter-category','editCategory'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const hasAll = id.startsWith('filter');
+        el.innerHTML = hasAll ? '<option value="ALL">Toutes catégories</option>' : '<option value="">— Sélectionner —</option>';
+        cats.forEach(c => {
+            const o = document.createElement('option');
+            o.value = c; o.textContent = c;
+            el.appendChild(o);
         });
-    </script>
-    <script src="js/admin.js"></script>
+    });
+
+    ['upload-domain','filter-domain','editDomain'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const hasAll = id.startsWith('filter');
+        el.innerHTML = hasAll ? '<option value="ALL">Tous domaines</option>' : '<option value="Général">Général</option>';
+        doms.forEach(d => {
+            if (d === 'Général') return;
+            const o = document.createElement('option');
+            o.value = d; o.textContent = d;
+            el.appendChild(o);
+        });
+    });
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────────
+function renderDashboard() {
+    const data   = window.getData();
+    const orders = window.getOrders ? window.getOrders() : [];
+    const creations = (data.creations || []).filter(c => c.type === 'MY_CREATION');
+
+    document.getElementById('stat-creations').textContent = creations.length;
+    document.getElementById('stat-services').textContent  = (data.services || []).length;
+    document.getElementById('stat-orders').textContent    = orders.length;
+    document.getElementById('stat-categories').textContent= new Set(creations.map(c=>c.service).filter(Boolean)).size;
+
+    // Badge orders
+    const badge = document.getElementById('orders-badge');
+    const newOrders = orders.filter(o => o.status === 'Nouvelle').length;
+    if (newOrders > 0) { badge.textContent = newOrders; badge.style.display = 'inline'; }
+
+    // Dernières commandes
+    const el = document.getElementById('recent-orders-list');
+    if (orders.length === 0) {
+        el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Aucune commande reçue.</p></div>';
+        return;
+    }
+    const recent = orders.slice(0, 5);
+    el.innerHTML = `<div style="overflow-x:auto;"><table class="orders-table">
+        <thead><tr><th>Date</th><th>Client</th><th>Total</th><th>Statut</th></tr></thead>
+        <tbody>${recent.map(o => `<tr>
+            <td>${o.date || ''}</td>
+            <td>${o.client ? o.client.nom + ' ' + o.client.prenom : ''}</td>
+            <td style="color:var(--c-cyan);font-weight:700;">${(o.total||0).toLocaleString('fr-FR')} F</td>
+            <td>${statusBadge(o.status)}</td>
+        </tr>`).join('')}</tbody>
+    </table></div>`;
+}
+
+function statusBadge(status) {
+    const map = { 'Nouvelle':'status-new','En cours':'status-progress','Terminée':'status-done','Annulée':'status-cancel','En attente':'status-progress' };
+    const cls = map[status] || 'status-new';
+    return `<span class="status-badge ${cls}">${status || 'Nouvelle'}</span>`;
+}
+
+// ─── GRILLE CRÉATIONS ─────────────────────────────────────────
+function renderCreationsGrid() {
+    const catFilter = document.getElementById('filter-category').value;
+    const domFilter = document.getElementById('filter-domain').value;
+    const creations = window.AdminCreations.getCreations(catFilter, domFilter);
+
+    document.getElementById('creation-count').textContent = creations.length + ' création(s)';
+
+    const grid = document.getElementById('adminCreationsGrid');
+    if (creations.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-icon">🎨</div>
+            <p>Aucune création dans cette catégorie.<br>Ajoutez des images avec le module ci-dessus.</p>
+        </div>`;
+        return;
+    }
+
+    grid.innerHTML = creations.map(c => `
+        <div class="creation-admin-card" id="card-${c.id}">
+            <div class="creation-admin-img-wrap" onclick="openLightbox('${escHtml(c.image)}', '${escHtml(c.title)}')">
+                <img src="${escHtml(c.image)}" alt="${escHtml(c.title)}" loading="lazy" onerror="this.src='https://placehold.co/300x200?text=Image'">
+                <div class="img-overlay"><span class="img-overlay-icon">🔍</span></div>
+            </div>
+            <div class="creation-admin-body">
+                <div class="creation-admin-title" title="${escHtml(c.title)}">${escHtml(c.title)}</div>
+                <div class="creation-admin-tags">
+                    ${c.service ? `<span class="tag-chip">${escHtml(c.service)}</span>` : ''}
+                    ${c.domain  ? `<span class="tag-chip domain">${escHtml(c.domain)}</span>`  : ''}
+                    ${c.price   ? `<span class="tag-chip" style="background:rgba(255,210,0,0.15);color:#FFD200;border-color:rgba(255,210,0,0.3);">${Number(c.price).toLocaleString('fr-FR')} F</span>` : ''}
+                </div>
+                <div class="creation-admin-actions">
+                    <button class="btn btn-outline btn-xs" onclick="openEditModal('${c.id}')">✏️ Modifier</button>
+                    <label class="btn btn-outline btn-xs" title="Remplacer l'image" style="cursor:pointer;">
+                        🔄 <input type="file" accept="image/*" style="display:none;" onchange="handleReplace('${c.id}', this)">
+                    </label>
+                    <button class="btn btn-danger btn-xs" onclick="handleDelete('${c.id}')">🗑️</button>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// Filtres
+document.getElementById('filter-category').addEventListener('change', renderCreationsGrid);
+document.getElementById('filter-domain').addEventListener('change',   renderCreationsGrid);
+
+// ─── UPLOAD D'IMAGES ──────────────────────────────────────────
+let selectedFiles = [];
+
+const fileInput   = document.getElementById('fileInput');
+const uploadZone  = document.getElementById('uploadZone');
+const previewsCon = document.getElementById('previewsContainer');
+const previewsGrid= document.getElementById('previewsGrid');
+
+function handleFileSelect(files) {
+    const newFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (!newFiles.length) return;
+    selectedFiles = selectedFiles.concat(newFiles);
+    renderPreviews();
+}
+
+function renderPreviews() {
+    if (!selectedFiles.length) { previewsCon.style.display = 'none'; return; }
+    previewsCon.style.display = 'block';
+    document.getElementById('previewCount').textContent = selectedFiles.length + ' image(s) sélectionnée(s)';
+    previewsGrid.innerHTML = '';
+    selectedFiles.forEach((file, idx) => {
+        const url  = URL.createObjectURL(file);
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `<img src="${url}" alt="${escHtml(file.name)}">
+            <button class="preview-remove" data-idx="${idx}">✕</button>`;
+        previewsGrid.appendChild(item);
+    });
+    previewsGrid.querySelectorAll('.preview-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+            selectedFiles.splice(parseInt(btn.dataset.idx), 1);
+            renderPreviews();
+        });
+    });
+}
+
+fileInput.addEventListener('change', () => handleFileSelect(fileInput.files));
+document.getElementById('clearPreviewsBtn').addEventListener('click', () => { selectedFiles = []; renderPreviews(); });
+
+// Drag & Drop
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave',() => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    handleFileSelect(e.dataTransfer.files);
+});
+
+// Bouton upload
+document.getElementById('uploadBtn').addEventListener('click', async () => {
+    const category = document.getElementById('upload-category').value;
+    const domain   = document.getElementById('upload-domain').value || 'Général';
+
+    if (!category) { showToast('Veuillez sélectionner une catégorie.', '⚠️'); return; }
+    if (!selectedFiles.length) { showToast('Aucune image sélectionnée.', '⚠️'); return; }
+
+    const btn      = document.getElementById('uploadBtn');
+    const progress = document.getElementById('progressBar');
+    const wrap     = document.getElementById('progressWrap');
+    const info     = document.getElementById('uploadInfo');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Upload en cours...';
+    wrap.style.display = 'block';
+    info.textContent = '';
+    progress.style.width = '0%';
+
+    try {
+        await window.AdminCreations.addCreations(selectedFiles, category, domain, (done, total, creation) => {
+            progress.style.width = Math.round((done / total) * 100) + '%';
+            info.textContent = done + ' / ' + total + ' image(s) envoyée(s)';
+        });
+
+        showToast(selectedFiles.length + ' création(s) ajoutée(s) avec succès !', '✅');
+        selectedFiles = [];
+        renderPreviews();
+        renderCreationsGrid();
+        renderDashboard();
+    } catch (e) {
+        showToast('Erreur lors de l\'upload : ' + e.message, '❌');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '⬆️ Enregistrer les créations';
+        wrap.style.display = 'none';
+        progress.style.width = '0%';
+    }
+});
+
+// ─── SUPPRESSION ─────────────────────────────────────────────
+async function handleDelete(id) {
+    confirmDialog('Supprimer cette création ?', 'L\'image sera supprimée définitivement de la vitrine et du stockage.', async () => {
+        await window.AdminCreations.deleteCreation(id);
+        document.getElementById('card-' + id)?.remove();
+        document.getElementById('creation-count').textContent = document.querySelectorAll('.creation-admin-card').length + ' création(s)';
+        renderDashboard();
+        showToast('Création supprimée.', '🗑️');
+    });
+}
+
+// ─── REMPLACEMENT D'IMAGE ────────────────────────────────────
+async function handleReplace(id, input) {
+    if (!input.files || !input.files[0]) return;
+    showToast('Remplacement en cours...', '⏳');
+    try {
+        await window.AdminCreations.replaceCreationImage(id, input.files[0]);
+        renderCreationsGrid();
+        showToast('Image remplacée avec succès !', '✅');
+    } catch (e) {
+        showToast('Erreur : ' + e.message, '❌');
+    }
+}
+
+// ─── ÉDITION ─────────────────────────────────────────────────
+function openEditModal(id) {
+    const data     = window.getData();
+    const creation = data.creations.find(c => c.id === id);
+    if (!creation) return;
+
+    document.getElementById('editCreationId').value = id;
+    document.getElementById('editTitle').value      = creation.title || '';
+    document.getElementById('editDesc').value       = creation.description || '';
+    document.getElementById('editPrice').value      = creation.price || '';
+    document.getElementById('editCategory').value   = creation.service || '';
+    document.getElementById('editDomain').value     = creation.domain  || '';
+    document.getElementById('editImageFile').value  = '';
+
+    document.getElementById('editModal').classList.add('active');
+}
+
+document.getElementById('saveEditBtn').addEventListener('click', async () => {
+    const id      = document.getElementById('editCreationId').value;
+    const imgFile = document.getElementById('editImageFile').files[0];
+
+    const fields = {
+        title:       document.getElementById('editTitle').value.trim(),
+        service:     document.getElementById('editCategory').value,
+        domain:      document.getElementById('editDomain').value,
+        description: document.getElementById('editDesc').value.trim(),
+        price:       document.getElementById('editPrice').value
+    };
+
+    if (imgFile) {
+        showToast('Upload de la nouvelle image...', '⏳');
+        await window.AdminCreations.replaceCreationImage(id, imgFile);
+    }
+    window.AdminCreations.updateCreation(id, fields);
+    document.getElementById('editModal').classList.remove('active');
+    renderCreationsGrid();
+    showToast('Création mise à jour !', '✅');
+});
+
+document.getElementById('editModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('editModal')) document.getElementById('editModal').classList.remove('active');
+});
+
+// ─── SERVICES & TARIFS ────────────────────────────────────────
+function renderServices() {
+    const data = window.getData();
+    renderPricesGrid(data);
+    renderServiceImagesGrid(data);
+}
+
+function renderPricesGrid(data) {
+    const grid = document.getElementById('adminPricesGrid');
+    grid.innerHTML = (data.services || []).map(s => {
+        const p = data.prices[s] || { basic:0, standard:0, premium:0 };
+        return `<div class="price-card-admin">
+            <h4>${escHtml(s)}</h4>
+            <div class="price-row-admin">
+                <label>BASIC</label>
+                <input type="number" value="${p.basic}" data-service="${escHtml(s)}" data-tier="basic" placeholder="0">
+            </div>
+            <div class="price-row-admin">
+                <label>STANDARD</label>
+                <input type="number" value="${p.standard}" data-service="${escHtml(s)}" data-tier="standard" placeholder="0">
+            </div>
+            <div class="price-row-admin">
+                <label>PREMIUM</label>
+                <input type="number" value="${p.premium}" data-service="${escHtml(s)}" data-tier="premium" placeholder="0">
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderServiceImagesGrid(data) {
+    const grid = document.getElementById('adminServiceImagesGrid');
+    grid.innerHTML = (data.services || []).map(s => {
+        const imgUrl = data.serviceImages ? data.serviceImages[s] || '' : '';
+        return `<div class="price-card-admin">
+            <h4>${escHtml(s)}</h4>
+            ${imgUrl ? `<img src="${escHtml(imgUrl)}" style="width:100%;height:100px;object-fit:contain;background:#0a0f2a;border-radius:6px;margin-bottom:8px;padding:4px;" onclick="openLightbox('${escHtml(imgUrl)}','${escHtml(s)}')">` : `<div style="height:80px;background:#0a0f2a;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--c-muted);font-size:0.8rem;margin-bottom:8px;">Aucune image</div>`}
+            <label class="btn btn-outline btn-xs btn-full" style="cursor:pointer;">
+                📁 ${imgUrl ? 'Remplacer' : 'Ajouter'} l'image
+                <input type="file" accept="image/*" style="display:none;" onchange="handleServiceImage('${escHtml(s)}', this)">
+            </label>
+        </div>`;
+    }).join('');
+}
+
+async function handleServiceImage(serviceName, input) {
+    if (!input.files || !input.files[0]) return;
+    showToast('Upload en cours...', '⏳');
+    try {
+        const url = await window.AdminCreations.addCreations([], serviceName, 'Général');
+        // Pour le service image, on fait un upload direct
+        const file = input.files[0];
+        let imageUrl;
+        if (window.AdminCreations.initStorage && typeof firebase !== 'undefined' && firebase.apps.length) {
+            const storageRef = firebase.storage().ref();
+            const safeSvc    = serviceName.replace(/[^a-zA-Z0-9_\-]/g, '_');
+            const ref        = storageRef.child(`services/${safeSvc}_${Date.now()}.${file.name.split('.').pop()}`);
+            await ref.put(file);
+            imageUrl = await ref.getDownloadURL();
+        } else {
+            imageUrl = await new Promise((res, rej) => {
+                const r = new FileReader();
+                r.onload = e => res(e.target.result);
+                r.onerror = rej;
+                r.readAsDataURL(file);
+            });
+        }
+        const data = window.getData();
+        if (!data.serviceImages) data.serviceImages = {};
+        data.serviceImages[serviceName] = imageUrl;
+        window.saveData(data);
+        renderServiceImagesGrid(data);
+        showToast('Image de service mise à jour !', '✅');
+    } catch(e) {
+        showToast('Erreur : ' + e.message, '❌');
+    }
+}
+
+document.getElementById('savePricesBtn').addEventListener('click', () => {
+    const data = window.getData();
+    document.querySelectorAll('#adminPricesGrid input').forEach(input => {
+        const svc  = input.dataset.service;
+        const tier = input.dataset.tier;
+        if (!svc || !tier) return;
+        if (!data.prices[svc]) data.prices[svc] = { basic:0, standard:0, premium:0 };
+        data.prices[svc][tier] = parseInt(input.value) || 0;
+    });
+    window.saveData(data);
+    showToast('Tarifs enregistrés et synchronisés avec la vitrine !', '✅');
+});
+
+// ─── COMMANDES ────────────────────────────────────────────────
+function renderOrders() {
+    const orders = window.getOrders ? window.getOrders() : [];
+    document.getElementById('orders-total-count').textContent = orders.length + ' commande(s)';
+
+    const body = document.getElementById('ordersBody');
+    if (!orders.length) {
+        body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--c-muted);">Aucune commande reçue.</td></tr>';
+        return;
+    }
+    body.innerHTML = orders.map(o => `<tr>
+        <td style="white-space:nowrap;">${o.date || ''} ${o.time ? '<br><small style="color:var(--c-muted);">'+o.time+'</small>' : ''}</td>
+        <td>
+            <div style="font-weight:700;">${escHtml(o.client ? o.client.nom+' '+o.client.prenom : '')}</div>
+            <small style="color:var(--c-muted);">${escHtml(o.client ? o.client.telephone || '' : '')}</small>
+        </td>
+        <td><small>${(o.services||[]).map(s=>escHtml(s.service)+' ('+escHtml(s.formule)+')').join('<br>')}</small></td>
+        <td style="font-weight:700;color:var(--c-cyan);">${(o.total||0).toLocaleString('fr-FR')} F</td>
+        <td>
+            <select class="form-control" style="padding:4px 8px;font-size:0.78rem;min-width:110px;" onchange="changeOrderStatus('${escHtml(o.id)}',this.value)">
+                ${['Nouvelle','En attente','En cours','Terminée','Annulée'].map(st=>`<option value="${st}" ${o.status===st?'selected':''}>${st}</option>`).join('')}
+            </select>
+        </td>
+        <td>
+            <button class="btn btn-danger btn-xs" onclick="deleteOrder('${escHtml(o.id)}')">🗑️</button>
+        </td>
+    </tr>`).join('');
+}
+
+function changeOrderStatus(id, newStatus) {
+    if (window.updateOrderStatus) window.updateOrderStatus(id, newStatus);
+    showToast('Statut mis à jour : ' + newStatus, '✅');
+}
+
+function deleteOrder(id) {
+    confirmDialog('Supprimer cette commande ?', 'La commande sera définitivement supprimée.', () => {
+        if (window.deleteOrder) window.deleteOrder(id);
+        renderOrders();
+        renderDashboard();
+        showToast('Commande supprimée.', '🗑️');
+    });
+}
+
+// ─── PARAMÈTRES ───────────────────────────────────────────────
+function loadSettings() {
+    const data = window.getData();
+    const s    = data.settings || {};
+    const t    = s.texts || {};
+
+    document.getElementById('set-wa').value         = s.whatsappNumber || '';
+    document.getElementById('set-logo').value       = s.logoUrl && !s.logoUrl.startsWith('data:') ? s.logoUrl : 'assets/images/logo.png';
+    document.getElementById('set-hero-title').value = t.heroTitle || '';
+    document.getElementById('set-hero-sub').value   = t.heroSubtitle || '';
+    document.getElementById('set-footer').value     = t.footerText || '';
+
+    // Configuration Firebase
+    const fbConfig = (window.FirebaseSync && typeof window.FirebaseSync.getStoredConfig === 'function') 
+        ? window.FirebaseSync.getStoredConfig() : null;
+    if (fbConfig) {
+        document.getElementById('fb-projectId').value     = fbConfig.projectId || '';
+        document.getElementById('fb-apiKey').value        = fbConfig.apiKey || '';
+        document.getElementById('fb-authDomain').value    = fbConfig.authDomain || '';
+        document.getElementById('fb-storageBucket').value = fbConfig.storageBucket || '';
+    }
+
+    // Liens permanents
+    const base = window.location.origin + window.location.pathname.replace('admin.html','');
+    const vitrineUrl = base + 'index.html';
+    const adminUrl   = base + 'admin.html';
+    document.getElementById('vitrine-url').textContent = vitrineUrl;
+    document.getElementById('admin-url').textContent   = adminUrl;
+    document.getElementById('vitrine-open').href       = vitrineUrl;
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+    const data = window.getData();
+    if (!data.settings) data.settings = {};
+    if (!data.settings.texts) data.settings.texts = {};
+
+    data.settings.whatsappNumber        = document.getElementById('set-wa').value.trim();
+    const logoVal = document.getElementById('set-logo').value.trim();
+    if (logoVal && !logoVal.startsWith('data:image/svg')) data.settings.logoUrl = logoVal;
+    data.settings.texts.heroTitle       = document.getElementById('set-hero-title').value.trim();
+    data.settings.texts.heroSubtitle    = document.getElementById('set-hero-sub').value.trim();
+    data.settings.texts.footerText      = document.getElementById('set-footer').value.trim();
+
+    window.saveData(data);
+    showToast('Paramètres enregistrés et synchronisés !', '✅');
+});
+
+// ─── ACTIONS CONFIGURATION FIREBASE ──────────────────────────
+document.getElementById('btnSaveFirebase').addEventListener('click', () => {
+    const projectId     = document.getElementById('fb-projectId').value.trim();
+    const apiKey        = document.getElementById('fb-apiKey').value.trim();
+    const authDomain    = document.getElementById('fb-authDomain').value.trim() || `${projectId}.firebaseapp.com`;
+    const storageBucket = document.getElementById('fb-storageBucket').value.trim() || `${projectId}.appspot.com`;
+
+    if (!projectId || !apiKey) {
+        showToast('Veuillez renseigner au moins le Project ID et l\'API Key.', '⚠️');
+        return;
+    }
+
+    const config = { projectId, apiKey, authDomain, storageBucket };
+    if (window.FirebaseSync && typeof window.FirebaseSync.setStoredConfig === 'function') {
+        window.FirebaseSync.setStoredConfig(config);
+        setTimeout(() => {
+            const fbReady = window.FirebaseSync.isReady();
+            updateSyncStatus(fbReady);
+            if (fbReady) {
+                if (window.AdminCreations) window.AdminCreations.initStorage();
+                showToast('Firebase connecté avec succès !', '✅');
+            } else {
+                showToast('Configuration enregistrée (vérifiez la connexion).', 'ℹ️');
+            }
+        }, 1200);
+    }
+});
+
+document.getElementById('btnDisconnectFirebase').addEventListener('click', () => {
+    confirmDialog('Déconnecter Firebase ?', 'L\'application repassera en mode LocalStorage hors-ligne.', () => {
+        if (window.FirebaseSync && typeof window.FirebaseSync.setStoredConfig === 'function') {
+            window.FirebaseSync.setStoredConfig(null);
+            document.getElementById('fb-projectId').value = '';
+            document.getElementById('fb-apiKey').value = '';
+            document.getElementById('fb-authDomain').value = '';
+            document.getElementById('fb-storageBucket').value = '';
+            updateSyncStatus(false);
+            showToast('Firebase déconnecté. Mode Local actif.', 'ℹ️');
+        }
+    });
+});
+
+// ─── SYNC FIREBASE ────────────────────────────────────────────
+function updateSyncStatus(connected) {
+    const dot  = document.getElementById('syncDot');
+    const text = document.getElementById('syncStatus');
+    const pill = document.getElementById('fb-status-pill');
+    if (connected) {
+        if (dot) { dot.style.background = '#25D366'; dot.style.boxShadow = '0 0 8px #25D366'; }
+        if (text) text.textContent = 'Firebase connecté';
+        if (pill) {
+            pill.style.background = 'rgba(37,211,102,0.15)';
+            pill.style.color = '#25D366';
+            pill.style.border = '1px solid rgba(37,211,102,0.3)';
+            pill.textContent = '🟢 Connecté (Cloud)';
+        }
+    } else {
+        if (dot) { dot.style.background = '#FFD200'; dot.style.boxShadow = '0 0 8px #FFD200'; }
+        if (text) text.textContent = 'Mode local (pas de Firebase)';
+        if (pill) {
+            pill.style.background = 'rgba(255,210,0,0.15)';
+            pill.style.color = '#FFD200';
+            pill.style.border = '1px solid rgba(255,210,0,0.3)';
+            pill.textContent = '🟡 Mode Local';
+        }
+    }
+}
+
+// ─── Écoute des mises à jour en temps réel ────────────────────
+document.addEventListener('pixora-data-updated', () => {
+    const activePage = document.querySelector('.admin-page.active');
+    if (!activePage) return;
+    const id = activePage.id.replace('page-', '');
+    if (id === 'dashboard') renderDashboard();
+    if (id === 'creations') renderCreationsGrid();
+});
+
+// ─── INIT PRINCIPAL ───────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    renderSidebarLogo();
+    populateSelects();
+    renderDashboard();
+
+    // Vérifier Firebase
+    setTimeout(() => {
+        const fbReady = window.FirebaseSync && window.FirebaseSync.isReady();
+        updateSyncStatus(fbReady);
+        if (fbReady && window.AdminCreations) window.AdminCreations.initStorage();
+    }, 1500);
+
+    // Écoute commandes Firebase
+    if (window.FirebaseSync && typeof window.FirebaseSync.onOrdersChange === 'function') {
+        window.FirebaseSync.onOrdersChange(orders => {
+            const activePage = document.querySelector('.admin-page.active');
+            if (activePage && activePage.id === 'page-orders') renderOrders();
+            renderDashboard();
+        });
+    }
+});
+</script>
 </body>
 </html>

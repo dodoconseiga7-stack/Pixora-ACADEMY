@@ -8,40 +8,53 @@ try {
     Write-Host "Serveur local démarré sur http://localhost:$port/"
     
     while ($listener.IsListening) {
-        $context = $listener.GetContext()
-        $request = $context.Request
-        $response = $context.Response
-        
-        $urlPath = $request.Url.LocalPath.TrimStart('/')
-        if (-not $urlPath) { $urlPath = "index.html" }
-        
-        $filePath = Join-Path $root $urlPath
-        
-        if (Test-Path $filePath -PathType Leaf) {
-            $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
-            $mime = switch ($ext) {
-                ".html" { "text/html; charset=utf-8" }
-                ".css"  { "text/css; charset=utf-8" }
-                ".js"   { "application/javascript; charset=utf-8" }
-                ".jpg"  { "image/jpeg" }
-                ".jpeg" { "image/jpeg" }
-                ".png"  { "image/png" }
-                ".svg"  { "image/svg+xml" }
-                ".webm" { "video/webm" }
-                default { "application/octet-stream" }
-            }
+        try {
+            $context = $listener.GetContext()
+            $request = $context.Request
+            $response = $context.Response
             
-            $bytes = [System.IO.File]::ReadAllBytes($filePath)
-            $response.ContentType = $mime
-            $response.ContentLength64 = $bytes.Length
-            $response.StatusCode = 200
-            $response.OutputStream.Write($bytes, 0, $bytes.Length)
-        } else {
-            $response.StatusCode = 404
-            $err = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found")
-            $response.OutputStream.Write($err, 0, $err.Length)
+            $urlPath = $request.Url.LocalPath.TrimStart('/')
+            if (-not $urlPath) { $urlPath = "index.html" }
+            
+            $filePath = Join-Path $root $urlPath
+            
+            if (Test-Path $filePath -PathType Leaf) {
+                $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
+                $mime = switch ($ext) {
+                    ".html" { "text/html; charset=utf-8" }
+                    ".css"  { "text/css; charset=utf-8" }
+                    ".js"   { "application/javascript; charset=utf-8" }
+                    ".json" { "application/json; charset=utf-8" }
+                    ".jpg"  { "image/jpeg" }
+                    ".jpeg" { "image/jpeg" }
+                    ".png"  { "image/png" }
+                    ".svg"  { "image/svg+xml" }
+                    ".webm" { "video/webm" }
+                    default { "application/octet-stream" }
+                }
+                
+                $bytes = [System.IO.File]::ReadAllBytes($filePath)
+                $response.ContentType = $mime
+                $response.ContentLength64 = $bytes.Length
+                $response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate")
+                $response.StatusCode = 200
+                
+                if ($request.HttpMethod -ne "HEAD") {
+                    $response.OutputStream.Write($bytes, 0, $bytes.Length)
+                }
+            } else {
+                $response.StatusCode = 404
+                $err = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found")
+                $response.ContentType = "text/plain; charset=utf-8"
+                $response.ContentLength64 = $err.Length
+                if ($request.HttpMethod -ne "HEAD") {
+                    $response.OutputStream.Write($err, 0, $err.Length)
+                }
+            }
+            $response.Close()
+        } catch {
+            Write-Host "Erreur traitement requête: $_"
         }
-        $response.Close()
     }
 } finally {
     $listener.Stop()

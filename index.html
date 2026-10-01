@@ -3,240 +3,373 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PIXORA STUDIO - Studio de Création Graphique Professionnel</title>
-    <meta name="description" content="Pixora Studio : Studio de création graphique. Cartes de visite, flyers, affiches, logos. Commandez directement sur WhatsApp." />
-    <meta name="author" content="Pixora Studio" />
+    <title>PIXORA ACADEMY — Studio de Création Graphique Professionnelle</title>
+    <meta name="description" content="Pixora Academy : Studio de création graphique professionnelle. Cartes de visite, flyers, affiches, logos, visuels publicitaires. Commandez directement sur WhatsApp." />
+    <meta name="author" content="Pixora Academy" />
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header class="site-header">
-        <div class="container header-container">
-            <a href="#accueil" class="logo-nav-container" id="site-logo-nav">
-                <span class="logo-text">PIXORA STUDIO</span>
-            </a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="#accueil">Accueil</a></li>
-                    <li><a href="#nos-services">Services</a></li>
-                    <li><a href="#difference">La Différence</a></li>
-                    <li><a href="#creations">Mes Créations</a></li>
-                    <li><a href="#tarifs">Tarifs</a></li>
-                    <li><a href="#commander" class="nav-cta">Commander</a></li>
-                </ul>
-            </nav>
-        </div>
+    <!-- OVERLAY POUR MENU MOBILE -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- TOPBAR MOBILE (<= 768px) -->
+    <header class="site-topbar" id="site-topbar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Ouvrir le menu" type="button">☰</button>
+        <a href="#accueil" class="topbar-logo" id="site-logo-topbar">
+            <img src="assets/images/logo.png" alt="PIXORA ACADEMY" class="topbar-main-logo">
+        </a>
+        <a href="#commander" class="btn btn-primary" style="padding: 7px 15px; font-size: 0.78rem;">Commander</a>
     </header>
 
-    <main>
+    <!-- MISE EN PAGE PRINCIPALE -->
+    <div class="app-layout">
 
-        <!-- ========================================
-             SECTION 1 : HERO + GRAND LOGO
-        ======================================== -->
-        <section id="accueil" class="section-hero">
-            <div class="container">
-                <!-- Grand Logo -->
-                <div class="hero-logo-zone" id="hero-logo-zone">
-                    <!-- Contenu injecté par JS (image ou texte) -->
-                </div>
+        <!-- ========================================================
+             PANNEAU LATÉRAL GAUCHE (CONSERVÉ STRICTEMENT INTACT)
+        ======================================================== -->
+        <aside class="site-sidebar" id="site-sidebar">
+            <a href="#accueil" class="sidebar-logo" id="site-logo-nav">
+                <img src="assets/images/logo.png" alt="PIXORA ACADEMY" class="site-main-logo">
+            </a>
 
-                <!-- Texte de présentation -->
-                <div class="hero-text text-center">
-                    <h1 class="hero-title">BIENVENUE CHEZ PIXORA STUDIO</h1>
-                    <p class="hero-subtitle">Des créations graphiques pensées pour donner une vraie image professionnelle à votre activité.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ========================================
-             SECTION 2 : NOS SERVICES (cartes visuelles)
-        ======================================== -->
-        <section id="nos-services" class="section-service-cards bg-light">
-            <div class="container">
-                <h2 class="section-title">NOS SERVICES</h2>
-                <div class="service-cards-grid" id="service-cards-grid">
-                    <!-- Cartes injectées par JS -->
-                </div>
-                <div class="hero-actions text-center" style="margin-top: 50px;">
-                    <a href="#creations" class="btn btn-primary">VOIR TOUTES MES CRÉATIONS</a>
-                    <a href="#commander" class="btn btn-outline">COMMANDER</a>
+            <div class="sidebar-studio-badge">
+                <span class="sidebar-badge-dot"></span>
+                <div class="sidebar-badge-info">
+                    <span class="sidebar-studio-tagline">PIXORA ACADEMY</span>
+                    <span class="sidebar-studio-sub">Studio Graphique & Expertise</span>
                 </div>
             </div>
-        </section>
 
-        <!-- ========================================
-             SECTION 3 : LA DIFFÉRENCE
-        ======================================== -->
-        <section id="difference" class="section-difference">
-            <div class="container">
-                <h2 class="section-title">LA DIFFÉRENCE</h2>
-                <p class="section-subtitle text-center">Voyez par vous-même la différence entre une création artisanale et une image générée automatiquement.</p>
-                <div class="difference-container">
-                    <div class="diff-card">
-                        <h3 class="card-label label-mine">MA CRÉATION</h3>
-                        <div class="diff-content" id="my-creation-content">
-                            <div class="diff-placeholder"><span>Aucune création encore ajoutée.</span></div>
+            <nav class="sidebar-nav">
+                <span class="sidebar-nav-label">Navigation</span>
+                <ul>
+                    <li><a href="#accueil" class="active"><span class="nav-icon">🏠</span> Accueil</a></li>
+                    <li><a href="#nos-services"><span class="nav-icon">✨</span> Services</a></li>
+                    <li><a href="#difference"><span class="nav-icon">⚖️</span> La Différence</a></li>
+                    <li><a href="#creations"><span class="nav-icon">🎨</span> Mes Créations</a></li>
+                    <li><a href="#tarifs"><span class="nav-icon">🏷️</span> Tarifs</a></li>
+                    <li><a href="#commander"><span class="nav-icon">🛒</span> Commander</a></li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-cta">
+                <a href="#commander" class="btn btn-gradient btn-full">
+                    <span>COMMANDER UN PROJET</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+            </div>
+
+            <div class="sidebar-wa">
+                <a href="#" id="wa-sidebar-btn" target="_blank" rel="noopener">
+                    <span class="wa-icon">💬</span>
+                    <div class="wa-text">
+                        <span class="wa-label">WhatsApp Direct</span>
+                        <span id="wa-sidebar-number" class="wa-num">+226 03 24 95 48</span>
+                    </div>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ========================================================
+             CONTENU PRINCIPAL À DROITE (FOND BLANC GÉNÉRAL)
+        ======================================================== -->
+        <div class="main-wrapper">
+            <main class="main-content" id="main-content">
+
+                <!-- ====================================================
+                     1. CADRE HORIZONTAL : HERO (BLEU NUIT SIDÉRAL)
+                ==================================================== -->
+                <section id="accueil" class="cadre-horizontal cadre-hero" style="margin-top: 10px;">
+                    <div class="hero-ad-banner" id="hero-logo-zone" style="margin: 0; padding: 0; background: transparent; border: none; box-shadow: none;">
+
+                        <div class="ad-banner-topbar">
+                            <span class="ad-banner-badge">✦ PIXORA ACADEMY</span>
+                            <span class="ad-banner-badge-line"></span>
+                            <span class="ad-banner-tagsmall">Création Graphique Professionnelle</span>
+                        </div>
+
+                        <h2 class="ad-banner-headline">
+                            <span class="ad-headline-line1">AU-DELÀ DE L'IA,</span>
+                            <span class="ad-headline-line2">NOUS CRÉONS DES DESIGNS</span>
+                            <span class="ad-headline-line3">PENSÉS, MAÎTRISÉS ET ADAPTÉS</span>
+                            <span class="ad-headline-line4">À VOTRE IMAGE.</span>
+                        </h2>
+
+                        <p class="ad-banner-sub">
+                            Créations graphiques professionnelles pour entreprises, commerces, marques et particuliers.
+                        </p>
+
+                        <div class="ad-banner-services" id="banner-category-buttons">
+                            <button type="button" class="ad-service-pill" data-category="Logo" title="Afficher les créations de Logos">🎨 Logos</button>
+                            <button type="button" class="ad-service-pill" data-category="Flyer" title="Afficher les flyers">📄 Flyers</button>
+                            <button type="button" class="ad-service-pill" data-category="Carte de visite" title="Afficher les cartes de visite">🪪 Cartes de visite</button>
+                            <button type="button" class="ad-service-pill" data-category="Affiche" title="Afficher les affiches">🖼️ Affiches</button>
+                            <button type="button" class="ad-service-pill" data-category="Visuel publicitaire" title="Afficher les visuels publicitaires">📸 Visuels pub</button>
+                            <button type="button" class="ad-service-pill" data-category="Étiquette" title="Afficher les étiquettes">🏷️ Étiquettes</button>
+                        </div>
+
+                        <div class="ad-banner-accent-bar">
+                            <span class="accent-dot" style="background:#FF7A1A"></span>
+                            <span class="accent-dot" style="background:#D82D9B"></span>
+                            <span class="accent-dot" style="background:#6C2BFF"></span>
+                            <span class="accent-dot" style="background:#00D2FF"></span>
+                        </div>
+
+                        <div class="ad-banner-ctas">
+                            <a href="#creations" class="btn btn-gradient btn-large" id="ad-btn-creations">VOIR MES CRÉATIONS</a>
+                            <a href="#commander" class="btn btn-outline-white btn-large" id="ad-btn-commander">COMMANDER</a>
+                        </div>
+
+                        <div class="ad-deco-circle ad-deco-circle-1"></div>
+                        <div class="ad-deco-circle ad-deco-circle-2"></div>
+                        <div class="ad-deco-circle ad-deco-circle-3"></div>
+                    </div>
+
+                    <div class="hero-text text-center" style="margin-top: 26px;">
+                        <h1 class="hero-title" id="hero-title" style="color: #FFFFFF;">BIENVENUE CHEZ PIXORA ACADEMY</h1>
+                        <p class="hero-subtitle" id="hero-subtitle" style="color: rgba(255, 255, 255, 0.7);">Des créations graphiques pensées pour donner une vraie image professionnelle à votre activité.</p>
+                    </div>
+                </section>
+
+                <!-- ====================================================
+                     2. CADRE HORIZONTAL : NOS SERVICES (BLEU SAPHIR SOBRE)
+                ==================================================== -->
+                <section id="nos-services" class="cadre-horizontal cadre-services">
+                    <div class="cadre-header">
+                        <span class="cadre-badge-tag">✦ EXPERTISE GRAPHIQUE</span>
+                        <h2 class="cadre-title" id="section-services-title">NOS SERVICES</h2>
+                        <p class="cadre-sub">Des créations sur-mesure conçues pour valoriser votre marque et prêtes à l'impression.</p>
+                    </div>
+
+                    <div class="service-cards-grid" id="service-cards-grid">
+                        <!-- Cartes de services injectées par JS -->
+                    </div>
+
+                    <div class="text-center" style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+                        <a href="#creations" class="btn btn-white" id="btn-hero-creations">VOIR TOUTES MES CRÉATIONS</a>
+                        <a href="#commander" class="btn btn-outline-white" id="btn-hero-commander">COMMANDER</a>
+                    </div>
+                </section>
+
+                <!-- ====================================================
+                     3. CADRE HORIZONTAL : LA DIFFÉRENCE (VIOLET NUIT SOBRE)
+                ==================================================== -->
+                <section id="difference" class="cadre-horizontal cadre-difference">
+                    <div class="cadre-header">
+                        <span class="cadre-badge-tag">⚖️ CRÉATION VECTORIELLE VS AUTOMATISATION</span>
+                        <h2 class="cadre-title" id="diff-title">LA DIFFÉRENCE</h2>
+                        <p class="cadre-sub" id="diff-subtitle">Voyez par vous-même la différence entre une création artisanale maîtrisée et une image générée automatiquement.</p>
+                    </div>
+
+                    <div class="difference-container">
+                        <div class="diff-card">
+                            <h3 class="card-label label-mine">MA CRÉATION</h3>
+                            <div class="diff-content" id="my-creation-content">
+                                <div class="diff-placeholder"><span>Aucune création encore ajoutée.</span></div>
+                            </div>
+                        </div>
+                        <div class="diff-badge">VS</div>
+                        <div class="diff-card diff-card-ai">
+                            <h3 class="card-label label-ai">🤖 CRÉATION PAR IA</h3>
+                            <div class="diff-content" id="ai-creation-content">
+                                <div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="diff-badge">VS</div>
-                    <div class="diff-card diff-card-ai">
-                        <h3 class="card-label label-ai">🤖 CRÉATION PAR IA</h3>
-                        <div class="diff-content" id="ai-creation-content">
-                            <div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>
+                </section>
+
+                <!-- ====================================================
+                     4. CADRE HORIZONTAL : MES CRÉATIONS (MAGENTA / PRUNE SOBRE)
+                ==================================================== -->
+                <section id="creations" class="cadre-horizontal cadre-creations">
+                    <div class="cadre-header">
+                        <span class="cadre-badge-tag">🎨 PORTFOLIO & RÉALISATIONS</span>
+                        <h2 class="cadre-title" id="creations-title">MES CRÉATIONS</h2>
+                        <p class="cadre-sub">Découvrez nos réalisations récentes par domaine : logos, flyers, cartes de visite et affiches.</p>
+                    </div>
+
+                    <div class="filters" id="domain-filters">
+                        <!-- Filtres injectés par JS -->
+                    </div>
+
+                    <div class="grid" id="creations-grid">
+                        <!-- Créations injectées par JS -->
+                    </div>
+                </section>
+
+                <!-- ====================================================
+                     5. CADRE HORIZONTAL : SERVICES & TARIFS (AMBRE / COGNAC DORÉ SOBRE)
+                ==================================================== -->
+                <section id="tarifs" class="cadre-horizontal cadre-tarifs">
+                    <div class="cadre-header">
+                        <span class="cadre-badge-tag">🏷️ TRANSPARENCE DES PRIX</span>
+                        <h2 class="cadre-title" id="tarifs-title">SERVICES & TARIFS</h2>
+                        <p class="cadre-sub" id="tarifs-subtitle">Chaque création est disponible en trois niveaux adaptés à votre budget et à vos exigences professionnelles.</p>
+                    </div>
+
+                    <div class="tiers-desc-grid">
+                        <div class="tier-desc-card">
+                            <div class="tier-badge tier-basic">BASIC</div>
+                            <p>Pour un besoin simple, propre et professionnel au meilleur coût.</p>
+                        </div>
+                        <div class="tier-desc-card">
+                            <div class="tier-badge tier-standard">STANDARD</div>
+                            <p>Pour une création travaillée, personnalisée avec déclinaisons complètes.</p>
+                        </div>
+                        <div class="tier-desc-card">
+                            <div class="tier-badge tier-premium">PREMIUM</div>
+                            <p>Pour une création exclusive, ultra-raffinée et vectorielle haute précision.</p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- ========================================
-             SECTION 4 : MES CRÉATIONS (Portfolio)
-        ======================================== -->
-        <section id="creations" class="section-creations bg-light">
-            <div class="container">
-                <h2 class="section-title">MES CRÉATIONS</h2>
-                <div class="filters" id="domain-filters">
-                    <!-- Filtres injectés par JS -->
-                </div>
-                <div class="grid" id="creations-grid">
-                    <!-- Créations injectées par JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- ========================================
-             SECTION 5 : TARIFS
-        ======================================== -->
-        <section id="tarifs" class="section-tarifs">
-            <div class="container">
-                <h2 class="section-title">SERVICES & TARIFS</h2>
-                <p class="section-subtitle text-center">Chaque création est disponible en trois niveaux adaptés à votre budget et à vos besoins.</p>
-
-                <!-- Niveau description -->
-                <div class="tiers-desc-grid">
-                    <div class="tier-desc-card">
-                        <div class="tier-badge tier-basic">BASIC</div>
-                        <p>Pour un besoin simple et professionnel.</p>
+                    <div class="grid" id="prices-grid">
+                        <!-- Prix injectés par JS -->
                     </div>
-                    <div class="tier-desc-card">
-                        <div class="tier-badge tier-standard">STANDARD</div>
-                        <p>Pour une création plus personnalisée et travaillée.</p>
+                </section>
+
+                <!-- ====================================================
+                     6. CADRE HORIZONTAL : COMMANDER (CYAN / SARCELLE NUIT SOBRE)
+                ==================================================== -->
+                <section id="commander" class="cadre-horizontal cadre-commander">
+                    <div class="cadre-header">
+                        <span class="cadre-badge-tag">🛒 FORMULAIRE EXPRESS</span>
+                        <h2 class="cadre-title">COMMANDER UN PROJET</h2>
+                        <p class="cadre-sub">Préparez votre commande en direct et recevez votre récapitulatif instantané sur WhatsApp.</p>
                     </div>
-                    <div class="tier-desc-card">
-                        <div class="tier-badge tier-premium">PREMIUM</div>
-                        <p>Pour une création complète, raffinée et poussée.</p>
+
+                    <div class="order-box">
+                        <form id="order-form">
+
+                            <h3 class="subsection-title">Vos informations</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="order-nom">Nom *</label>
+                                    <input type="text" id="order-nom" class="form-control" required placeholder="Votre nom">
+                                </div>
+                                <div class="form-group">
+                                    <label for="order-prenom">Prénom *</label>
+                                    <input type="text" id="order-prenom" class="form-control" required placeholder="Votre prénom">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="order-tel">Numéro de téléphone *</label>
+                                    <input type="tel" id="order-tel" class="form-control" required placeholder="+226 ...">
+                                </div>
+                                <div class="form-group">
+                                    <label for="order-adresse">Adresse / Quartier *</label>
+                                    <input type="text" id="order-adresse" class="form-control" required placeholder="Votre ville / quartier">
+                                </div>
+                            </div>
+
+                            <h3 class="subsection-title" style="margin-top:24px;">Votre projet</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="order-domaine">Domaine d'activité *</label>
+                                    <select id="order-domaine" class="form-control" required>
+                                        <!-- Injecté par JS -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="order-logo">Vous avez déjà un logo ? *</label>
+                                    <select id="order-logo" class="form-control" required>
+                                        <option value="Oui">Oui</option>
+                                        <option value="Non">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <h3 class="subsection-title" style="margin-top:24px;">Que voulez-vous commander ?</h3>
+                            <div id="services-list">
+                                <div class="service-row">
+                                    <select class="form-control input-service" required>
+                                        <!-- Injecté par JS -->
+                                    </select>
+                                    <select class="form-control input-formule" required>
+                                        <option value="basic">Basic</option>
+                                        <option value="standard">Standard</option>
+                                        <option value="premium">Premium</option>
+                                    </select>
+                                    <button type="button" class="btn-remove-service" style="visibility:hidden;" aria-label="Supprimer">✕</button>
+                                </div>
+                            </div>
+                            <button type="button" id="btn-add-service" class="btn-link">+ Ajouter un autre service</button>
+
+                            <div class="form-group" style="margin-top:18px;">
+                                <label for="order-message">Message / Précisions pour votre commande (facultatif)</label>
+                                <textarea id="order-message" class="form-control" rows="2" placeholder="Précisez vos souhaits, couleurs, délais ou détails particuliers..."></textarea>
+                            </div>
+
+                            <div class="order-total-box">
+                                <span>TOTAL ESTIMÉ :</span>
+                                <span id="order-total-amount">0 F CFA</span>
+                            </div>
+
+                            <div class="text-center" style="margin-top: 26px;">
+                                <button type="submit" class="btn btn-gradient btn-large">GÉNÉRER LE RÉCAPITULATIF</button>
+                            </div>
+                        </form>
                     </div>
-                </div>
+                </section>
 
-                <div class="grid" id="prices-grid">
-                    <!-- Prix injectés par JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- ========================================
-             SECTION 6 : COMMANDER
-        ======================================== -->
-        <section id="commander" class="section-order bg-light">
-            <div class="container">
-                <div class="order-box">
-                    <h2 class="section-title">COMMANDER</h2>
-                    <form id="order-form">
-
-                        <h3 class="subsection-title">Vos informations</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="order-nom">Nom *</label>
-                                <input type="text" id="order-nom" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order-prenom">Prénom *</label>
-                                <input type="text" id="order-prenom" class="form-control" required>
-                            </div>
+                <!-- ====================================================
+                     7. CADRE HORIZONTAL : ENGAGEMENTS & GARANTIES (BLEU SIDÉRAL)
+                ==================================================== -->
+                <section class="cadre-horizontal cadre-guarantees">
+                    <div class="cadre-header" style="margin-bottom: 22px;">
+                        <span class="cadre-badge-tag">🛡️ QUALITÉ & CONFIANCE</span>
+                        <h2 class="cadre-title" style="font-size: 1.4rem; color: #FFFFFF;">POURQUOI CHOISIR PIXORA ACADEMY ?</h2>
+                    </div>
+                    <div class="guarantees-grid">
+                        <div class="guarantee-item">
+                            <span class="g-icon">🎯</span>
+                            <strong>Design 100% Maîtrisé</strong>
+                            <p>Création sur-mesure au-delà des automatismes IA</p>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="order-tel">Numéro de téléphone *</label>
-                                <input type="tel" id="order-tel" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="order-adresse">Adresse / Quartier *</label>
-                                <input type="text" id="order-adresse" class="form-control" required>
-                            </div>
+                        <div class="guarantee-item">
+                            <span class="g-icon">📁</span>
+                            <strong>Fichiers Prêts à l'Emploi</strong>
+                            <p>HD, vectoriels, PDF impression & formats réseaux sociaux</p>
                         </div>
-
-                        <h3 class="subsection-title" style="margin-top:28px;">Votre projet</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="order-domaine">Domaine d'activité *</label>
-                                <select id="order-domaine" class="form-control" required>
-                                    <!-- Injecté par JS -->
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="order-logo">Vous avez déjà un logo ? *</label>
-                                <select id="order-logo" class="form-control" required>
-                                    <option value="Oui">Oui</option>
-                                    <option value="Non">Non</option>
-                                </select>
-                            </div>
+                        <div class="guarantee-item">
+                            <span class="g-icon">⏱️</span>
+                            <strong>Délais Respectés</strong>
+                            <p>Livraison rapide et soignée de vos visuels (24h - 72h)</p>
                         </div>
-
-                        <h3 class="subsection-title" style="margin-top:28px;">Que voulez-vous commander ?</h3>
-                        <div id="services-list">
-                            <div class="service-row">
-                                <select class="form-control input-service" required>
-                                    <!-- Injecté par JS -->
-                                </select>
-                                <select class="form-control input-formule" required>
-                                    <option value="basic">Basic</option>
-                                    <option value="standard">Standard</option>
-                                    <option value="premium">Premium</option>
-                                </select>
-                                <button type="button" class="btn-remove-service" style="visibility:hidden;" aria-label="Supprimer">✕</button>
-                            </div>
+                        <div class="guarantee-item">
+                            <span class="g-icon">🔄</span>
+                            <strong>Ajustements Inclus</strong>
+                            <p>Retouches et modifications selon la formule choisie</p>
                         </div>
-                        <button type="button" id="btn-add-service" class="btn-link">+ Ajouter un autre service</button>
+                    </div>
+                </section>
 
-                        <div class="order-total-box">
-                            <span>TOTAL :</span>
-                            <span id="order-total-amount">0 F CFA</span>
-                        </div>
+                <!-- ====================================================
+                     8. CADRE HORIZONTAL : CONTACT WHATSAPP (VERT ÉMERAUDE SOBRE)
+                ==================================================== -->
+                <section class="cadre-horizontal cadre-whatsapp">
+                    <span class="cadre-badge-tag">💬 ASSISTANCE & DEVIS DIRECT</span>
+                    <h2 class="cadre-title" id="contact-title" style="color: #FFFFFF;">UNE QUESTION ? CONTACTEZ-NOUS DIRECTEMENT</h2>
+                    <p style="color: rgba(255, 255, 255, 0.7); max-width: 540px; margin: 0 auto;">Échangez directement avec notre designer pour toute demande sur-mesure ou question technique.</p>
+                    <div class="wa-number" id="display-wa-number">+226 03 24 95 48</div>
+                    <a href="#" class="btn btn-whatsapp" id="wa-contact-btn">CONTACTER SUR WHATSAPP</a>
+                </section>
 
-                        <div class="text-center" style="margin-top: 30px;">
-                            <button type="submit" class="btn btn-primary btn-large">GÉNÉRER LE RÉCAPITULATIF</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </section>
+                <!-- FOOTER -->
+                <footer class="site-footer text-center">
+                    <p id="footer-text">© 2026 Pixora Academy — Studio de création graphique professionnelle. Tous droits réservés.</p>
+                </footer>
 
-        <!-- ========================================
-             SECTION 7 : CONTACT WHATSAPP
-        ======================================== -->
-        <section class="section-whatsapp text-center">
-            <div class="container">
-                <h2 class="text-white mb-2">UNE QUESTION ? CONTACTEZ-NOUS</h2>
-                <div class="wa-number" id="display-wa-number">+226 03 24 95 48</div>
-                <a href="#" class="btn btn-whatsapp" id="wa-contact-btn">CONTACTER SUR WHATSAPP</a>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="site-footer text-center">
-        <div class="container">
-            <p>© 2026 Pixora Studio — Studio de création graphique. Tous droits réservés.</p>
-            <p style="margin-top: 10px;"><a href="admin.html" class="admin-link">Espace Administration</a></p>
+            </main>
         </div>
-    </footer>
+    </div>
 
     <!-- MODAL RÉCAPITULATIF -->
     <div class="modal-overlay" id="recap-modal">
@@ -259,8 +392,92 @@
         </div>
     </div>
 
+    <!-- Firebase SDK (compat) & Cloud Sync -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
     <script src="js/data.js"></script>
+    <script src="js/data-manager.js"></script>
     <script src="js/ai-seed.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- GESTION DE LA NAVIGATION & SYNCHRONISATION -->
+    <script>
+    (function() {
+        var toggle = document.getElementById('sidebar-toggle');
+        var sidebar = document.getElementById('site-sidebar');
+        var overlay = document.getElementById('sidebar-overlay');
+
+        function openSidebar() {
+            if (sidebar) sidebar.classList.add('open');
+            if (overlay) overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSidebar() {
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (toggle) toggle.addEventListener('click', openSidebar);
+        if (overlay) overlay.addEventListener('click', closeSidebar);
+
+        // Fermer la sidebar sur mobile au clic sur un lien
+        document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Navigation active selon le scroll
+        var sections = ['accueil', 'nos-services', 'difference', 'creations', 'tarifs', 'commander'];
+        function updateActiveNav() {
+            var scrollPos = window.scrollY + 140;
+            var currentSection = 'accueil';
+
+            sections.forEach(function(secId) {
+                var el = document.getElementById(secId);
+                if (el && el.offsetTop <= scrollPos) {
+                    currentSection = secId;
+                }
+            });
+
+            document.querySelectorAll('.sidebar-nav ul li a').forEach(function(a) {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === '#' + currentSection) {
+                    a.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', updateActiveNav, { passive: true });
+        updateActiveNav();
+
+        // Synchronisation du bouton WhatsApp de la sidebar
+        function syncSidebarWhatsApp() {
+            var mainWaBtn = document.getElementById('wa-contact-btn');
+            var sideWaBtn = document.getElementById('wa-sidebar-btn');
+            var sideWaNum = document.getElementById('wa-sidebar-number');
+            var displayNum = document.getElementById('display-wa-number');
+
+            if (mainWaBtn && sideWaBtn) {
+                var href = mainWaBtn.getAttribute('href');
+                if (href && href !== '#') {
+                    sideWaBtn.setAttribute('href', href);
+                }
+            }
+            if (displayNum && sideWaNum && displayNum.textContent) {
+                sideWaNum.textContent = displayNum.textContent.trim();
+            }
+        }
+
+        setTimeout(syncSidebarWhatsApp, 300);
+        setTimeout(syncSidebarWhatsApp, 1200);
+        setTimeout(syncSidebarWhatsApp, 2500);
+    })();
+    </script>
 </body>
 </html>

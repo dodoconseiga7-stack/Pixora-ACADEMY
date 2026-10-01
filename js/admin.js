@@ -33,17 +33,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
     // UTILITAIRES
     // ============================================================
+
+    /**
+     * Remplit un <select> avec des options, puis sélectionne la valeur choisie.
+     * La sélection se fait après l'insertion dans le DOM pour garantir la cohérence.
+     */
     function fillSelect(selectEl, items, selectedValue) {
         if (!selectEl) return;
+        // Générer et insérer les options
         selectEl.innerHTML = items.map(item =>
-            `<option value="${item}" ${item === selectedValue ? 'selected' : ''}>${item}</option>`
+            `<option value="${item}">${item}</option>`
         ).join('');
+        // Sélectionner la valeur uniquement si elle existe dans la liste
+        if (items.includes(selectedValue)) {
+            selectEl.value = selectedValue;
+        } else if (selectedValue && items.length > 0) {
+            // La valeur n'existe plus — ajouter une option temporaire pour l'afficher
+            const ghost = document.createElement('option');
+            ghost.value = selectedValue;
+            ghost.textContent = selectedValue + ' (valeur précédente)';
+            ghost.style.color = '#ef4444';
+            selectEl.insertBefore(ghost, selectEl.firstChild);
+            selectEl.value = selectedValue;
+        }
     }
 
     // Récupère les images d'une création (supporte image unique + tableau images[])
     function getImages(c) {
-        if (c.images && Array.isArray(c.images) && c.images.length > 0) return [...c.images];
-        if (c.image) return [c.image];
+        if (c && c.images && Array.isArray(c.images) && c.images.length > 0) return [...c.images];
+        if (c && c.image) return [c.image];
         return [];
     }
 
@@ -67,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Lit et compresse une image pour le stockage fiable en base64 (évite la saturation de quota localStorage)
+    // Lit et compresse une image pour le stockage fiable en base64
     function compressAndReadFile(file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) {
         return new Promise((resolve, reject) => {
             if (!file) {
@@ -125,26 +143,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRemoveLogo   = document.getElementById('btn-remove-logo');
     const logoFileInput   = document.getElementById('logo-file-input');
     const logoCurrentBox  = document.getElementById('logo-current-box');
+    const logoImportBtn   = document.getElementById('logo-import-btn');
+
+    const adminSiteLogoNav = document.getElementById('admin-site-logo-nav');
+
+    function renderAdminHeaderLogo() {
+        const d = getData();
+        if (adminSiteLogoNav) {
+            if (d.settings && d.settings.logoUrl) {
+                adminSiteLogoNav.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO" class="admin-nav-logo">`;
+            } else {
+                adminSiteLogoNav.innerHTML = `<span class="logo-text">PIXORA STUDIO</span>`;
+            }
+        }
+    }
 
     function refreshLogoAdmin() {
         const d = getData();
         if (d.settings && d.settings.logoUrl) {
             logoPreview.src = d.settings.logoUrl;
             logoPreview.style.display = 'block';
-            logoCurrentBox.style.display = 'flex';
-            logoPlaceholder.style.display = 'none';
-            btnRemoveLogo.style.display = 'inline-flex';
+            logoCurrentBox.style.display = 'block';
+            if (logoPlaceholder) logoPlaceholder.style.display = 'none';
+            if (logoImportBtn)   logoImportBtn.style.display = 'none';
         } else {
             logoPreview.style.display = 'none';
             logoCurrentBox.style.display = 'none';
-            logoPlaceholder.style.display = 'block';
-            btnRemoveLogo.style.display = 'none';
+            if (logoPlaceholder) logoPlaceholder.style.display = 'block';
+            if (logoImportBtn)   logoImportBtn.style.display = 'block';
         }
+        renderAdminHeaderLogo();
     }
     refreshLogoAdmin();
 
-    logoFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
+    // Handler commun pour l'import logo (depuis le bouton "Remplacer" ou "Importer")
+    function handleLogoFile(file) {
         if (!file) return;
         readFileAsBase64(file).then(b64 => {
             const d = getData();
@@ -154,18 +187,41 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshLogoAdmin();
             showMsg('✓ Logo importé et enregistré avec succès !');
         }).catch(err => showMsg('⚠️ ' + err.message, true));
+    }
+
+    if (logoFileInput) {
+        logoFileInput.addEventListener('change', (e) => {
+            handleLogoFile(e.target.files[0]);
+            e.target.value = '';
+        });
+    }
+
+    // Pont pour le bouton "Importer" quand aucun logo n'existe
+    document.addEventListener('logo-file-picked', (e) => {
+        if (e.detail && e.detail.file) handleLogoFile(e.detail.file);
     });
 
-    btnRemoveLogo.addEventListener('click', () => {
-        if (confirm('Supprimer le logo ? Le texte "PIXORA STUDIO" s\'affichera à la place.')) {
-            const d = getData();
-            if (!d.settings) d.settings = {};
-            d.settings.logoUrl = '';
-            saveData(d);
-            refreshLogoAdmin();
-            showMsg('✓ Logo supprimé.');
-        }
-    });
+    // Fallback direct sur logo-file-input-empty si le CustomEvent ne passe pas
+    const logoFileInputEmpty = document.getElementById('logo-file-input-empty');
+    if (logoFileInputEmpty) {
+        logoFileInputEmpty.addEventListener('change', (e) => {
+            handleLogoFile(e.target.files[0]);
+            e.target.value = '';
+        });
+    }
+
+    if (btnRemoveLogo) {
+        btnRemoveLogo.addEventListener('click', () => {
+            if (confirm('Supprimer le logo ? Le texte "PIXORA STUDIO" s\'affichera à la place.')) {
+                const d = getData();
+                if (!d.settings) d.settings = {};
+                d.settings.logoUrl = '';
+                saveData(d);
+                refreshLogoAdmin();
+                showMsg('✓ Logo supprimé.');
+            }
+        });
+    }
 
     // ============================================================
     // 2. GESTION DES DOMAINES
@@ -521,66 +577,84 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function refreshDiffAdmin() {
         const d = getData();
-        const myList = d.creations.filter(c => c.type === 'MY_CREATION');
-        const aiList = d.creations.filter(c => c.type === 'AI_CREATION');
+        const myList = (d.creations || []).filter(c => c.type === 'MY_CREATION');
+        const aiList = (d.creations || []).filter(c => c.type === 'AI_CREATION');
         const mine = (d.difference && d.difference.myCreation) || (myList[0] || {});
         const ai   = (d.difference && d.difference.aiCreation) || (aiList[0] || {});
 
-        diffMineTitle.value   = mine.title || '';
-        diffMineService.value = mine.service || '';
-        diffMineDesc.value    = mine.description || '';
+        if (diffMineTitle)   diffMineTitle.value   = mine.title || '';
+        if (diffMineService) diffMineService.value = mine.service || '';
+        if (diffMineDesc)    diffMineDesc.value    = mine.description || '';
         const mineImg = getImages(mine)[0] || '';
         if (mineImg) { diffMineImg = mineImg; diffMinePreview.src = mineImg; diffMinePreview.style.display = 'block'; }
-        else { diffMinePreview.style.display = 'none'; }
+        else if (diffMinePreview) { diffMinePreview.style.display = 'none'; }
 
-        diffAiTitle.value   = ai.title || '';
-        diffAiService.value = ai.service || '';
-        diffAiDesc.value    = ai.description || '';
+        if (diffAiTitle)   diffAiTitle.value   = ai.title || '';
+        if (diffAiService) diffAiService.value = ai.service || '';
+        if (diffAiDesc)    diffAiDesc.value    = ai.description || '';
         const aiImg = getImages(ai)[0] || '';
         if (aiImg) { diffAiImg = aiImg; diffAiPreview.src = aiImg; diffAiPreview.style.display = 'block'; }
-        else { diffAiPreview.style.display = 'none'; }
+        else if (diffAiPreview) { diffAiPreview.style.display = 'none'; }
     }
     refreshDiffAdmin();
 
-    diffMineFile.addEventListener('change', (e) => {
-        const file = e.target.files[0]; if (!file) return;
-        readFileAsBase64(file).then(b64 => { diffMineImg = b64; diffMinePreview.src = b64; diffMinePreview.style.display = 'block'; }).catch(err => showMsg('⚠️ ' + err.message, true));
-    });
-    diffAiFile.addEventListener('change', (e) => {
-        const file = e.target.files[0]; if (!file) return;
-        readFileAsBase64(file).then(b64 => { diffAiImg = b64; diffAiPreview.src = b64; diffAiPreview.style.display = 'block'; }).catch(err => showMsg('⚠️ ' + err.message, true));
-    });
+    if (diffMineFile) {
+        diffMineFile.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            readFileAsBase64(file).then(b64 => {
+                diffMineImg = b64;
+                diffMinePreview.src = b64;
+                diffMinePreview.style.display = 'block';
+            }).catch(err => showMsg('⚠️ ' + err.message, true));
+        });
+    }
+    if (diffAiFile) {
+        diffAiFile.addEventListener('change', (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            readFileAsBase64(file).then(b64 => {
+                diffAiImg = b64;
+                diffAiPreview.src = b64;
+                diffAiPreview.style.display = 'block';
+            }).catch(err => showMsg('⚠️ ' + err.message, true));
+        });
+    }
 
-    document.getElementById('diff-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const d = getData();
-        if (!d.difference) d.difference = {};
-        d.difference.myCreation = {
-            title: diffMineTitle.value.trim() || 'Ma Création',
-            service: diffMineService.value.trim() || 'Création graphique',
-            description: diffMineDesc.value.trim(),
-            image: diffMineImg || getImages(d.creations.find(c => c.type === 'MY_CREATION') || {})[0] || ''
-        };
-        d.difference.aiCreation = {
-            title: diffAiTitle.value.trim() || 'Création par IA',
-            service: diffAiService.value.trim() || 'Génération automatique',
-            description: diffAiDesc.value.trim(),
-            image: diffAiImg || getImages(d.creations.find(c => c.type === 'AI_CREATION') || {})[0] || ''
-        };
-        saveData(d);
-        showMsg('✓ Comparaison enregistrée avec succès !');
-    });
-
-    document.getElementById('btn-reset-diff').addEventListener('click', () => {
-        if (confirm('Réinitialiser la comparaison ?')) {
+    const diffForm = document.getElementById('diff-form');
+    if (diffForm) {
+        diffForm.addEventListener('submit', (e) => {
+            e.preventDefault();
             const d = getData();
-            delete d.difference;
+            if (!d.difference) d.difference = {};
+            d.difference.myCreation = {
+                title: diffMineTitle ? diffMineTitle.value.trim() || 'Ma Création' : 'Ma Création',
+                service: diffMineService ? diffMineService.value.trim() || 'Création graphique' : 'Création graphique',
+                description: diffMineDesc ? diffMineDesc.value.trim() : '',
+                image: diffMineImg || getImages((d.creations || []).find(c => c.type === 'MY_CREATION') || {})[0] || ''
+            };
+            d.difference.aiCreation = {
+                title: diffAiTitle ? diffAiTitle.value.trim() || 'Création par IA' : 'Création par IA',
+                service: diffAiService ? diffAiService.value.trim() || 'Génération automatique' : 'Génération automatique',
+                description: diffAiDesc ? diffAiDesc.value.trim() : '',
+                image: diffAiImg || getImages((d.creations || []).find(c => c.type === 'AI_CREATION') || {})[0] || ''
+            };
             saveData(d);
-            diffMineImg = ''; diffAiImg = '';
-            refreshDiffAdmin();
-            showMsg('✓ Comparaison réinitialisée.');
-        }
-    });
+            showMsg('✓ Comparaison enregistrée avec succès !');
+        });
+    }
+
+    const btnResetDiff = document.getElementById('btn-reset-diff');
+    if (btnResetDiff) {
+        btnResetDiff.addEventListener('click', () => {
+            if (confirm('Réinitialiser la comparaison ?')) {
+                const d = getData();
+                delete d.difference;
+                saveData(d);
+                diffMineImg = ''; diffAiImg = '';
+                refreshDiffAdmin();
+                showMsg('✓ Comparaison réinitialisée.');
+            }
+        });
+    }
 
     // ============================================================
     // 5. GESTION DU CATALOGUE — AJOUT (multi-images)
@@ -592,13 +666,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const addImagesPreview = document.getElementById('add-images-preview');
 
     function renderAddImagesPreview() {
+        if (!addImagesPreview) return;
         if (pendingImages.length === 0) {
             addImagesPreview.innerHTML = '<p style="color:#94a3b8;font-size:0.85rem;">Aucune image sélectionnée.</p>';
             return;
         }
         addImagesPreview.innerHTML = pendingImages.map((img, idx) => `
             <div style="position:relative;display:inline-block;margin:4px;">
-                <img src="${img}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid ${idx===0?'#3b82f6':'#e2e8f0'};" title="${idx===0?'Image principale':'Image '+( idx+1)}">
+                <img src="${img}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid ${idx===0?'#3b82f6':'#e2e8f0'};" title="${idx===0?'Image principale':'Image '+( idx+1)}" onerror="this.src='https://placehold.co/80x80?text=Image'">
                 ${idx===0 ? '<span style="position:absolute;bottom:2px;left:2px;background:#3b82f6;color:white;font-size:0.62rem;font-weight:700;padding:1px 5px;border-radius:3px;">PRINCIPALE</span>' : ''}
                 <button type="button" onclick="removeAddImage(${idx})"
                     style="position:absolute;top:-6px;right:-6px;background:#ef4444;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:0.75rem;font-weight:bold;display:flex;align-items:center;justify-content:center;">✕</button>
@@ -611,32 +686,48 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAddImagesPreview();
     };
 
-    cImgFile.addEventListener('change', async (e) => {
-        const files = Array.from(e.target.files);
-        for (const file of files) {
-            try {
-                const b64 = await readFileAsBase64(file);
-                pendingImages.push(b64);
-            } catch(err) {
-                showMsg('⚠️ ' + err.message, true);
+    if (cImgFile) {
+        cImgFile.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                try {
+                    const b64 = await readFileAsBase64(file);
+                    pendingImages.push(b64);
+                } catch(err) {
+                    showMsg('⚠️ ' + err.message, true);
+                }
             }
-        }
-        e.target.value = '';
-        renderAddImagesPreview();
-    });
-
-    cImgUrl.addEventListener('change', () => {
-        const url = cImgUrl.value.trim();
-        if (url) {
-            pendingImages.push(url);
-            cImgUrl.value = '';
+            e.target.value = '';
             renderAddImagesPreview();
-        }
-    });
+        });
+    }
+
+    if (cImgUrl) {
+        cImgUrl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const url = cImgUrl.value.trim();
+                if (url) {
+                    pendingImages.push(url);
+                    cImgUrl.value = '';
+                    renderAddImagesPreview();
+                }
+            }
+        });
+        cImgUrl.addEventListener('change', () => {
+            const url = cImgUrl.value.trim();
+            if (url) {
+                pendingImages.push(url);
+                cImgUrl.value = '';
+                renderAddImagesPreview();
+            }
+        });
+    }
 
     const creationsList  = document.getElementById('creations-list');
     const creationsCount = document.getElementById('creations-count');
     let currentCategoryFilter = 'ALL';
+    let currentAdminServiceFilter = 'ALL';
 
     // ============================================================
     // RENDU DU CATALOGUE (liste des créations existantes)
@@ -644,13 +735,33 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCreations() {
         const d = getData();
         let list = d.creations || [];
+
+        // Filtre Type (Toutes / Mes Créations / IA)
         if (currentCategoryFilter !== 'ALL') {
             list = list.filter(c => c.type === currentCategoryFilter);
         }
+
+        // Filtre Catégorie de service (Logos, Flyers, Cartes, Affiches, Visuels, Étiquettes...)
+        if (currentAdminServiceFilter !== 'ALL') {
+            const f = currentAdminServiceFilter.toLowerCase();
+            list = list.filter(c => {
+                const svc = (c.service || '').toLowerCase();
+                const dom = (c.domain || '').toLowerCase();
+                const tit = (c.title || '').toLowerCase();
+                if (f === 'logo') return svc.includes('logo') || dom.includes('logo') || tit.includes('logo');
+                if (f === 'flyer') return svc.includes('flyer') || dom.includes('flyer') || tit.includes('flyer');
+                if (f.includes('carte')) return svc.includes('carte') || dom.includes('carte') || tit.includes('carte');
+                if (f.includes('affiche')) return svc.includes('affiche') || svc.includes('kakemono') || svc.includes('kakémono') || dom.includes('affiche') || tit.includes('affiche');
+                if (f.includes('visuel')) return svc.includes('visuel') || dom.includes('visuel') || tit.includes('visuel');
+                if (f.includes('etiquette') || f.includes('étiquette')) return svc.includes('etiquette') || svc.includes('étiquette') || dom.includes('etiquette') || tit.includes('etiquette');
+                return svc.includes(f) || dom.includes(f) || tit.includes(f);
+            });
+        }
+
         creationsCount.textContent = list.length;
 
         if (list.length === 0) {
-            creationsList.innerHTML = `<p style="color:var(--c-text-muted);text-align:center;padding:30px;">Aucune création dans cette catégorie.</p>`;
+            creationsList.innerHTML = `<p style="color:var(--c-text-muted);text-align:center;padding:36px;background:var(--c-surface-inner);border:1px dashed var(--c-border);border-radius:12px;">Aucune création trouvée dans cette sélection.</p>`;
             return;
         }
 
@@ -659,44 +770,80 @@ document.addEventListener('DOMContentLoaded', () => {
             const mainImg = imgs[0] || '';
             const extraCount = imgs.length - 1;
             const priceTag = c.price
-                ? `<span style="font-weight:700;color:#059669;font-size:0.82rem;">💰 ${Number(c.price).toLocaleString('fr-FR')} F CFA</span>`
+                ? `<span style="font-weight:700;color:#34d399;font-size:0.82rem;">💰 ${Number(c.price).toLocaleString('fr-FR')} F CFA</span>`
                 : '';
+            // Échapper l'id pour l'utiliser dans onclick
+            const safeId = String(c.id).replace(/'/g, "\\'");
             return `
             <div class="item-row">
                 <div class="item-info">
                     <!-- Image(s) -->
-                    <div style="position:relative;flex-shrink:0;cursor:pointer;" onclick="previewFullscreen('${c.id}',0)" title="Voir l'image">
+                    <div style="position:relative;flex-shrink:0;cursor:pointer;" onclick="previewFullscreen('${safeId}',0)" title="Voir l'image">
                         <img src="${mainImg || 'https://placehold.co/72x72?text=Image'}" alt="${c.title}"
-                            style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid ${imgs.length>1?'#3b82f6':'var(--c-border)'};"
+                            style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid ${imgs.length>1?'var(--c-primary)':'var(--c-border)'};"
                             onerror="this.src='https://placehold.co/72x72?text=Image'">
-                        ${extraCount > 0 ? `<span style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.7);color:white;font-size:0.65rem;font-weight:700;padding:1px 5px;border-radius:4px;">+${extraCount}</span>` : ''}
+                        ${extraCount > 0 ? `<span style="position:absolute;bottom:2px;right:2px;background:rgba(0,0,0,0.8);color:white;font-size:0.65rem;font-weight:700;padding:1px 5px;border-radius:4px;">+${extraCount}</span>` : ''}
                     </div>
                     <!-- Infos -->
                     <div class="item-meta">
-                        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
-                            <strong style="font-size:0.95rem;">${c.title}</strong>
+                        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:4px;">
+                            <strong style="font-size:0.95rem;color:var(--c-text);">${c.title}</strong>
                             <span class="badge-type ${c.type === 'AI_CREATION' ? 'badge-ai' : ''}">${c.type === 'MY_CREATION' ? 'Ma création' : 'IA'}</span>
                         </div>
-                        <small style="display:block;color:#475569;margin-bottom:2px;">📂 <strong>${c.domain || '—'}</strong> &nbsp;|&nbsp; 🎨 ${c.service || '—'}</small>
+                        <small style="display:block;color:var(--c-text-muted);margin-bottom:2px;">📂 <strong>${c.domain || '—'}</strong> &nbsp;|&nbsp; 🎨 ${c.service || '—'}</small>
                         ${priceTag ? `<div style="margin-bottom:2px;">${priceTag}</div>` : ''}
                         ${c.description ? `<small style="display:block;color:#94a3b8;font-style:italic;">${c.description}</small>` : ''}
-                        ${imgs.length > 1 ? `<small style="display:block;color:#3b82f6;font-weight:600;margin-top:2px;">📸 ${imgs.length} images</small>` : ''}
+                        ${imgs.length > 1 ? `<small style="display:block;color:#60a5fa;font-weight:600;margin-top:2px;">📸 ${imgs.length} images</small>` : ''}
                     </div>
                 </div>
-                <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                    <button type="button" class="btn-edit" onclick="openEditModal('${c.id}')">✏️ Modifier</button>
-                    <button type="button" class="btn-delete" onclick="deleteCreation('${c.id}')">🗑 Supprimer</button>
+                <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;">
+                    <label class="btn btn-outline" style="font-size:0.8rem;padding:7px 12px;cursor:pointer;" title="Remplacer l'image directement">
+                        🔄 Remplacer
+                        <input type="file" accept="image/*" style="display:none;" onchange="quickReplaceCreationImage('${safeId}', this)">
+                    </label>
+                    <button type="button" class="btn-edit" onclick="openEditModal('${safeId}')">✏️ Modifier</button>
+                    <button type="button" class="btn-delete" onclick="deleteCreation('${safeId}')">🗑 Supprimer</button>
                 </div>
             </div>`;
         }).join('');
     }
 
-    // Filtres
+    // Remplacement rapide direct de l'image d'une création
+    window.quickReplaceCreationImage = (id, inputEl) => {
+        const file = inputEl.files && inputEl.files[0];
+        if (!file) return;
+        compressAndReadFile(file).then(b64 => {
+            const d = getData();
+            const creation = (d.creations || []).find(c => String(c.id) === String(id));
+            if (creation) {
+                if (!creation.images) creation.images = [];
+                creation.images[0] = b64;
+                creation.image = b64;
+                saveData(d);
+                renderCreations();
+                refreshDiffAdmin();
+                showMsg(`✓ Image de "${creation.title}" remplacée et enregistrée ! Actualisez le site pour voir le changement.`);
+            }
+        }).catch(err => showMsg('⚠️ ' + err.message, true));
+        inputEl.value = '';
+    };
+
+    // Filtres Type (Toutes / Mes Créations / IA)
     document.querySelectorAll('.filter-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentCategoryFilter = btn.dataset.cat;
+            renderCreations();
+        });
+    });
+
+    // Filtres Catégories de Services (Logos, Flyers, Cartes de visite, Affiches...)
+    document.querySelectorAll('.admin-cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.admin-cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentAdminServiceFilter = btn.dataset.serviceFilter;
             renderCreations();
         });
     });
@@ -713,36 +860,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Soumettre le formulaire d'ajout
-    document.getElementById('creation-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (pendingImages.length === 0) {
-            alert('Veuillez choisir au moins une image pour votre création.');
-            return;
-        }
-        const d = getData();
-        if (!d.creations) d.creations = [];
-        const priceVal = document.getElementById('c-price').value.trim();
+    const creationForm = document.getElementById('creation-form');
+    if (creationForm) {
+        creationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (pendingImages.length === 0) {
+                alert('Veuillez choisir au moins une image pour votre création.');
+                return;
+            }
+            const d = getData();
+            if (!d.creations) d.creations = [];
+            const priceVal = document.getElementById('c-price').value.trim();
 
-        const newCreation = {
-            id: 'c_' + Date.now(),
-            type: document.getElementById('c-type').value,
-            title: document.getElementById('c-title').value.trim(),
-            domain: document.getElementById('c-domain').value,
-            service: document.getElementById('c-service').value,
-            price: priceVal ? parseInt(priceVal) : null,
-            description: document.getElementById('c-desc').value.trim()
-        };
-        setImages(newCreation, pendingImages);
+            const newCreation = {
+                id: 'c_' + Date.now(),
+                type: document.getElementById('c-type').value,
+                title: document.getElementById('c-title').value.trim(),
+                domain: document.getElementById('c-domain').value,
+                service: document.getElementById('c-service').value,
+                price: priceVal ? parseInt(priceVal) : null,
+                description: document.getElementById('c-desc').value.trim()
+            };
+            setImages(newCreation, pendingImages);
 
-        d.creations.unshift(newCreation);
-        saveData(d);
-        renderCreations();
-        refreshDiffAdmin();
-        e.target.reset();
-        pendingImages = [];
-        renderAddImagesPreview();
-        showMsg('✓ Nouvelle création ajoutée au catalogue !');
-    });
+            d.creations.unshift(newCreation);
+            saveData(d);
+            renderCreations();
+            refreshDiffAdmin();
+            e.target.reset();
+            pendingImages = [];
+            renderAddImagesPreview();
+            showMsg('✓ Nouvelle création ajoutée au catalogue !');
+        });
+    }
 
     renderCreations();
     renderAddImagesPreview();
@@ -760,12 +910,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const editDesc    = document.getElementById('edit-c-desc');
     const editImgsGallery = document.getElementById('edit-images-gallery');
     const editAddImgFile  = document.getElementById('edit-add-img-file');
+    const editMainPreview = document.getElementById('edit-main-preview');
+    const editMainPreviewNone = document.getElementById('edit-main-preview-none');
 
     let editImages = [];  // Tableau d'images en cours d'édition
 
+    function updateEditMainPreview() {
+        if (!editMainPreview) return;
+        if (editImages.length > 0 && editImages[0]) {
+            editMainPreview.src = editImages[0];
+            editMainPreview.style.display = 'block';
+            if (editMainPreviewNone) editMainPreviewNone.style.display = 'none';
+        } else {
+            editMainPreview.style.display = 'none';
+            if (editMainPreviewNone) editMainPreviewNone.style.display = 'block';
+        }
+    }
+
     function renderEditGallery() {
+        if (!editImgsGallery) return;
         if (editImages.length === 0) {
             editImgsGallery.innerHTML = '<p style="color:#94a3b8;font-size:0.85rem;padding:10px 0;">Aucune image. Ajoutez-en une ci-dessous.</p>';
+            updateEditMainPreview();
             return;
         }
         editImgsGallery.innerHTML = editImages.map((img, idx) => `
@@ -797,9 +963,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const b64 = await readFileAsBase64(file);
                     editImages[idx] = b64;
                     renderEditGallery();
+                    updateEditMainPreview();
                 } catch(err) { showMsg('⚠️ ' + err.message, true); }
             });
         });
+
+        updateEditMainPreview();
     }
 
     window.removeEditImage = (idx) => {
@@ -817,77 +986,105 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.style.display = 'flex';
     };
 
-    editAddImgFile.addEventListener('change', async (e) => {
-        const files = Array.from(e.target.files);
-        for (const file of files) {
-            try {
-                const b64 = await readFileAsBase64(file);
-                editImages.push(b64);
-            } catch(err) { showMsg('⚠️ ' + err.message, true); }
-        }
-        e.target.value = '';
-        renderEditGallery();
-    });
+    if (editAddImgFile) {
+        editAddImgFile.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                try {
+                    const b64 = await readFileAsBase64(file);
+                    editImages.push(b64);
+                } catch(err) { showMsg('⚠️ ' + err.message, true); }
+            }
+            e.target.value = '';
+            renderEditGallery();
+        });
+    }
 
     window.openEditModal = (id) => {
         const d = getData();
-        const c = d.creations.find(item => item.id === id);
-        if (!c) return;
+        const c = (d.creations || []).find(item => item.id === id);
+        if (!c) {
+            showMsg('⚠️ Création introuvable.', true);
+            return;
+        }
 
-        editId.value    = c.id;
-        editType.value  = c.type;
-        editTitle.value = c.title;
-        editPrice.value = c.price || '';
-        editDesc.value  = c.description || '';
+        // 1. Remplir les champs texte
+        if (editId)    editId.value    = c.id;
+        if (editType)  editType.value  = c.type || 'MY_CREATION';
+        if (editTitle) editTitle.value = c.title || '';
+        if (editPrice) editPrice.value = c.price || '';
+        // textarea description
+        if (editDesc)  editDesc.value  = c.description || '';
 
-        fillSelect(editDomain, d.domains || [], c.domain || '');
-        fillSelect(editService, d.services || [], c.service || '');
+        // 2. Remplir les selects APRÈS avoir injecté les options
+        const domains  = d.domains  || [];
+        const services = d.services || [];
+        fillSelect(editDomain,  domains,  c.domain  || '');
+        fillSelect(editService, services, c.service || '');
 
+        // 3. Charger les images
         editImages = getImages(c);
         renderEditGallery();
 
+        // 4. Ouvrir la modal
         editModal.classList.add('active');
-        editModal.scrollTop = 0;
+        // Scroll en haut de la modal
+        const card = editModal.querySelector('.modal-edit-card');
+        if (card) card.scrollTop = 0;
     };
 
-    document.getElementById('btn-cancel-edit').addEventListener('click', () => {
-        editModal.classList.remove('active');
-        editImages = [];
-    });
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
+    if (btnCancelEdit) {
+        btnCancelEdit.addEventListener('click', () => {
+            editModal.classList.remove('active');
+            editImages = [];
+        });
+    }
 
-    editModal.addEventListener('click', (e) => {
-        if (e.target === editModal) { editModal.classList.remove('active'); editImages = []; }
-    });
+    if (editModal) {
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                editModal.classList.remove('active');
+                editImages = [];
+            }
+        });
+    }
 
-    document.getElementById('edit-creation-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id  = editId.value;
-        const d   = getData();
-        const idx = d.creations.findIndex(c => c.id === id);
-        if (idx === -1) return;
+    const editCreationForm = document.getElementById('edit-creation-form');
+    if (editCreationForm) {
+        editCreationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id  = editId ? editId.value : '';
+            const d   = getData();
+            const idx = (d.creations || []).findIndex(c => c.id === id);
+            if (idx === -1) {
+                showMsg('⚠️ Création introuvable, impossible de modifier.', true);
+                return;
+            }
 
-        d.creations[idx].type        = editType.value;
-        d.creations[idx].title       = editTitle.value.trim();
-        d.creations[idx].domain      = editDomain ? editDomain.value : d.creations[idx].domain;
-        d.creations[idx].service     = editService ? editService.value : d.creations[idx].service;
-        d.creations[idx].price       = editPrice.value.trim() ? parseInt(editPrice.value.trim()) : null;
-        d.creations[idx].description = editDesc.value.trim();
-        setImages(d.creations[idx], editImages);
+            d.creations[idx].type        = editType   ? editType.value  : d.creations[idx].type;
+            d.creations[idx].title       = editTitle  ? editTitle.value.trim() : d.creations[idx].title;
+            d.creations[idx].domain      = editDomain  ? editDomain.value  : d.creations[idx].domain;
+            d.creations[idx].service     = editService ? editService.value : d.creations[idx].service;
+            d.creations[idx].price       = editPrice && editPrice.value.trim() ? parseInt(editPrice.value.trim()) : null;
+            d.creations[idx].description = editDesc   ? editDesc.value.trim() : d.creations[idx].description;
+            setImages(d.creations[idx], editImages);
 
-        saveData(d);
-        renderCreations();
-        refreshDiffAdmin();
-        editModal.classList.remove('active');
-        editImages = [];
-        showMsg('✓ Création modifiée avec succès !');
-    });
+            saveData(d);
+            renderCreations();
+            refreshDiffAdmin();
+            editModal.classList.remove('active');
+            editImages = [];
+            showMsg('✓ Création modifiée avec succès !');
+        });
+    }
 
     // ============================================================
     // OVERLAY PLEIN ÉCRAN (depuis la liste catalogue)
     // ============================================================
     window.previewFullscreen = (id, imgIdx) => {
         const d = getData();
-        const c = d.creations.find(item => item.id === id);
+        const c = (d.creations || []).find(item => item.id === id);
         if (!c) return;
         const imgs = getImages(c);
         if (!imgs[imgIdx]) return;
@@ -906,6 +1103,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Fermer la lightbox avec Échap
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (imgOverlay) imgOverlay.style.display = 'none';
+            if (editModal && editModal.classList.contains('active')) {
+                editModal.classList.remove('active');
+                editImages = [];
+            }
+        }
+    });
+
     // ============================================================
     // 6. TARIFS
     // ============================================================
@@ -914,6 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPrices() {
         const d = getData();
         const services = d.services || [];
+        if (!pricesList) return;
         if (services.length === 0) {
             pricesList.innerHTML = '<p style="color:var(--c-text-muted);font-size:0.9rem;">Aucun service défini.</p>';
             return;
@@ -939,32 +1148,489 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
-    document.getElementById('prices-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const d = getData();
-        if (!d.prices) d.prices = {};
-        document.querySelectorAll('.price-in').forEach(input => {
-            const svc = input.dataset.s; const tier = input.dataset.t;
-            if (!d.prices[svc]) d.prices[svc] = {};
-            d.prices[svc][tier] = parseInt(input.value) || 0;
+    const pricesForm = document.getElementById('prices-form');
+    if (pricesForm) {
+        pricesForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const d = getData();
+            if (!d.prices) d.prices = {};
+            document.querySelectorAll('.price-in').forEach(input => {
+                const svc = input.dataset.s; const tier = input.dataset.t;
+                if (!d.prices[svc]) d.prices[svc] = {};
+                d.prices[svc][tier] = parseInt(input.value) || 0;
+            });
+            saveData(d);
+            showMsg('✓ Grille des tarifs mise à jour !');
         });
-        saveData(d);
-        showMsg('✓ Grille des tarifs mise à jour !');
-    });
+    }
 
     // ============================================================
-    // 7. WHATSAPP
+    // 7. COORDONNÉES, TÉLÉPHONES & WHATSAPP
     // ============================================================
     const adminWaInput = document.getElementById('admin-wa');
-    if (data.settings && data.settings.whatsappNumber) {
-        adminWaInput.value = data.settings.whatsappNumber;
-    }
-    document.getElementById('settings-form').addEventListener('submit', (e) => {
-        e.preventDefault();
+    const adminPhoneInput = document.getElementById('admin-phone');
+    const adminResaInput = document.getElementById('admin-reservation');
+    const adminEmailInput = document.getElementById('admin-email');
+    const adminAddrInput = document.getElementById('admin-address');
+
+    function populateContacts() {
         const d = getData();
-        if (!d.settings) d.settings = {};
-        d.settings.whatsappNumber = adminWaInput.value.trim();
-        saveData(d);
-        showMsg('✓ Numéro WhatsApp mis à jour !');
+        const s = d.settings || {};
+        if (adminWaInput) adminWaInput.value = s.whatsappNumber || '';
+        if (adminPhoneInput) adminPhoneInput.value = s.phoneNumber || s.whatsappNumber || '';
+        if (adminResaInput) adminResaInput.value = s.reservationNumber || s.whatsappNumber || '';
+        if (adminEmailInput) adminEmailInput.value = s.email || '';
+        if (adminAddrInput) adminAddrInput.value = s.address || '';
+    }
+    populateContacts();
+
+    const contactsForm = document.getElementById('contacts-form');
+    if (contactsForm) {
+        contactsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const d = getData();
+            if (!d.settings) d.settings = {};
+            d.settings.whatsappNumber = adminWaInput ? adminWaInput.value.trim() : '';
+            d.settings.phoneNumber = adminPhoneInput ? adminPhoneInput.value.trim() : d.settings.whatsappNumber;
+            d.settings.reservationNumber = adminResaInput ? adminResaInput.value.trim() : d.settings.whatsappNumber;
+            d.settings.email = adminEmailInput ? adminEmailInput.value.trim() : '';
+            d.settings.address = adminAddrInput ? adminAddrInput.value.trim() : '';
+            saveData(d);
+            showMsg('✓ Coordonnées et numéros enregistrés avec succès !');
+        });
+    }
+
+    // ============================================================
+    // 8. TEXTES, TITRES & PRÉSENTATION DU SITE
+    // ============================================================
+    function populateTexts() {
+        const d = getData();
+        const t = (d.settings && d.settings.texts) || {};
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el && val) el.value = val;
+        };
+        setVal('text-hero-title', t.heroTitle);
+        setVal('text-hero-subtitle', t.heroSubtitle);
+        setVal('text-services-title', t.servicesTitle);
+        setVal('text-btn-creations', t.btnCreations);
+        setVal('text-btn-commander', t.btnCommander);
+        setVal('text-diff-title', t.diffTitle);
+        setVal('text-diff-subtitle', t.diffSubtitle);
+        setVal('text-creations-title', t.creationsTitle);
+        setVal('text-tarifs-title', t.tarifsTitle);
+        setVal('text-contact-title', t.contactTitle);
+        setVal('text-footer', t.footerText);
+    }
+    populateTexts();
+
+    const textsForm = document.getElementById('texts-form');
+    if (textsForm) {
+        textsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const d = getData();
+            if (!d.settings) d.settings = {};
+            if (!d.settings.texts) d.settings.texts = {};
+            const getVal = id => {
+                const el = document.getElementById(id);
+                return el ? el.value.trim() : '';
+            };
+            d.settings.texts.heroTitle = getVal('text-hero-title');
+            d.settings.texts.heroSubtitle = getVal('text-hero-subtitle');
+            d.settings.texts.servicesTitle = getVal('text-services-title');
+            d.settings.texts.btnCreations = getVal('text-btn-creations');
+            d.settings.texts.btnCommander = getVal('text-btn-commander');
+            d.settings.texts.diffTitle = getVal('text-diff-title');
+            d.settings.texts.diffSubtitle = getVal('text-diff-subtitle');
+            d.settings.texts.creationsTitle = getVal('text-creations-title');
+            d.settings.texts.tarifsTitle = getVal('text-tarifs-title');
+            d.settings.texts.contactTitle = getVal('text-contact-title');
+            d.settings.texts.footerText = getVal('text-footer');
+
+            saveData(d);
+            showMsg('✓ Textes et titres du site enregistrés !');
+        });
+    }
+
+    // ============================================================
+    // 9. GESTION DES COMMANDES & TABLEAU DE BORD
+    // ============================================================
+    const ordersListContainer = document.getElementById('orders-list-container');
+    const orderSearchInput = document.getElementById('order-search-input');
+    const orderStatusFilter = document.getElementById('order-status-filter');
+    const orderServiceFilter = document.getElementById('order-service-filter');
+    const orderDateFilter = document.getElementById('order-date-filter');
+    const btnResetOrderFilters = document.getElementById('btn-reset-order-filters');
+    const btnRefreshOrders = document.getElementById('btn-refresh-orders');
+
+    // Fiche Client Modal
+    const clientModal = document.getElementById('client-modal');
+    const modalOrderContent = document.getElementById('modal-order-content');
+    const modalOrderStatusBadge = document.getElementById('modal-order-status-badge');
+    const modalSelectStatus = document.getElementById('modal-select-status');
+    const btnSaveOrderStatus = document.getElementById('btn-save-order-status');
+    const btnDeleteCurrentOrder = document.getElementById('btn-delete-current-order');
+    const btnModalWaLink = document.getElementById('btn-modal-wa-link');
+    const btnCloseClientModal = document.getElementById('btn-close-client-modal');
+
+    let currentOpenOrderId = null;
+
+    function populateOrderServiceFilter() {
+        if (!orderServiceFilter) return;
+        const d = getData();
+        const services = d.services || [];
+        orderServiceFilter.innerHTML = '<option value="ALL">Tous les services</option>' +
+            services.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+    populateOrderServiceFilter();
+
+    function renderOrdersDashboard() {
+        if (!ordersListContainer) return;
+        const orders = typeof window.getOrders === 'function' ? window.getOrders() : [];
+
+        // 1. Calcul des indicateurs KPIs
+        const total = orders.length;
+        const newCount = orders.filter(o => o.status === 'Nouvelle').length;
+        const pendingCount = orders.filter(o => o.status === 'En attente' || o.status === 'En cours').length;
+        const doneCount = orders.filter(o => o.status === 'Terminée').length;
+
+        const statTotal = document.getElementById('stat-total-orders');
+        const statNew = document.getElementById('stat-new-orders');
+        const statProg = document.getElementById('stat-progress-orders');
+        const statDone = document.getElementById('stat-done-orders');
+        if (statTotal) statTotal.textContent = total;
+        if (statNew) statNew.textContent = newCount;
+        if (statProg) statProg.textContent = pendingCount;
+        if (statDone) statDone.textContent = doneCount;
+
+        // 2. Filtres
+        const searchVal = (orderSearchInput ? orderSearchInput.value : '').toLowerCase().trim();
+        const statusVal = orderStatusFilter ? orderStatusFilter.value : 'ALL';
+        const serviceVal = orderServiceFilter ? orderServiceFilter.value : 'ALL';
+        const dateVal = orderDateFilter ? orderDateFilter.value : '';
+
+        const filtered = orders.filter(o => {
+            if (statusVal !== 'ALL' && o.status !== statusVal) return false;
+
+            if (serviceVal !== 'ALL') {
+                const hasService = (o.services || []).some(s => s.service === serviceVal);
+                if (!hasService) return false;
+            }
+
+            if (dateVal) {
+                const parts = dateVal.split('-');
+                if (parts.length === 3) {
+                    const formatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    if (o.date && o.date !== formatted) return false;
+                }
+            }
+
+            if (searchVal) {
+                const clientName = `${o.client?.nom || ''} ${o.client?.prenom || ''}`.toLowerCase();
+                const tel = (o.client?.telephone || '').toLowerCase();
+                const svcList = (o.services || []).map(s => s.service).join(' ').toLowerCase();
+                if (!clientName.includes(searchVal) && !tel.includes(searchVal) && !svcList.includes(searchVal)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // 3. Affichage
+        if (filtered.length === 0) {
+            ordersListContainer.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; color:#64748b;">
+                    <div style="font-size:2rem; margin-bottom:8px;">📦</div>
+                    <p style="font-weight:600; margin:0;">Aucune commande trouvée.</p>
+                    <p style="font-size:0.85rem; margin-top:4px;">Les commandes passées par vos clients s'affichent automatiquement ici.</p>
+                </div>`;
+            return;
+        }
+
+        ordersListContainer.innerHTML = filtered.map(o => {
+            const clientName = `${o.client?.nom || ''} ${o.client?.prenom || ''}`.trim() || 'Client';
+            const tel = o.client?.telephone || 'Non renseigné';
+            const servicesStr = (o.services || []).map(s => `${s.service} (${s.formule || 'Basic'})`).join(', ') || 'Service graphique';
+            const totalStr = (o.total || 0).toLocaleString('fr-FR') + ' F CFA';
+            const statusClass = `badge-status-${(o.status || 'Nouvelle').toLowerCase().replace(/\s+/g, '-')}`;
+
+            return `
+                <div class="order-card-row" data-order-id="${o.id}">
+                    <div class="order-meta-info">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span class="order-client-name">${clientName}</span>
+                            <span class="badge-status ${statusClass}">${o.status || 'Nouvelle'}</span>
+                        </div>
+                        <div class="order-client-sub">
+                            <span>📞 ${tel}</span>
+                            <span>📅 ${o.date || ''} à ${o.time || ''}</span>
+                        </div>
+                        <div class="order-services-preview">
+                            🎨 ${servicesStr}
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="order-price-badge">${totalStr}</span>
+                        <button type="button" class="btn btn-view" onclick="openClientOrderModal('${o.id}')">👁️ Fiche Client</button>
+                        <button type="button" class="btn btn-delete" onclick="handleDeleteOrder('${o.id}')" title="Supprimer">✕</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    window.openClientOrderModal = function(orderId) {
+        const orders = typeof window.getOrders === 'function' ? window.getOrders() : [];
+        const o = orders.find(item => item.id === orderId);
+        if (!o) return;
+        currentOpenOrderId = orderId;
+
+        const clientName = `${o.client?.nom || ''} ${o.client?.prenom || ''}`.trim() || 'Client inconnu';
+        const tel = o.client?.telephone || '';
+        const adresse = o.client?.adresse || 'Non renseignée';
+        const domaine = o.projet?.domaine || 'Non renseigné';
+        const logo = o.projet?.logoExistant || 'Non';
+        const total = (o.total || 0).toLocaleString('fr-FR') + ' F CFA';
+
+        if (modalOrderStatusBadge) {
+            modalOrderStatusBadge.textContent = o.status || 'Nouvelle';
+            modalOrderStatusBadge.className = `badge-status badge-status-${(o.status || 'Nouvelle').toLowerCase().replace(/\s+/g, '-')}`;
+        }
+        if (modalSelectStatus) modalSelectStatus.value = o.status || 'Nouvelle';
+
+        if (btnModalWaLink) {
+            const rawTel = tel.replace(/[^0-9]/g, '');
+            if (rawTel) {
+                const waText = encodeURIComponent(`Bonjour ${clientName}, je vous contacte concernant votre commande sur Pixora Studio (#${o.id}).`);
+                btnModalWaLink.href = `https://wa.me/${rawTel}?text=${waText}`;
+                btnModalWaLink.style.display = 'inline-block';
+            } else {
+                btnModalWaLink.style.display = 'none';
+            }
+        }
+
+        const servicesRows = (o.services || []).map((s, idx) => `
+            <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed #e2e8f0; font-size:0.9rem;">
+                <div><strong>${idx + 1}. ${s.service}</strong> <span style="color:#64748b;">(${s.formule || 'Basic'})</span></div>
+                <div style="font-weight:700;">${(s.price || 0).toLocaleString('fr-FR')} F CFA</div>
+            </div>
+        `).join('');
+
+        const historyRows = (o.history || []).map(h => `
+            <li style="font-size:0.82rem; color:#475569; margin-bottom:4px;">
+                <strong>${h.date || ''}</strong> : ${h.status || ''} ${h.note ? `— <em>${h.note}</em>` : ''}
+            </li>
+        `).join('');
+
+        if (modalOrderContent) {
+            modalOrderContent.innerHTML = `
+                <div style="margin-bottom:16px;">
+                    <span style="font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase;">Identifiant Commande</span>
+                    <div style="font-family:monospace; font-weight:700; font-size:1.1rem; color:var(--c-primary-dark);">${o.id}</div>
+                    <div style="font-size:0.85rem; color:#64748b;">Reçue le ${o.date || ''} à ${o.time || ''}</div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; background:#f8fafc; padding:14px; border-radius:10px; margin-bottom:16px; border:1px solid #e2e8f0;">
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#64748b;">Client</div>
+                        <div style="font-weight:700; font-size:0.95rem; color:#1e293b;">${clientName}</div>
+                        <div style="font-size:0.88rem; color:#3b82f6; font-weight:600;"><a href="tel:${tel}" style="color:inherit; text-decoration:none;">📞 ${tel}</a></div>
+                        <div style="font-size:0.85rem; color:#475569;">📍 ${adresse}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#64748b;">Projet & Activité</div>
+                        <div style="font-weight:600; font-size:0.9rem; color:#1e293b;">🏢 ${domaine}</div>
+                        <div style="font-size:0.85rem; color:#475569;">Logo existant : <strong>${logo}</strong></div>
+                    </div>
+                </div>
+
+                ${o.message ? `
+                <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:10px 14px; border-radius:4px; margin-bottom:16px;">
+                    <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#1e40af;">Message / Précisions du client</div>
+                    <div style="font-size:0.9rem; color:#1e3a8a; white-space:pre-wrap; margin-top:4px;">${o.message}</div>
+                </div>` : ''}
+
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:0.78rem; font-weight:700; text-transform:uppercase; color:#64748b; margin-bottom:6px;">Services Commandés</div>
+                    ${servicesRows}
+                    <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:2px solid var(--c-primary); font-size:1.1rem; font-weight:800;">
+                        <span>TOTAL</span>
+                        <span style="color:var(--c-primary);">${total}</span>
+                    </div>
+                </div>
+
+                ${historyRows ? `
+                <div style="margin-top:14px; border-top:1px solid #e2e8f0; padding-top:10px;">
+                    <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:#64748b; margin-bottom:6px;">Historique du suivi</div>
+                    <ul style="margin:0; padding-left:18px;">${historyRows}</ul>
+                </div>` : ''}
+            `;
+        }
+
+        if (clientModal) clientModal.classList.add('active');
+    };
+
+    if (btnCloseClientModal) {
+        btnCloseClientModal.addEventListener('click', () => {
+            if (clientModal) clientModal.classList.remove('active');
+            currentOpenOrderId = null;
+        });
+    }
+
+    if (clientModal) {
+        clientModal.addEventListener('click', (e) => {
+            if (e.target === clientModal) {
+                clientModal.classList.remove('active');
+                currentOpenOrderId = null;
+            }
+        });
+    }
+
+    if (btnSaveOrderStatus) {
+        btnSaveOrderStatus.addEventListener('click', () => {
+            if (!currentOpenOrderId || !modalSelectStatus) return;
+            const newStatus = modalSelectStatus.value;
+            if (typeof window.updateOrderStatus === 'function') {
+                window.updateOrderStatus(currentOpenOrderId, newStatus);
+                showMsg(`✓ Statut de la commande #${currentOpenOrderId} mis à jour : ${newStatus}`);
+                openClientOrderModal(currentOpenOrderId);
+                renderOrdersDashboard();
+            }
+        });
+    }
+
+    if (btnDeleteCurrentOrder) {
+        btnDeleteCurrentOrder.addEventListener('click', () => {
+            if (!currentOpenOrderId) return;
+            if (confirm(`Êtes-vous sûr de vouloir supprimer définitivement la commande #${currentOpenOrderId} ?`)) {
+                if (typeof window.deleteOrder === 'function') {
+                    window.deleteOrder(currentOpenOrderId);
+                    if (clientModal) clientModal.classList.remove('active');
+                    currentOpenOrderId = null;
+                    renderOrdersDashboard();
+                    showMsg('✓ Commande supprimée.');
+                }
+            }
+        });
+    }
+
+    window.handleDeleteOrder = function(orderId) {
+        if (confirm(`Supprimer la commande #${orderId} ?`)) {
+            if (typeof window.deleteOrder === 'function') {
+                window.deleteOrder(orderId);
+                renderOrdersDashboard();
+                showMsg('✓ Commande supprimée.');
+            }
+        }
+    };
+
+    if (orderSearchInput) orderSearchInput.addEventListener('input', renderOrdersDashboard);
+    if (orderStatusFilter) orderStatusFilter.addEventListener('change', renderOrdersDashboard);
+    if (orderServiceFilter) orderServiceFilter.addEventListener('change', renderOrdersDashboard);
+    if (orderDateFilter) orderDateFilter.addEventListener('change', renderOrdersDashboard);
+    if (btnResetOrderFilters) {
+        btnResetOrderFilters.addEventListener('click', () => {
+            if (orderSearchInput) orderSearchInput.value = '';
+            if (orderStatusFilter) orderStatusFilter.value = 'ALL';
+            if (orderServiceFilter) orderServiceFilter.value = 'ALL';
+            if (orderDateFilter) orderDateFilter.value = '';
+            renderOrdersDashboard();
+        });
+    }
+    if (btnRefreshOrders) {
+        btnRefreshOrders.addEventListener('click', () => {
+            renderOrdersDashboard();
+            showMsg('✓ Commandes actualisées.');
+        });
+    }
+
+    document.addEventListener('pixora-order-created', () => {
+        renderOrdersDashboard();
+        showMsg('🔔 Nouvelle commande reçue !');
     });
+    document.addEventListener('pixora-orders-updated', renderOrdersDashboard);
+
+    // ============================================================
+    // 10. ACCÈS DIRECT ADMINISTRATEUR (authentification supprimée)
+    // ============================================================
+    const mainWrap = document.getElementById('admin-main-wrap');
+    if (mainWrap) mainWrap.style.display = 'block';
+
+
+    // ============================================================
+    // 11. FIREBASE SYNCHRONISATION CLOUD
+    // ============================================================
+    const fbForm = document.getElementById('firebase-config-form');
+    const headerSyncStatus = document.getElementById('header-sync-status');
+    const fbCardBadge = document.getElementById('firebase-card-badge');
+    const btnDisconnectFb = document.getElementById('btn-disconnect-fb');
+
+    function updateFirebaseUI() {
+        if (!window.FirebaseSync) return;
+        const config = window.FirebaseSync.getStoredConfig();
+        const isReady = window.FirebaseSync.isReady();
+
+        if (config) {
+            const setIn = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+            setIn('fb-apiKey', config.apiKey);
+            setIn('fb-authDomain', config.authDomain);
+            setIn('fb-projectId', config.projectId);
+            setIn('fb-storageBucket', config.storageBucket);
+        }
+
+        if (isReady) {
+            if (headerSyncStatus) {
+                headerSyncStatus.className = 'sync-badge online';
+                headerSyncStatus.textContent = '🟢 Cloud Connecté';
+            }
+            if (fbCardBadge) {
+                fbCardBadge.className = 'sync-badge online';
+                fbCardBadge.textContent = '🟢 Connecté au Cloud Firestore';
+            }
+        } else {
+            if (headerSyncStatus) {
+                headerSyncStatus.className = 'sync-badge offline';
+                headerSyncStatus.textContent = '🟡 Mode Local';
+            }
+            if (fbCardBadge) {
+                fbCardBadge.className = 'sync-badge offline';
+                fbCardBadge.textContent = '🟡 Mode Local (Hors-ligne)';
+            }
+        }
+    }
+    updateFirebaseUI();
+
+    if (fbForm) {
+        fbForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const apiKey = document.getElementById('fb-apiKey').value.trim();
+            const authDomain = document.getElementById('fb-authDomain').value.trim();
+            const projectId = document.getElementById('fb-projectId').value.trim();
+            const storageBucket = document.getElementById('fb-storageBucket').value.trim();
+
+            if (!apiKey || !projectId) {
+                showMsg('⚠️ Veuillez au moins renseigner apiKey et projectId.', true);
+                return;
+            }
+
+            const config = { apiKey, authDomain, projectId, storageBucket };
+            if (window.FirebaseSync) {
+                window.FirebaseSync.setStoredConfig(config);
+                updateFirebaseUI();
+                showMsg('✓ Configuration Firebase enregistrée !');
+            }
+        });
+    }
+
+    if (btnDisconnectFb) {
+        btnDisconnectFb.addEventListener('click', () => {
+            if (confirm('Déconnecter Firebase et revenir en mode LocalStorage ?')) {
+                if (window.FirebaseSync) {
+                    window.FirebaseSync.setStoredConfig(null);
+                    updateFirebaseUI();
+                    showMsg('✓ Déconnecté de Firebase. Mode Local actif.');
+                }
+            }
+        });
+    }
 });

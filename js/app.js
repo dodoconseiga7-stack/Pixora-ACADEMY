@@ -9,33 +9,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderLogo() {
         const d = getData(); // reload latest data
-        if (d.settings.logoUrl) {
-            // Hero : grande image avec zoom
-            heroLogoZone.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO Logo" style="cursor:zoom-in;" title="Cliquer pour voir le logo en grand">`;
-            const heroImg = heroLogoZone.querySelector('img');
-            if (heroImg) {
-                heroImg.addEventListener('click', () => openLightbox(d.settings.logoUrl, 'Logo Pixora Studio'));
-            }
-            // Nav : petite image
-            siteLogoNav.innerHTML = `<img src="${d.settings.logoUrl}" alt="PIXORA STUDIO">`;
-        } else {
-            // Hero : texte stylisé
-            heroLogoZone.innerHTML = `
-                <div class="hero-logo-placeholder">PIXORA STUDIO</div>
-                <div class="hero-logo-sub">Studio de création graphique</div>
-            `;
-            // Nav : texte
-            siteLogoNav.innerHTML = `<span class="logo-text">PIXORA STUDIO</span>`;
+        const logoSrc = (d.settings && d.settings.logoUrl && !d.settings.logoUrl.startsWith('data:image/svg')) 
+            ? d.settings.logoUrl 
+            : 'assets/images/logo.png';
+
+        if (siteLogoNav) {
+            siteLogoNav.innerHTML = `<img src="${logoSrc}" alt="PIXORA ACADEMY" class="site-main-logo">`;
+        }
+        const siteLogoTopbar = document.getElementById('site-logo-topbar');
+        if (siteLogoTopbar) {
+            siteLogoTopbar.innerHTML = `<img src="${logoSrc}" alt="PIXORA ACADEMY" class="topbar-main-logo">`;
         }
     }
     renderLogo();
 
     // ============================================================
-    // 2. WHATSAPP
+    // 2. TEXTES DYNAMIQUES & CONTACTS
     // ============================================================
-    document.getElementById('display-wa-number').textContent = data.settings.whatsappNumber;
-    const waNum = data.settings.whatsappNumber.replace(/[^0-9]/g, '');
-    document.getElementById('wa-contact-btn').href = `https://wa.me/${waNum}`;
+    function renderTexts() {
+        const d = getData();
+        const texts = (d.settings && d.settings.texts) || {};
+
+        const elHeroTitle = document.getElementById('hero-title');
+        if (elHeroTitle && texts.heroTitle) elHeroTitle.textContent = texts.heroTitle;
+
+        const elHeroSub = document.getElementById('hero-subtitle');
+        if (elHeroSub && texts.heroSubtitle) elHeroSub.textContent = texts.heroSubtitle;
+
+        const elSvcTitle = document.getElementById('section-services-title');
+        if (elSvcTitle && texts.servicesTitle) elSvcTitle.textContent = texts.servicesTitle;
+
+        const elBtnCreations = document.getElementById('btn-hero-creations');
+        if (elBtnCreations && texts.btnCreations) elBtnCreations.textContent = texts.btnCreations;
+
+        const elBtnCommander = document.getElementById('btn-hero-commander');
+        if (elBtnCommander && texts.btnCommander) elBtnCommander.textContent = texts.btnCommander;
+
+        const elDiffTitle = document.getElementById('diff-title');
+        if (elDiffTitle && texts.diffTitle) elDiffTitle.textContent = texts.diffTitle;
+
+        const elDiffSub = document.getElementById('diff-subtitle');
+        if (elDiffSub && texts.diffSubtitle) elDiffSub.textContent = texts.diffSubtitle;
+
+        const elCreationsTitle = document.getElementById('creations-title');
+        if (elCreationsTitle && texts.creationsTitle) elCreationsTitle.textContent = texts.creationsTitle;
+
+        const elTarifsTitle = document.getElementById('tarifs-title');
+        if (elTarifsTitle && texts.tarifsTitle) elTarifsTitle.textContent = texts.tarifsTitle;
+
+        const elTarifsSub = document.getElementById('tarifs-subtitle');
+        if (elTarifsSub && texts.tarifsSubtitle) elTarifsSub.textContent = texts.tarifsSubtitle;
+
+        const elContactTitle = document.getElementById('contact-title');
+        if (elContactTitle && texts.contactTitle) elContactTitle.textContent = texts.contactTitle;
+
+        const elFooterText = document.getElementById('footer-text');
+        if (elFooterText && texts.footerText) elFooterText.textContent = texts.footerText;
+
+        const waNum = (d.settings && d.settings.whatsappNumber) ? d.settings.whatsappNumber : '+226 03 24 95 48';
+        const displayWa = document.getElementById('display-wa-number');
+        if (displayWa) displayWa.textContent = waNum;
+        const cleanWa = waNum.replace(/[^0-9]/g, '');
+        const waBtn = document.getElementById('wa-contact-btn');
+        if (waBtn) waBtn.href = `https://wa.me/${cleanWa}`;
+    }
+    renderTexts();
 
     // ============================================================
     // 3. LA DIFFÉRENCE (Comparaison Ma Création vs IA)
@@ -75,8 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (featuredAi) {
             aiEl.innerHTML = `
                 <div style="cursor:zoom-in;" title="Cliquer pour voir en grand">
-                    <img src="${featuredAi.image}" alt="${featuredAi.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+IA';">
-                    <div class="ai-badge">IA</div>
+                    <img src="${featuredAi.image}" alt="${featuredAi.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+IA';" style="max-height:260px; width:100%; object-fit:contain; background:#F5F5F5; border-radius:8px;">
+                    <div class="ai-badge" style="margin-top:10px;">IA</div>
                     <h4>${featuredAi.title}</h4>
                     <p>${featuredAi.service || 'Génération IA'} — ${featuredAi.domain || 'Artificiel'}</p>
                     ${featuredAi.description ? `<small style="display:block; color:var(--c-text-muted); margin-top:4px;">${featuredAi.description}</small>` : ''}
@@ -84,13 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             aiEl.onclick = () => openLightbox(featuredAi.image, featuredAi.title, featuredAi.description || '', 'Création générée par IA');
         } else if (aiList.length > 0) {
-            // Affichage de la galerie IA (grille)
+            // Affichage de la galerie IA (grille de cartes paysage)
             const galleryHtml = aiList.map(item => `
-                <div class="ai-gallery-item" data-fullimg="${item.image}" data-title="${item.title}" data-desc="${item.description || ''}" data-meta="${item.service || ''}">
-                    <img src="${item.image}" alt="${item.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+IA';">
-                    <div class="ai-gallery-info">
-                        <h4>${item.title}</h4>
-                        <div class="ai-badge">IA</div>
+                <div class="ai-gallery-item" 
+                     data-fullimg="${item.image}" 
+                     data-title="${item.title}" 
+                     data-desc="${item.description || ''}" 
+                     data-meta="${item.service || ''}"
+                     title="${item.title} — Cliquer pour voir en grand">
+                    <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Image+IA';">
+                    <div class="ai-gallery-info" style="padding:8px 10px 10px; background:#FFFFFF; border-top: 1px solid #E8EEF8; display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                        <span style="font-size:0.8rem; font-weight:700; color:#1A1A2E; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100% - 40px);">${item.title}</span>
+                        <span class="ai-badge" style="flex-shrink:0; font-size:0.65rem; padding:2px 8px; border-radius:50px; background:rgba(216,45,155,0.12); color:#D82D9B; border:1px solid rgba(216,45,155,0.3); font-weight:800;">IA</span>
                     </div>
                 </div>
             `).join('');
@@ -152,7 +195,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderServiceCards() {
         const freshData = getData();
-        const displayServices = freshData.services.filter(s => s !== 'Autres');
+        const displayServices = freshData.services.filter(s => {
+            if (s === 'Autres') return false;
+            if (freshData.servicesMeta && freshData.servicesMeta[s] && freshData.servicesMeta[s].hidden) {
+                return false;
+            }
+            return true;
+        });
 
         serviceCardsGrid.innerHTML = displayServices.map(s => {
             const price = freshData.prices[s] ? freshData.prices[s].basic : 0;
@@ -171,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="service-card-body">
                         <div class="service-card-name">${s}</div>
                         <div class="service-card-price">À partir de ${price.toLocaleString('fr-FR')} F CFA</div>
-                        <a href="#commander" class="btn btn-outline" style="width:100%; margin-top:12px; font-size:0.85rem; padding:8px 12px; text-align:center; display:block;">Commander</a>
+                        <a href="#commander" class="btn btn-outline btn-order-service" data-service="${s}" style="width:100%; margin-top:12px; font-size:0.85rem; padding:8px 12px; text-align:center; display:block;">Commander</a>
                     </div>
                 </div>
             `;
@@ -186,39 +235,113 @@ document.addEventListener('DOMContentLoaded', () => {
                 openLightbox(imgEl.dataset.zoomImg, svcName, `Tarif à partir de ${p.toLocaleString('fr-FR')} F CFA`, 'Service Pixora Studio');
             });
         });
+
+        // Clic sur "Commander" pré-remplit le service dans le formulaire de commande
+        serviceCardsGrid.querySelectorAll('.btn-order-service').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const svcName = btn.dataset.service;
+                const firstSelect = document.querySelector('.service-row .input-service');
+                if (firstSelect && svcName) {
+                    firstSelect.value = svcName;
+                    calcTotal();
+                }
+            });
+        });
     }
     renderServiceCards();
 
     // ============================================================
-    // 5. MES CRÉATIONS (Portfolio + Prix + Informations)
+    // 5. MES CRÉATIONS (Portfolio + Filtres Catégories Réels)
     // ============================================================
     const domainFilters = document.getElementById('domain-filters');
     const creationsGrid = document.getElementById('creations-grid');
+    let currentActiveFilter = 'ALL';
 
-    function buildFilters() {
-        const freshData = getData();
-        domainFilters.innerHTML = `<button class="filter-btn active" data-domain="ALL">Tous</button>`;
-        freshData.domains.forEach(d => {
-            domainFilters.innerHTML += `<button class="filter-btn" data-domain="${d}">${d}</button>`;
-        });
+    // Catégories directes demandées par le client pour la bannière et le catalogue
+    const PRIMARY_CATEGORIES = [
+        { label: 'Tous', filter: 'ALL' },
+        { label: '🎨 Logos', filter: 'Logo' },
+        { label: '📄 Flyers', filter: 'Flyer' },
+        { label: '🪪 Cartes de visite', filter: 'Carte de visite' },
+        { label: '🖼️ Affiches', filter: 'Affiche' },
+        { label: '📸 Visuels pub', filter: 'Visuel publicitaire' },
+        { label: '🏷️ Étiquettes', filter: 'Étiquette' }
+    ];
+
+    function matchesPortfolioFilter(c, filter) {
+        if (!filter || filter === 'ALL') return true;
+        const f = filter.toLowerCase().trim();
+        const svc = (c.service || '').toLowerCase().trim();
+        const dom = (c.domain || '').toLowerCase().trim();
+        const tit = (c.title || '').toLowerCase().trim();
+
+        if (f === 'logo' || f === 'logos') {
+            return svc.includes('logo') || dom.includes('logo') || tit.includes('logo');
+        }
+        if (f === 'flyer' || f === 'flyers') {
+            return svc.includes('flyer') || dom.includes('flyer') || tit.includes('flyer');
+        }
+        if (f.includes('carte')) {
+            return svc.includes('carte') || dom.includes('carte') || tit.includes('carte');
+        }
+        if (f.includes('affiche') || f.includes('kakemono') || f.includes('kakémono')) {
+            return svc.includes('affiche') || svc.includes('kakemono') || svc.includes('kakémono') || dom.includes('affiche') || dom.includes('kakemono') || tit.includes('affiche');
+        }
+        if (f.includes('visuel')) {
+            return svc.includes('visuel') || dom.includes('visuel') || tit.includes('visuel');
+        }
+        if (f.includes('etiquette') || f.includes('étiquette')) {
+            return svc.includes('etiquette') || svc.includes('étiquette') || dom.includes('etiquette') || dom.includes('étiquette') || tit.includes('etiquette');
+        }
+        return svc === f || dom === f || svc.includes(f) || dom.includes(f) || tit.includes(f);
     }
 
-    function renderPortfolio(domain = 'ALL') {
+    function buildFilters() {
+        if (!domainFilters) return;
         const freshData = getData();
-        const list = freshData.creations.filter(c =>
-            c.type === 'MY_CREATION' && (domain === 'ALL' || c.domain === domain)
+        let html = '';
+
+        // Catégories principales
+        PRIMARY_CATEGORIES.forEach(cat => {
+            const isActive = cat.filter === currentActiveFilter ? 'active' : '';
+            html += `<button type="button" class="filter-btn ${isActive}" data-filter="${cat.filter}">${cat.label}</button>`;
+        });
+
+        // Domaines additionnels existants
+        if (freshData.domains && freshData.domains.length > 0) {
+            freshData.domains.forEach(d => {
+                // Ne pas dupliquer si déjà présent
+                const isDup = PRIMARY_CATEGORIES.some(cat => cat.filter.toLowerCase() === d.toLowerCase() || cat.label.toLowerCase().includes(d.toLowerCase()));
+                if (!isDup && d !== 'Autres') {
+                    const isActive = d === currentActiveFilter ? 'active' : '';
+                    html += `<button type="button" class="filter-btn ${isActive}" data-filter="${d}">${d}</button>`;
+                }
+            });
+        }
+
+        domainFilters.innerHTML = html;
+    }
+
+    function renderPortfolio(filter = 'ALL') {
+        currentActiveFilter = filter;
+        const freshData = getData();
+        const list = (freshData.creations || []).filter(c =>
+            c.type === 'MY_CREATION' && matchesPortfolioFilter(c, filter)
         );
+
         if (list.length === 0) {
             creationsGrid.innerHTML = `
-                <p style="grid-column:1/-1; text-align:center; color:var(--c-text-muted); padding: 40px 0;">
-                    Aucune création dans ce domaine pour l'instant.
-                </p>`;
+                <div style="grid-column:1/-1; text-align:center; color:var(--c-text-muted); padding: 50px 20px; background:rgba(18,26,58,0.5); border:1px dashed var(--c-border); border-radius:12px;">
+                    <p style="font-size:1.1rem; font-weight:600; margin-bottom:8px; color:var(--c-white);">Aucune création trouvée pour cette catégorie.</p>
+                    <p style="font-size:0.9rem;">Ajoutez vos créations depuis l'espace administration pour les voir apparaître ici.</p>
+                </div>`;
             return;
         }
+
         creationsGrid.innerHTML = list.map(c => {
             const priceHtml = c.price ? `<span style="font-weight:700; color:var(--c-primary); font-size:0.88rem; margin-left:8px;">${Number(c.price).toLocaleString('fr-FR')} F CFA</span>` : '';
             return `
-                <div class="creation-item" data-img="${c.image}" data-title="${c.title}" data-desc="${c.description || ''}" data-service="${c.service}" data-domain="${c.domain}" data-price="${c.price || ''}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
+                <div class="creation-item" data-img="${c.image}" data-title="${c.title}" data-desc="${c.description || ''}" data-service="${c.service || ''}" data-domain="${c.domain || ''}" data-price="${c.price || ''}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
                     <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
                     <div class="creation-info">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -226,8 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${priceHtml}
                         </div>
                         <p style="margin-bottom:8px;">${c.description || ''}</p>
-                        <span class="creation-tag">${c.service}</span>
-                        <span class="creation-tag" style="background:#f1f5f9; color:#475569; margin-left:4px;">${c.domain}</span>
+                        <span class="creation-tag">${c.service || 'Création'}</span>
+                        ${c.domain ? `<span class="creation-tag" style="background:rgba(23,105,255,0.15); color:#82b1ff; margin-left:4px;">${c.domain}</span>` : ''}
                     </div>
                 </div>
             `;
@@ -235,38 +358,90 @@ document.addEventListener('DOMContentLoaded', () => {
 
         creationsGrid.querySelectorAll('.creation-item').forEach(el => {
             el.addEventListener('click', () => {
-                const meta = `${el.dataset.service} • ${el.dataset.domain}` + (el.dataset.price ? ` • ${Number(el.dataset.price).toLocaleString('fr-FR')} F CFA` : '');
+                const meta = `${el.dataset.service}${el.dataset.domain ? ' • ' + el.dataset.domain : ''}` + (el.dataset.price ? ` • ${Number(el.dataset.price).toLocaleString('fr-FR')} F CFA` : '');
                 openLightbox(el.dataset.img, el.dataset.title, el.dataset.desc, meta);
             });
         });
     }
 
-    buildFilters();
-    renderPortfolio();
+    function activatePortfolioFilter(filterValue) {
+        currentActiveFilter = filterValue;
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            if (btn.dataset.filter === filterValue) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+        renderPortfolio(filterValue);
+    }
 
-    domainFilters.addEventListener('click', (e) => {
-        if (e.target.classList.contains('filter-btn')) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            renderPortfolio(e.target.dataset.domain);
-        }
-    });
+    buildFilters();
+    renderPortfolio('ALL');
+
+    if (domainFilters) {
+        domainFilters.addEventListener('click', (e) => {
+            const btn = e.target.closest('.filter-btn');
+            if (btn) {
+                const filterVal = btn.dataset.filter;
+                activatePortfolioFilter(filterVal);
+            }
+        });
+    }
+
+    // ============================================================
+    // 5.5 LIEN DES BOUTONS DE LA GRANDE BANNIÈRE DU HERO
+    // ============================================================
+    function setupHeroBannerButtons() {
+        const bannerBtns = document.querySelectorAll('.ad-service-pill[data-category]');
+        bannerBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cat = btn.dataset.category;
+
+                // Animation visuelle de sélection sur le bouton de la bannière
+                bannerBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Défilement fluide vers la section Mes Créations
+                const creationsSection = document.getElementById('creations');
+                if (creationsSection) {
+                    const headerOffset = 90;
+                    const elementPosition = creationsSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+
+                // Filtrer instantanément le catalogue
+                activatePortfolioFilter(cat);
+            });
+        });
+    }
+    setupHeroBannerButtons();
 
     // ============================================================
     // 6. TARIFS
     // ============================================================
     const pricesGrid = document.getElementById('prices-grid');
-    pricesGrid.innerHTML = data.services.map(s => {
-        const p = data.prices[s] || { basic: 0, standard: 0, premium: 0 };
-        return `
-            <div class="price-card">
-                <h3>${s}</h3>
-                <div class="price-tier"><span class="tier-name">BASIC</span><span class="tier-price">${p.basic.toLocaleString('fr-FR')} F</span></div>
-                <div class="price-tier"><span class="tier-name">STANDARD</span><span class="tier-price">${p.standard.toLocaleString('fr-FR')} F</span></div>
-                <div class="price-tier"><span class="tier-name">PREMIUM</span><span class="tier-price">${p.premium.toLocaleString('fr-FR')} F</span></div>
-            </div>
-        `;
-    }).join('');
+    function renderPrices() {
+        if (!pricesGrid) return;
+        const freshData = getData();
+        pricesGrid.innerHTML = (freshData.services || []).map(s => {
+            const p = (freshData.prices && freshData.prices[s]) || { basic: 0, standard: 0, premium: 0 };
+            return `
+                <div class="price-card">
+                    <h3>${s}</h3>
+                    <div class="price-tier"><span class="tier-name">BASIC</span><span class="tier-price">${(p.basic || 0).toLocaleString('fr-FR')} F</span></div>
+                    <div class="price-tier"><span class="tier-name">STANDARD</span><span class="tier-price">${(p.standard || 0).toLocaleString('fr-FR')} F</span></div>
+                    <div class="price-tier"><span class="tier-name">PREMIUM</span><span class="tier-price">${(p.premium || 0).toLocaleString('fr-FR')} F</span></div>
+                </div>
+            `;
+        }).join('');
+    }
+    renderPrices();
 
     // ============================================================
     // 7. FORMULAIRE DE COMMANDE
@@ -278,7 +453,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderTotalEl = document.getElementById('order-total-amount');
 
     function getServiceOptionsHtml() {
-        return getData().services.map(s => `<option value="${s}">${s}</option>`).join('');
+        const freshData = getData();
+        return freshData.services.filter(s => {
+            if (freshData.servicesMeta && freshData.servicesMeta[s] && freshData.servicesMeta[s].hidden) {
+                return false;
+            }
+            return true;
+        }).map(s => `<option value="${s}">${s}</option>`).join('');
     }
     document.querySelector('.input-service').innerHTML = getServiceOptionsHtml();
 
@@ -291,6 +472,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (s && f && freshData.prices[s]) total += freshData.prices[s][f] || 0;
         });
         orderTotalEl.textContent = `${total.toLocaleString('fr-FR')} F CFA`;
+        const rightTotalEl = document.getElementById('right-col-total');
+        if (rightTotalEl) rightTotalEl.textContent = `${total.toLocaleString('fr-FR')} F CFA`;
         return total;
     }
 
@@ -327,6 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const adresse  = document.getElementById('order-adresse').value;
         const domaine  = document.getElementById('order-domaine').value;
         const logo     = document.getElementById('order-logo').value;
+        const msgEl    = document.getElementById('order-message');
+        const userMsg  = msgEl ? msgEl.value.trim() : '';
 
         const freshData = getData();
         let servicesHtml = '';
@@ -362,6 +547,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h4>Services commandés</h4>
                 ${servicesHtml}
             </div>
+            ${userMsg ? `
+            <div class="recap-section">
+                <h4>Précisions / Message</h4>
+                <p style="white-space:pre-wrap; color:#334155;">${userMsg}</p>
+            </div>` : ''}
             <div style="font-size:1.15rem; font-weight:700; border-top:2px solid var(--c-primary); padding-top:12px; display:flex; justify-content:space-between;">
                 <span>TOTAL</span><span>${total.toLocaleString('fr-FR')} F CFA</span>
             </div>`;
@@ -379,6 +569,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const adresse = document.getElementById('order-adresse').value;
         const domaine = document.getElementById('order-domaine').value;
         const logo    = document.getElementById('order-logo').value;
+        const msgEl   = document.getElementById('order-message');
+        const userMsg = msgEl ? msgEl.value.trim() : '';
 
         const numMap = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
 
@@ -403,6 +595,7 @@ ${logo}
 
         let total = 0;
         let idx = 0;
+        const orderedServices = [];
         document.querySelectorAll('.service-row').forEach(row => {
             const s = row.querySelector('.input-service').value;
             const f = row.querySelector('.input-formule').value;
@@ -412,7 +605,12 @@ ${logo}
             msg += `${emoji} ${s}\nFormule : ${fTitle}\nPrix : ${price.toLocaleString('fr-FR')} F CFA\n\n`;
             total += price;
             idx++;
+            orderedServices.push({ service: s, formule: fTitle, price: price });
         });
+
+        if (userMsg) {
+            msg += `📝 MESSAGE / PRÉCISIONS\n${userMsg}\n\n`;
+        }
 
         msg += `💰 TOTAL\n${total.toLocaleString('fr-FR')} F CFA
 
@@ -423,8 +621,36 @@ WhatsApp
 Commande envoyée depuis Pixora Studio
 ━━━━━━━━━━━━━━━━━━`;
 
+        // 💾 ENREGISTRER LA COMMANDE DANS LE SYSTÈME ADMINISTRATEUR
+        if (typeof window.addOrder === 'function') {
+            window.addOrder({
+                client: { nom, prenom, telephone: tel, adresse },
+                projet: { domaine, logoExistant: logo },
+                services: orderedServices,
+                total: total,
+                message: userMsg
+            });
+        }
+
         const phone = freshData.settings.whatsappNumber.replace(/[^0-9]/g, '');
         window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
         modal.classList.remove('active');
     });
+
+    // Synchronisation en direct si Firebase ou LocalStorage se met à jour
+    function refreshAll() {
+        renderLogo();
+        renderTexts();
+        renderDiff();
+        renderServiceCards();
+        renderPrices();
+        buildFilters();
+        renderPortfolio(currentActiveFilter || 'ALL');
+    }
+
+    window.addEventListener('storage', refreshAll);
+    document.addEventListener('pixora-data-updated', refreshAll);
+    if (window.FirebaseSync && typeof window.FirebaseSync.onDataChange === 'function') {
+        window.FirebaseSync.onDataChange(refreshAll);
+    }
 });
