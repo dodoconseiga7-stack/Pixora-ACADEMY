@@ -117,8 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
                      data-desc="${escapedDesc}"
                      data-meta="${escapedMeta}"
                      title="${escapedTitle} — Cliquer pour voir en grand">
-                    <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
-                         onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Création';">
+                    <div class="my-gallery-img-wrap">
+                        <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Création';">
+                    </div>
                     <div class="my-gallery-info">
                         <span class="my-gallery-title">${item.title || 'Création'}</span>
                         <span class="my-gallery-badge">✦ PRO</span>
@@ -150,8 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
                      data-desc="${escapedDesc}"
                      data-meta="${escapedMeta}"
                      title="${escapedTitle} — Cliquer pour voir en grand">
-                    <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
-                         onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Création';">
+                    <div class="my-gallery-img-wrap">
+                        <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Création';">
+                    </div>
                     <div class="my-gallery-info">
                         <span class="my-gallery-title">${item.title || 'Création'}</span>
                         <span class="my-gallery-badge">✦ PRO</span>
@@ -174,44 +178,60 @@ document.addEventListener('DOMContentLoaded', () => {
             myEl.innerHTML = `<div class="diff-placeholder"><span>Ajoutez vos créations depuis l'administration.</span></div>`;
         }
 
-        // ── CRÉATION IA : galerie multi-cartes ──
-        let featuredAi = (freshData.difference && freshData.difference.aiCreation && freshData.difference.aiCreation.image)
-            ? freshData.difference.aiCreation
-            : null;
+        // ── CRÉATION IA : galerie multi-cartes distinctes ──
+        // Rassembler toutes les créations IA disponibles
+        let allAiList = (aiList && aiList.length > 0) ? [...aiList] : [];
+        if (freshData.difference && freshData.difference.aiCreation && freshData.difference.aiCreation.image) {
+            const featImg = freshData.difference.aiCreation.image;
+            const alreadyExists = allAiList.some(item => (item.image === featImg || (item.images && item.images.includes(featImg))));
+            if (!alreadyExists) {
+                allAiList.unshift({
+                    id: 'ai_featured',
+                    type: 'AI_CREATION',
+                    title: freshData.difference.aiCreation.title || 'Création par IA',
+                    service: freshData.difference.aiCreation.service || 'Génération IA',
+                    domain: freshData.difference.aiCreation.domain || 'Artificiel',
+                    image: featImg,
+                    description: freshData.difference.aiCreation.description || ''
+                });
+            }
+        }
 
-        if (featuredAi) {
-            aiEl.innerHTML = `
-                <div style="cursor:zoom-in;" title="Cliquer pour voir en grand">
-                    <img src="${featuredAi.image}" alt="${featuredAi.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image+IA';" style="max-height:260px; width:100%; object-fit:contain; background:#F5F5F5; border-radius:8px;">
-                    <div class="ai-badge" style="margin-top:10px;">IA</div>
-                    <h4>${featuredAi.title}</h4>
-                    <p>${featuredAi.service || 'Génération IA'} — ${featuredAi.domain || 'Artificiel'}</p>
-                    ${featuredAi.description ? `<small style="display:block; color:var(--c-text-muted); margin-top:4px;">${featuredAi.description}</small>` : ''}
-                </div>
-            `;
-            aiEl.onclick = () => openLightbox(featuredAi.image, featuredAi.title, featuredAi.description || '', 'Création générée par IA');
-        } else if (aiList.length > 0) {
-            // Affichage de la galerie IA (grille de cartes)
-            const galleryHtml = aiList.map(item => `
+        if (allAiList.length > 0) {
+            const aiGalleryHtml = allAiList.map(item => {
+                const imgSrc = (item.images && item.images[0]) ? item.images[0] : (item.image || '');
+                const escapedTitle = (item.title || 'Création par IA').replace(/"/g, '&quot;');
+                const escapedDesc = (item.description || '').replace(/"/g, '&quot;');
+                const escapedMeta = (item.service || 'Génération IA').replace(/"/g, '&quot;');
+                return `
                 <div class="ai-gallery-item" 
-                     data-fullimg="${item.image}" 
-                     data-title="${item.title}" 
-                     data-desc="${item.description || ''}" 
-                     data-meta="${item.service || ''}"
-                     title="${item.title} — Cliquer pour voir en grand">
-                    <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Image+IA';">
-                    <div class="ai-gallery-info" style="padding:8px 10px 10px; background:#FFFFFF; border-top: 1px solid #E8EEF8; display:flex; align-items:center; justify-content:space-between; gap:6px;">
-                        <span style="font-size:0.8rem; font-weight:700; color:#1A1A2E; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:calc(100% - 40px);">${item.title}</span>
-                        <span class="ai-badge" style="flex-shrink:0; font-size:0.65rem; padding:2px 8px; border-radius:50px; background:rgba(216,45,155,0.12); color:#D82D9B; border:1px solid rgba(216,45,155,0.3); font-weight:800;">IA</span>
+                     data-fullimg="${imgSrc}" 
+                     data-title="${escapedTitle}" 
+                     data-desc="${escapedDesc}" 
+                     data-meta="${escapedMeta}"
+                     title="${escapedTitle} — Cliquer pour voir en grand">
+                    <div class="ai-gallery-img-wrap">
+                        <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Image+IA';">
                     </div>
-                </div>
-            `).join('');
-            aiEl.innerHTML = `<div class="ai-gallery-grid">${galleryHtml}</div>`;
+                    <div class="ai-gallery-info">
+                        <span class="ai-gallery-title">${item.title || 'Création IA'}</span>
+                        <span class="ai-gallery-badge">IA</span>
+                    </div>
+                </div>`;
+            }).join('');
+            aiEl.onclick = null;
+            aiEl.innerHTML = `<div class="ai-gallery-grid">${aiGalleryHtml}</div>`;
             
             aiEl.querySelectorAll('.ai-gallery-item').forEach(el => {
-                el.addEventListener('click', () => openLightbox(el.dataset.fullimg, el.dataset.title, el.dataset.desc, 'Création IA • ' + el.dataset.meta));
+                el.addEventListener('click', () => openLightbox(
+                    el.dataset.fullimg,
+                    el.dataset.title,
+                    el.dataset.desc,
+                    'Création IA • ' + el.dataset.meta
+                ));
             });
         } else {
+            aiEl.onclick = null;
             aiEl.innerHTML = `<div class="diff-placeholder"><span>Chargement des exemples IA...</span></div>`;
         }
     }
