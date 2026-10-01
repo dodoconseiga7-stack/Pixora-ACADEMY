@@ -736,6 +736,83 @@ button{font-family:inherit;cursor:pointer;}
 }
 .empty-state .empty-icon{ font-size:2.8rem; margin-bottom:12px; }
 .empty-state p{ font-size:0.92rem; }
+
+/* ── SÉLECTION VITRINE LA DIFFÉRENCE ─────────────────────── */
+.diff-sel-card {
+    background: rgba(255,255,255,0.04);
+    border: 2px solid var(--c-border-s);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    user-select: none;
+}
+.diff-sel-card:hover {
+    border-color: rgba(23,105,255,0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.diff-sel-card.selected {
+    border-color: #1769FF;
+    background: rgba(23,105,255,0.12);
+    box-shadow: 0 0 18px rgba(23,105,255,0.3);
+}
+.diff-sel-check {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(10,15,42,0.85);
+    border: 2px solid rgba(255,255,255,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: transparent;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+.diff-sel-card.selected .diff-sel-check {
+    background: #1769FF;
+    border-color: #fff;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(23,105,255,0.6);
+}
+.diff-sel-img-wrap {
+    width: 100%;
+    height: 130px;
+    background: #0a0f2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.diff-sel-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+    transition: transform 0.2s ease;
+}
+.diff-sel-card:hover .diff-sel-img-wrap img {
+    transform: scale(1.05);
+}
+.diff-sel-body {
+    padding: 10px 12px;
+}
+.diff-sel-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
 </style>
 </head>
 <body>
@@ -901,6 +978,31 @@ button{font-family:inherit;cursor:pointer;}
                     <div class="empty-state" style="grid-column:1/-1;">
                         <div class="empty-icon">🎨</div>
                         <p>Aucune création encore ajoutée.<br>Commencez par importer des images ci-dessus.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SÉLECTION VITRINE : LA DIFFÉRENCE ── -->
+            <div class="section-card" id="diff-selection-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="card-badge badge-blue">Vitrine</span>
+                        ⚖️ Sélection « La Différence — Ma Création »
+                    </div>
+                    <button class="btn btn-gradient btn-sm" id="saveDiffSelectionBtn">💾 Enregistrer la sélection</button>
+                </div>
+                <p style="color:var(--c-muted);font-size:0.84rem;margin-bottom:20px;">
+                    Cochez les créations que vous souhaitez afficher dans la section <strong style="color:#fff;">« La Différence »</strong> de la vitrine (côté <em>Ma Création</em>). Si aucune n'est cochée, toutes les créations seront affichées automatiquement.
+                </p>
+                <div style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                    <button class="btn btn-outline btn-sm" id="diffSelectAllBtn">✅ Tout sélectionner</button>
+                    <button class="btn btn-outline btn-sm" id="diffUnselectAllBtn">⬜ Tout désélectionner</button>
+                    <span id="diffSelectionCount" style="font-size:0.8rem;color:var(--c-muted);">0 sélectionnée(s)</span>
+                </div>
+                <div class="creations-admin-grid" id="diffSelectionGrid">
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div class="empty-icon">🖼️</div>
+                        <p>Aucune création disponible. Ajoutez d'abord vos créations ci-dessus.</p>
                     </div>
                 </div>
             </div>
@@ -1159,7 +1261,7 @@ function showPage(pageId) {
     document.getElementById('topbar-title').textContent = titles[pageId] || '';
 
     closeSidebar();
-    if (pageId === 'creations') renderCreationsGrid();
+    if (pageId === 'creations') { renderCreationsGrid(); renderDiffSelection(); }
     if (pageId === 'services')  renderServices();
     if (pageId === 'orders')    renderOrders();
     if (pageId === 'settings')  { loadSettings(); updateSyncStatus(window.FirebaseSync && window.FirebaseSync.isReady()); }
@@ -1403,6 +1505,7 @@ document.getElementById('uploadBtn').addEventListener('click', async () => {
         selectedFiles = [];
         renderPreviews();
         renderCreationsGrid();
+        renderDiffSelection();
         renderDashboard();
     } catch (e) {
         showToast('Erreur lors de l\'upload : ' + e.message, '❌');
@@ -1418,8 +1521,14 @@ document.getElementById('uploadBtn').addEventListener('click', async () => {
 async function handleDelete(id) {
     confirmDialog('Supprimer cette création ?', 'L\'image sera supprimée définitivement de la vitrine et du stockage.', async () => {
         await window.AdminCreations.deleteCreation(id);
+        const curData = window.getData();
+        if (curData.difference && Array.isArray(curData.difference.selectedMyCreations)) {
+            curData.difference.selectedMyCreations = curData.difference.selectedMyCreations.filter(x => x !== id);
+            window.saveData(curData);
+        }
         document.getElementById('card-' + id)?.remove();
         document.getElementById('creation-count').textContent = document.querySelectorAll('.creation-admin-card').length + ' création(s)';
+        renderDiffSelection();
         renderDashboard();
         showToast('Création supprimée.', '🗑️');
     });
@@ -1432,6 +1541,7 @@ async function handleReplace(id, input) {
     try {
         await window.AdminCreations.replaceCreationImage(id, input.files[0]);
         renderCreationsGrid();
+        renderDiffSelection();
         showToast('Image remplacée avec succès !', '✅');
     } catch (e) {
         showToast('Erreur : ' + e.message, '❌');
@@ -1474,12 +1584,128 @@ document.getElementById('saveEditBtn').addEventListener('click', async () => {
     window.AdminCreations.updateCreation(id, fields);
     document.getElementById('editModal').classList.remove('active');
     renderCreationsGrid();
+    renderDiffSelection();
     showToast('Création mise à jour !', '✅');
 });
 
 document.getElementById('editModal').addEventListener('click', e => {
     if (e.target === document.getElementById('editModal')) document.getElementById('editModal').classList.remove('active');
 });
+
+// ─── SÉLECTION VITRINE : LA DIFFÉRENCE ────────────────────────
+let selectedDiffIds = new Set();
+
+function renderDiffSelection() {
+    const data = window.getData();
+    const myCreations = (data.creations || []).filter(c => c.type === 'MY_CREATION');
+    const grid = document.getElementById('diffSelectionGrid');
+    const countEl = document.getElementById('diffSelectionCount');
+    if (!grid) return;
+
+    // Récupérer la sélection enregistrée
+    const savedSelected = (data.difference && Array.isArray(data.difference.selectedMyCreations))
+        ? data.difference.selectedMyCreations
+        : [];
+    
+    // Initialiser le Set avec les IDs valides
+    selectedDiffIds = new Set(savedSelected.filter(id => myCreations.some(c => c.id === id)));
+
+    if (myCreations.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-icon">🖼️</div>
+            <p>Aucune création disponible. Ajoutez d'abord vos créations ci-dessus.</p>
+        </div>`;
+        if (countEl) countEl.textContent = '0 sélectionnée(s)';
+        return;
+    }
+
+    if (countEl) {
+        countEl.textContent = `${selectedDiffIds.size} / ${myCreations.length} sélectionnée(s)`;
+    }
+
+    grid.innerHTML = myCreations.map(c => {
+        const isSelected = selectedDiffIds.has(c.id);
+        return `
+        <div class="diff-sel-card ${isSelected ? 'selected' : ''}" data-id="${c.id}" id="diff-card-${c.id}">
+            <div class="diff-sel-check">${isSelected ? '✓' : ''}</div>
+            <div class="diff-sel-img-wrap">
+                <img src="${escHtml(c.image)}" alt="${escHtml(c.title)}" loading="lazy" onerror="this.src='https://placehold.co/300x200?text=Image'">
+            </div>
+            <div class="diff-sel-body">
+                <div class="diff-sel-title" title="${escHtml(c.title)}">${escHtml(c.title)}</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                    ${c.service ? `<span class="tag-chip" style="font-size:0.65rem;">${escHtml(c.service)}</span>` : ''}
+                    ${c.domain  ? `<span class="tag-chip domain" style="font-size:0.65rem;">${escHtml(c.domain)}</span>`  : ''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Event listeners sur chaque carte
+    grid.querySelectorAll('.diff-sel-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const id = card.dataset.id;
+            const chk = card.querySelector('.diff-sel-check');
+            if (selectedDiffIds.has(id)) {
+                selectedDiffIds.delete(id);
+                card.classList.remove('selected');
+                if (chk) chk.textContent = '';
+            } else {
+                selectedDiffIds.add(id);
+                card.classList.add('selected');
+                if (chk) chk.textContent = '✓';
+            }
+            if (countEl) {
+                countEl.textContent = `${selectedDiffIds.size} / ${myCreations.length} sélectionnée(s)`;
+            }
+        });
+    });
+}
+
+// Boutons Sélection La Différence
+const diffSelectAllBtn = document.getElementById('diffSelectAllBtn');
+if (diffSelectAllBtn) {
+    diffSelectAllBtn.addEventListener('click', () => {
+        const data = window.getData();
+        const myCreations = (data.creations || []).filter(c => c.type === 'MY_CREATION');
+        myCreations.forEach(c => selectedDiffIds.add(c.id));
+        document.querySelectorAll('#diffSelectionGrid .diff-sel-card').forEach(card => {
+            card.classList.add('selected');
+            const chk = card.querySelector('.diff-sel-check');
+            if (chk) chk.textContent = '✓';
+        });
+        const countEl = document.getElementById('diffSelectionCount');
+        if (countEl) countEl.textContent = `${selectedDiffIds.size} / ${myCreations.length} sélectionnée(s)`;
+    });
+}
+
+const diffUnselectAllBtn = document.getElementById('diffUnselectAllBtn');
+if (diffUnselectAllBtn) {
+    diffUnselectAllBtn.addEventListener('click', () => {
+        selectedDiffIds.clear();
+        document.querySelectorAll('#diffSelectionGrid .diff-sel-card').forEach(card => {
+            card.classList.remove('selected');
+            const chk = card.querySelector('.diff-sel-check');
+            if (chk) chk.textContent = '';
+        });
+        const data = window.getData();
+        const myCreations = (data.creations || []).filter(c => c.type === 'MY_CREATION');
+        const countEl = document.getElementById('diffSelectionCount');
+        if (countEl) countEl.textContent = `0 / ${myCreations.length} sélectionnée(s)`;
+    });
+}
+
+const saveDiffSelectionBtn = document.getElementById('saveDiffSelectionBtn');
+if (saveDiffSelectionBtn) {
+    saveDiffSelectionBtn.addEventListener('click', () => {
+        const data = window.getData();
+        if (!data.difference) data.difference = {};
+        data.difference.selectedMyCreations = Array.from(selectedDiffIds);
+        window.saveData(data);
+        document.dispatchEvent(new CustomEvent('pixora-data-updated', { detail: data }));
+        showToast(`Sélection enregistrée (${selectedDiffIds.size} création(s)) !`, '✅');
+    });
+}
 
 // ─── SERVICES & TARIFS ────────────────────────────────────────
 function renderServices() {
@@ -1735,7 +1961,7 @@ document.addEventListener('pixora-data-updated', () => {
     if (!activePage) return;
     const id = activePage.id.replace('page-', '');
     if (id === 'dashboard') renderDashboard();
-    if (id === 'creations') renderCreationsGrid();
+    if (id === 'creations') { renderCreationsGrid(); renderDiffSelection(); }
 });
 
 // ─── INIT PRINCIPAL ───────────────────────────────────────────

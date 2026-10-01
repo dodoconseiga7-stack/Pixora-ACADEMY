@@ -86,26 +86,95 @@ document.addEventListener('DOMContentLoaded', () => {
         const myEl = document.getElementById('my-creation-content');
         const aiEl = document.getElementById('ai-creation-content');
 
-        // Ma création : soit configurée explicitement, soit première/aléatoire
-        let featuredMine = (freshData.difference && freshData.difference.myCreation && freshData.difference.myCreation.image)
-            ? freshData.difference.myCreation
-            : (myList.length > 0 ? myList[0] : null);
+        // ── MA CRÉATION : galerie multi-cartes ──
+        // Si des images spécifiques sont sélectionnées pour la Différence, les utiliser
+        // Sinon, afficher toutes les créations MY_CREATION sous forme de galerie
+        const diffSelected = (freshData.difference && Array.isArray(freshData.difference.selectedMyCreations))
+            ? freshData.difference.selectedMyCreations
+            : [];
 
-        if (featuredMine) {
-            myEl.innerHTML = `
-                <div style="cursor:zoom-in;" title="Cliquer pour voir en grand">
-                    <img src="${featuredMine.image}" alt="${featuredMine.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
-                    <h4>${featuredMine.title}</h4>
-                    <p>${featuredMine.service || 'Création graphique'} — ${featuredMine.domain || 'Pixora Studio'}</p>
-                    ${featuredMine.description ? `<small style="display:block; color:var(--c-text-muted); margin-top:4px;">${featuredMine.description}</small>` : ''}
-                </div>
-            `;
-            myEl.onclick = () => openLightbox(featuredMine.image, featuredMine.title, featuredMine.description || '', 'Ma Création • ' + (featuredMine.service || ''));
+        let displayedMyList;
+        if (diffSelected.length > 0) {
+            // Utiliser uniquement les créations sélectionnées (par ID)
+            displayedMyList = diffSelected
+                .map(id => myList.find(c => c.id === id))
+                .filter(Boolean);
         } else {
+            // Fallback : toutes les MY_CREATION disponibles (max 12 pour ne pas surcharger)
+            displayedMyList = myList.slice(0, 12);
+        }
+
+        if (displayedMyList.length > 0) {
+            const myGalleryHtml = displayedMyList.map(item => {
+                const imgSrc = (item.images && item.images[0]) ? item.images[0] : (item.image || '');
+                const escapedTitle = (item.title || '').replace(/"/g, '&quot;');
+                const escapedDesc = (item.description || '').replace(/"/g, '&quot;');
+                const escapedMeta = (item.service || '').replace(/"/g, '&quot;');
+                return `
+                <div class="my-gallery-item"
+                     data-fullimg="${imgSrc}"
+                     data-title="${escapedTitle}"
+                     data-desc="${escapedDesc}"
+                     data-meta="${escapedMeta}"
+                     title="${escapedTitle} — Cliquer pour voir en grand">
+                    <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
+                         onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Création';">
+                    <div class="my-gallery-info">
+                        <span class="my-gallery-title">${item.title || 'Création'}</span>
+                        <span class="my-gallery-badge">✦ PRO</span>
+                    </div>
+                </div>`;
+            }).join('');
+            myEl.onclick = null; // Retirer le click global
+            myEl.innerHTML = `<div class="my-gallery-grid">${myGalleryHtml}</div>`;
+
+            myEl.querySelectorAll('.my-gallery-item').forEach(el => {
+                el.addEventListener('click', () => openLightbox(
+                    el.dataset.fullimg,
+                    el.dataset.title,
+                    el.dataset.desc,
+                    'Ma Création • ' + el.dataset.meta
+                ));
+            });
+        } else if (myList.length > 0) {
+            // Si aucun sélectionné mais qu'il en existe, afficher toutes
+            const myGalleryHtml = myList.slice(0, 12).map(item => {
+                const imgSrc = (item.images && item.images[0]) ? item.images[0] : (item.image || '');
+                const escapedTitle = (item.title || '').replace(/"/g, '&quot;');
+                const escapedDesc = (item.description || '').replace(/"/g, '&quot;');
+                const escapedMeta = (item.service || '').replace(/"/g, '&quot;');
+                return `
+                <div class="my-gallery-item"
+                     data-fullimg="${imgSrc}"
+                     data-title="${escapedTitle}"
+                     data-desc="${escapedDesc}"
+                     data-meta="${escapedMeta}"
+                     title="${escapedTitle} — Cliquer pour voir en grand">
+                    <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
+                         onerror="this.onerror=null; this.src='https://placehold.co/400x280?text=Création';">
+                    <div class="my-gallery-info">
+                        <span class="my-gallery-title">${item.title || 'Création'}</span>
+                        <span class="my-gallery-badge">✦ PRO</span>
+                    </div>
+                </div>`;
+            }).join('');
+            myEl.onclick = null;
+            myEl.innerHTML = `<div class="my-gallery-grid">${myGalleryHtml}</div>`;
+
+            myEl.querySelectorAll('.my-gallery-item').forEach(el => {
+                el.addEventListener('click', () => openLightbox(
+                    el.dataset.fullimg,
+                    el.dataset.title,
+                    el.dataset.desc,
+                    'Ma Création • ' + el.dataset.meta
+                ));
+            });
+        } else {
+            myEl.onclick = null;
             myEl.innerHTML = `<div class="diff-placeholder"><span>Ajoutez vos créations depuis l'administration.</span></div>`;
         }
 
-        // Création IA : soit configurée explicitement, soit liste galerie IA
+        // ── CRÉATION IA : galerie multi-cartes ──
         let featuredAi = (freshData.difference && freshData.difference.aiCreation && freshData.difference.aiCreation.image)
             ? freshData.difference.aiCreation
             : null;
@@ -122,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             aiEl.onclick = () => openLightbox(featuredAi.image, featuredAi.title, featuredAi.description || '', 'Création générée par IA');
         } else if (aiList.length > 0) {
-            // Affichage de la galerie IA (grille de cartes paysage)
+            // Affichage de la galerie IA (grille de cartes)
             const galleryHtml = aiList.map(item => `
                 <div class="ai-gallery-item" 
                      data-fullimg="${item.image}" 
