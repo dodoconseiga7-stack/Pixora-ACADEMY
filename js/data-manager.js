@@ -14,7 +14,7 @@
 
     // Données par défaut pour les textes du site
     const defaultTexts = {
-        heroTitle: "BIENVENUE CHEZ PIXORA STUDIO",
+        heroTitle: "BIENVENUE CHEZ PIXORA ACADEMY",
         heroSubtitle: "Des créations graphiques pensées pour donner une vraie image professionnelle à votre activité.",
         servicesTitle: "NOS SERVICES",
         btnCreations: "VOIR TOUTES MES CRÉATIONS",
@@ -25,7 +25,7 @@
         tarifsTitle: "SERVICES & TARIFS",
         tarifsSubtitle: "Chaque création est disponible en trois niveaux adaptés à votre budget et à vos besoins.",
         contactTitle: "UNE QUESTION ? CONTACTEZ-NOUS",
-        footerText: "© 2026 Pixora Studio — Studio de création graphique. Tous droits réservés."
+        footerText: "© 2026 Pixora Academy — Studio de création graphique professionnelle. Tous droits réservés."
     };
 
     // Extension de getData
