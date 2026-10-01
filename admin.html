@@ -556,13 +556,87 @@ button{font-family:inherit;cursor:pointer;}
     vertical-align:middle;
 }
 .orders-table tr:hover td{ background:rgba(255,255,255,0.03); }
-.status-badge{
-    font-size:0.7rem;
-    font-weight:700;
-    padding:3px 10px;
-    border-radius:50px;
-    display:inline-block;
+
+/* Carte commande (layout admin.js renderOrdersDashboard) */
+.order-card-row {
+    background: var(--c-card);
+    border: 1px solid var(--c-border-s);
+    border-radius: var(--r-md);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    transition: background 0.18s ease, border-color 0.18s ease;
 }
+.order-card-row:hover {
+    background: var(--c-card-hover);
+    border-color: rgba(108,43,255,0.35);
+}
+.order-meta-info { flex: 1; min-width: 0; }
+.order-client-name { font-size: 0.95rem; font-weight: 700; color: #fff; }
+.order-client-sub {
+    display: flex;
+    gap: 14px;
+    font-size: 0.78rem;
+    color: var(--c-muted);
+    margin-top: 3px;
+    flex-wrap: wrap;
+}
+.order-services-preview {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.order-price-badge {
+    background: rgba(0,210,255,0.12);
+    border: 1px solid rgba(0,210,255,0.3);
+    color: var(--c-cyan);
+    font-weight: 800;
+    font-size: 0.88rem;
+    padding: 5px 12px;
+    border-radius: 50px;
+    white-space: nowrap;
+}
+.btn-view {
+    background: rgba(108,43,255,0.15);
+    border: 1px solid rgba(108,43,255,0.4);
+    color: #C4ADFF;
+    padding: 6px 12px;
+    border-radius: var(--r-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s;
+    white-space: nowrap;
+}
+.btn-view:hover { background: rgba(108,43,255,0.35); }
+.btn-delete {
+    background: rgba(255,77,79,0.1);
+    border: 1px solid rgba(255,77,79,0.3);
+    color: #FF4D4F;
+    padding: 6px 10px;
+    border-radius: var(--r-sm);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.btn-delete:hover { background: rgba(255,77,79,0.3); }
+
+/* Badges de statut commandes */
+.badge-status { font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:50px; display:inline-block; }
+.badge-status-nouvelle    { background:rgba(0,210,255,0.15);  color:#00D2FF; border:1px solid rgba(0,210,255,0.3); }
+.badge-status-en-attente  { background:rgba(255,210,0,0.15);  color:#FFD200; border:1px solid rgba(255,210,0,0.3); }
+.badge-status-en-cours    { background:rgba(255,122,26,0.15); color:#FF7A1A; border:1px solid rgba(255,122,26,0.3); }
+.badge-status-terminée    { background:rgba(37,211,102,0.15); color:#25D366; border:1px solid rgba(37,211,102,0.3); }
+.badge-status-annulée     { background:rgba(255,77,79,0.15);  color:#FF4D4F; border:1px solid rgba(255,77,79,0.3); }
+
+.status-badge{ font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:50px; display:inline-block; }
 .status-new      { background:rgba(23,105,255,0.2);  color:#82B1FF; }
 .status-progress { background:rgba(255,210,0,0.2);   color:#FFD200; }
 .status-done     { background:rgba(37,211,102,0.2);  color:#25D366; }
@@ -1030,27 +1104,61 @@ button{font-family:inherit;cursor:pointer;}
 
         <!-- ══════════════ PAGE: COMMANDES ══════════════ -->
         <div class="admin-page" id="page-orders">
+
+            <!-- KPIs Commandes -->
+            <div class="stats-grid" style="margin-bottom:20px;">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total-orders">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card" style="border-color:rgba(0,210,255,0.3);">
+                    <div class="stat-value" style="color:var(--c-cyan);" id="stat-new-orders">0</div>
+                    <div class="stat-label">Nouvelles</div>
+                </div>
+                <div class="stat-card" style="border-color:rgba(255,210,0,0.3);">
+                    <div class="stat-value" style="color:var(--c-yellow);" id="stat-progress-orders">0</div>
+                    <div class="stat-label">En cours</div>
+                </div>
+                <div class="stat-card" style="border-color:rgba(37,211,102,0.3);">
+                    <div class="stat-value" style="color:var(--c-green);" id="stat-done-orders">0</div>
+                    <div class="stat-label">Terminées</div>
+                </div>
+            </div>
+
             <div class="section-card">
                 <div class="section-card-header">
                     <div class="section-card-title">📋 Toutes les commandes</div>
-                    <span id="orders-total-count" style="font-size:0.82rem;color:var(--c-muted);">0 commande(s)</span>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <span id="orders-total-count" style="font-size:0.82rem;color:var(--c-muted);">0 commande(s)</span>
+                        <button class="btn btn-outline btn-sm" id="btn-refresh-orders">🔄 Actualiser</button>
+                    </div>
                 </div>
-                <div style="overflow-x:auto;">
-                    <table class="orders-table" id="ordersTable">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Client</th>
-                                <th>Services</th>
-                                <th>Total</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersBody">
-                            <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--c-muted);">Aucune commande reçue.</td></tr>
-                        </tbody>
-                    </table>
+
+                <!-- Filtres -->
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;padding:16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid var(--c-border-s);">
+                    <input class="form-control" id="order-search-input" placeholder="🔍 Rechercher un client, téléphone..." style="flex:1;min-width:180px;padding:8px 12px;font-size:0.84rem;">
+                    <select class="form-control" id="order-status-filter" style="min-width:140px;padding:8px 12px;font-size:0.84rem;">
+                        <option value="ALL">Tous les statuts</option>
+                        <option value="Nouvelle">Nouvelle</option>
+                        <option value="En attente">En attente</option>
+                        <option value="En cours">En cours</option>
+                        <option value="Terminée">Terminée</option>
+                        <option value="Annulée">Annulée</option>
+                    </select>
+                    <select class="form-control" id="order-service-filter" style="min-width:160px;padding:8px 12px;font-size:0.84rem;">
+                        <option value="ALL">Tous les services</option>
+                    </select>
+                    <input type="date" class="form-control" id="order-date-filter" style="padding:8px 12px;font-size:0.84rem;">
+                    <button class="btn btn-outline btn-sm" id="btn-reset-order-filters">✕ Réinitialiser</button>
+                </div>
+
+                <!-- Liste des commandes (cartes) -->
+                <div id="orders-list-container">
+                    <div style="text-align:center;padding:40px 20px;background:rgba(255,255,255,0.03);border:1px dashed var(--c-border);border-radius:10px;color:var(--c-muted);">
+                        <div style="font-size:2rem;margin-bottom:8px;">📦</div>
+                        <p style="font-weight:600;margin:0;color:var(--c-text);">Aucune commande reçue.</p>
+                        <p style="font-size:0.85rem;margin-top:4px;">Les commandes passées par vos clients s'affichent automatiquement ici.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1141,6 +1249,41 @@ button{font-family:inherit;cursor:pointer;}
 
     </main><!-- /admin-main -->
 </div><!-- /admin-layout -->
+
+<!-- ══════════ MODALE FICHE CLIENT ══════════ -->
+<div class="modal-overlay" id="client-modal" style="z-index:1100;">
+    <div class="modal-card" style="max-width:620px;width:96vw;max-height:88vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <h3 style="margin:0;font-size:1.1rem;">📋 Fiche Client</h3>
+                <span id="modal-order-status-badge" class="badge-status badge-status-nouvelle">Nouvelle</span>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btn-close-client-modal" style="flex-shrink:0;">✕ Fermer</button>
+        </div>
+
+        <!-- Contenu dynamique de la commande -->
+        <div id="modal-order-content" style="margin-bottom:20px;"></div>
+
+        <!-- Actions -->
+        <div style="background:rgba(255,255,255,0.05);border:1px solid var(--c-border-s);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+            <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--c-muted);">Changer le statut</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <select class="form-control" id="modal-select-status" style="flex:1;padding:8px 12px;font-size:0.88rem;">
+                    <option value="Nouvelle">Nouvelle</option>
+                    <option value="En attente">En attente</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Terminée">Terminée</option>
+                    <option value="Annulée">Annulée</option>
+                </select>
+                <button class="btn btn-gradient btn-sm" id="btn-save-order-status">💾 Enregistrer</button>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a href="#" id="btn-modal-wa-link" target="_blank" class="btn btn-sm" style="background:#25D366;color:#fff;border:none;flex:1;text-align:center;">💬 Contacter via WhatsApp</a>
+                <button class="btn btn-danger btn-sm" id="btn-delete-current-order" style="flex-shrink:0;">🗑️ Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- ══════════ LIGHTBOX ══════════ -->
 <div class="admin-lightbox" id="adminLightbox">
