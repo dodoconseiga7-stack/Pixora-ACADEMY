@@ -50,9 +50,19 @@ function initData() {
         }
 
         // Migration : ajouter crÃ©ations et logo si absents dans localStorage
-        if ((!parsed.creations || parsed.creations.length === 0) && defaultData.creations && defaultData.creations.length > 0) {
-            parsed.creations = defaultData.creations;
-            updated = true;
+        if (defaultData.creations && defaultData.creations.length > 0) {
+            if (!parsed.creations || parsed.creations.length === 0) {
+                parsed.creations = defaultData.creations;
+                updated = true;
+            } else {
+                const currentIds = new Set(parsed.creations.map(c => c.id));
+                defaultData.creations.forEach(defC => {
+                    if (!currentIds.has(defC.id)) {
+                        parsed.creations.unshift(defC);
+                        updated = true;
+                    }
+                });
+            }
         }
         if ((!parsed.settings || !parsed.settings.logoUrl) && defaultData.settings && defaultData.settings.logoUrl) {
             if (!parsed.settings) parsed.settings = {};

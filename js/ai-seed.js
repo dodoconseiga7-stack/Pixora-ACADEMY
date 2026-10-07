@@ -15,8 +15,8 @@
 
 (function seedAICreations() {
     const KEY = 'pixora_studio_data_v3';
-    // Version v2 — les créations IA gérées par l'admin sont désormais préservées
-    const AI_SEED_FLAG = 'pixora_ai_seeded_v2';
+    // Version v3 — Toutes les créations de l'utilisateur sont strictement préservées
+    const AI_SEED_FLAG = 'pixora_ai_seeded_v3';
 
     // Ne pas ré-injecter si déjà fait avec cette version
     if (localStorage.getItem(AI_SEED_FLAG) === 'true') return;
@@ -25,15 +25,7 @@
     if (!stored) return; // data.js n'a pas encore initialisé
 
     let data = JSON.parse(stored);
-
-    // ── Protéger les créations IA gérées manuellement par l'admin ──
-    // Critères : adminManaged === true  OU  id commençant par 'ai_admin_'
-    const adminManagedAi = (data.creations || []).filter(c =>
-        c.type === 'AI_CREATION' && (c.adminManaged === true || String(c.id).startsWith('ai_admin_'))
-    );
-
-    // On retire toutes les AI_CREATION (on va les réinjecter proprement)
-    data.creations = (data.creations || []).filter(c => c.type !== 'AI_CREATION');
+    if (!data.creations) data.creations = [];
 
     // ================================================================
     // EXEMPLES IA À INJECTER (exemples par défaut — seed)
@@ -228,15 +220,15 @@
         }
     ];
 
-    // ── Fusionner intelligemment ──────────────────────────────────────
-    // Les créations adminManaged remplacent les seeds de même ID (si l'admin a édité un seed existant)
-    const adminIds = new Set(adminManagedAi.map(c => c.id));
-    const filteredSeed = aiExamples.filter(e => !adminIds.has(e.id));
+    // ── Conserver absolument toutes les créations existantes de l'utilisateur ──
+    const existingIds = new Set(data.creations.map(c => c.id));
+    const toAdd = aiExamples.filter(e => !existingIds.has(e.id));
 
-    // Ordre : créations non-IA en premier, puis seeds, puis créations admin IA
-    data.creations = [...data.creations, ...filteredSeed, ...adminManagedAi];
-    localStorage.setItem(KEY, JSON.stringify(data));
+    if (toAdd.length > 0) {
+        data.creations = [...data.creations, ...toAdd];
+        localStorage.setItem(KEY, JSON.stringify(data));
+    }
     localStorage.setItem(AI_SEED_FLAG, 'true');
 
-    console.log('[PIXORA STUDIO] Exemples IA injectés :', filteredSeed.length, 'seed(s) +', adminManagedAi.length, 'création(s) admin préservée(s).');
+    console.log('[PIXORA STUDIO] Créations utilisateur préservées :', data.creations.length);
 })();

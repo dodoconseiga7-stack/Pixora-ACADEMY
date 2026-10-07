@@ -63,6 +63,20 @@
         // Métadonnées des services (masqué / actif, descriptions spécifiques, catégories)
         if (!d.servicesMeta) d.servicesMeta = {};
 
+        // Préservation stricte de toutes les créations authentiques de l'utilisateur
+        if (window.defaultData && Array.isArray(window.defaultData.creations) && window.defaultData.creations.length > 0) {
+            if (!Array.isArray(d.creations) || d.creations.length === 0) {
+                d.creations = [...window.defaultData.creations];
+            } else {
+                const currentIds = new Set(d.creations.map(c => c.id));
+                window.defaultData.creations.forEach(defC => {
+                    if (!currentIds.has(defC.id)) {
+                        d.creations.unshift(defC);
+                    }
+                });
+            }
+        }
+
         return d;
     };
 

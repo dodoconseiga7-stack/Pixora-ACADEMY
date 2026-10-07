@@ -212,11 +212,6 @@ window.PixoraVideo = (function () {
             return null;
         }
 
-        // Si c'est une URL externe (http, https, cloud)
-        if (info.url.startsWith('http://') || info.url.startsWith('https://') || info.url.startsWith('data:')) {
-            return info.url;
-        }
-
         // Si c'est stocké dans IndexedDB
         if (info.isLocal || info.url.startsWith('indexeddb:')) {
             const localRec = await getStoredBlobLocally();
@@ -227,9 +222,11 @@ window.PixoraVideo = (function () {
                 cachedBlobUrl = URL.createObjectURL(localRec.blob);
                 return cachedBlobUrl;
             }
+            return null;
         }
 
-        return null;
+        // Si c'est une URL directe (http, https, cloud, data ou chemin relatif)
+        return info.url;
     }
 
     // ─── Enregistrer un fichier vidéo ────────────────────────────

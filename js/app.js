@@ -256,12 +256,13 @@ document.addEventListener('DOMContentLoaded', () => {
         heroVideoPlayer.addEventListener('loadeddata', () => triggerAutoplay());
 
         // ── IntersectionObserver : gestion de la visibilité ──
-        if ('IntersectionObserver' in window) {
+        const heroSection = document.getElementById('accueil') || document.getElementById('hero-video-zone');
+        if ('IntersectionObserver' in window && heroSection) {
             const visibilityObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (!heroVideoPlayer || !heroVideoPlayer.src || heroVideoPlayer.style.display === 'none') return;
 
-                    if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+                    if (entry.isIntersecting) {
                         // La vidéo est dans sa section visible
                         isVideoInViewport = true;
 
@@ -280,17 +281,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             heroVideoPlayer.play().catch(() => {});
                         }
                     } else {
-                        // La vidéo quitte la zone visible → couper son et pause
-                        isVideoInViewport = false;
-                        cleanupAutoUnmute();
-                        // Couper l'audio sans modifier userAudioChoice
-                        heroVideoPlayer.muted = true;
-                        heroVideoPlayer.pause();
+                        // La vidéo quitte la zone visible (au scroll) → couper son et pause
+                        if (window.scrollY > 120) {
+                            isVideoInViewport = false;
+                            cleanupAutoUnmute();
+                            // Couper l'audio sans modifier userAudioChoice
+                            heroVideoPlayer.muted = true;
+                            heroVideoPlayer.pause();
+                        }
                     }
                 });
-            }, { threshold: [0, 0.1, 0.25] });
+            }, { threshold: [0, 0.15] });
 
-            visibilityObserver.observe(heroVideoPlayer);
+            visibilityObserver.observe(heroSection);
         }
 
         // Gestion du changement d'onglet
