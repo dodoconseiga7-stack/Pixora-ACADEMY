@@ -30,6 +30,8 @@ try {
                     ".png"  { "image/png" }
                     ".svg"  { "image/svg+xml" }
                     ".webm" { "video/webm" }
+                    ".mp4"  { "video/mp4" }
+                    ".mov"  { "video/quicktime" }
                     default { "application/octet-stream" }
                 }
                 

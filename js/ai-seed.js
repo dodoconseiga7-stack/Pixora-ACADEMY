@@ -1,18 +1,24 @@
 /**
  * PIXORA STUDIO — Seeder des Créations IA
- * 
+ *
  * Ce script injecte automatiquement les exemples "CRÉATION PAR IA"
  * dans le localStorage. Il ne touche JAMAIS aux créations de type
  * MY_CREATION (les vraies créations importées par le propriétaire).
- * 
- * Pour régénérer les exemples IA, rechargez simplement la page.
+ *
+ * IMPORTANT : il respecte également les créations AI_CREATION qui ont
+ * été gérées manuellement depuis l'espace admin (marquées adminManaged:true
+ * ou dont l'id commence par 'ai_admin_'). Ces créations ne seront JAMAIS
+ * écrasées ou supprimées par ce seeder.
+ *
+ * Pour forcer une réinjection, incrémentez la version du flag AI_SEED_FLAG.
  */
 
 (function seedAICreations() {
     const KEY = 'pixora_studio_data_v3';
-    const AI_SEED_FLAG = 'pixora_ai_seeded_v1'; // version flag pour ne pas ré-injecter
+    // Version v2 — les créations IA gérées par l'admin sont désormais préservées
+    const AI_SEED_FLAG = 'pixora_ai_seeded_v2';
 
-    // Ne pas ré-injecter si déjà fait
+    // Ne pas ré-injecter si déjà fait avec cette version
     if (localStorage.getItem(AI_SEED_FLAG) === 'true') return;
 
     const stored = localStorage.getItem(KEY);
@@ -20,11 +26,17 @@
 
     let data = JSON.parse(stored);
 
-    // Retirer les anciens exemples IA s'il en existe (sans toucher MY_CREATION)
-    data.creations = data.creations.filter(c => c.type !== 'AI_CREATION');
+    // ── Protéger les créations IA gérées manuellement par l'admin ──
+    // Critères : adminManaged === true  OU  id commençant par 'ai_admin_'
+    const adminManagedAi = (data.creations || []).filter(c =>
+        c.type === 'AI_CREATION' && (c.adminManaged === true || String(c.id).startsWith('ai_admin_'))
+    );
+
+    // On retire toutes les AI_CREATION (on va les réinjecter proprement)
+    data.creations = (data.creations || []).filter(c => c.type !== 'AI_CREATION');
 
     // ================================================================
-    // EXEMPLES IA À INJECTER
+    // EXEMPLES IA À INJECTER (exemples par défaut — seed)
     // Utilisation d'images libres de droits (Unsplash/Pexels)
     // + l'image générée localement
     // ================================================================
@@ -216,10 +228,15 @@
         }
     ];
 
-    // Ajouter les exemples IA à la fin de la liste
-    data.creations = [...data.creations, ...aiExamples];
+    // ── Fusionner intelligemment ──────────────────────────────────────
+    // Les créations adminManaged remplacent les seeds de même ID (si l'admin a édité un seed existant)
+    const adminIds = new Set(adminManagedAi.map(c => c.id));
+    const filteredSeed = aiExamples.filter(e => !adminIds.has(e.id));
+
+    // Ordre : créations non-IA en premier, puis seeds, puis créations admin IA
+    data.creations = [...data.creations, ...filteredSeed, ...adminManagedAi];
     localStorage.setItem(KEY, JSON.stringify(data));
     localStorage.setItem(AI_SEED_FLAG, 'true');
 
-    console.log('[PIXORA STUDIO] Exemples IA injectés avec succès :', aiExamples.length, 'créations.');
+    console.log('[PIXORA STUDIO] Exemples IA injectés :', filteredSeed.length, 'seed(s) +', adminManagedAi.length, 'création(s) admin préservée(s).');
 })();

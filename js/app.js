@@ -24,6 +24,298 @@ document.addEventListener('DOMContentLoaded', () => {
     renderLogo();
 
     // ============================================================
+    // 1.5 GRAND CADRE VIDÉO HERO
+    // (Autoplay loop, contrôle mute/unmute persistant, gestion de la visibilité)
+    // ============================================================
+    const heroVideoPlayer = document.getElementById('hero-video-player');
+    const heroVideoSoundBtn = document.getElementById('hero-video-sound-btn');
+    const heroVideoWatermarkMask = document.getElementById('hero-video-watermark-mask');
+    const soundMutedIcon = document.getElementById('sound-icon-muted');
+    const soundUnmutedIcon = document.getElementById('sound-icon-unmuted');
+
+    // ─── Choix audio persistant de l'utilisateur ─────────────────
+    // null      : aucun choix, comportement par défaut du navigateur
+    // 'muted'   : l'utilisateur a coupé le son → JAMAIS réactivé automatiquement
+    // 'unmuted' : l'utilisateur a réactivé le son → conservé pendant la session
+    let userAudioChoice = (function () {
+        try { return sessionStorage.getItem('pixora_hero_video_audio_choice') || null; }
+        catch (e) { return null; }
+    })();
+
+    function setUserAudioChoice(choice) {
+        userAudioChoice = choice;
+        try {
+            if (choice) { sessionStorage.setItem('pixora_hero_video_audio_choice', choice); }
+            else { sessionStorage.removeItem('pixora_hero_video_audio_choice'); }
+        } catch (e) {}
+    }
+
+    // La section hero est en haut de page → optimiste au chargement
+    let isVideoInViewport = true;
+    let autoUnmuteCleanup = null;
+
+    function cleanupAutoUnmute() {
+        if (typeof autoUnmuteCleanup === 'function') {
+            autoUnmuteCleanup();
+            autoUnmuteCleanup = null;
+        }
+    }
+
+
+    function updateSoundUI(isMuted) {
+        if (soundMutedIcon) soundMutedIcon.style.display = isMuted ? 'inline' : 'none';
+        if (soundUnmutedIcon) soundUnmutedIcon.style.display = isMuted ? 'none' : 'inline';
+    }
+
+    function applyVideoPlayerAttributes() {
+        if (!heroVideoPlayer) return;
+        const isMuted = (userAudioChoice === 'muted');
+        heroVideoPlayer.muted = isMuted;
+        heroVideoPlayer.volume = 1;
+        heroVideoPlayer.loop = true;
+        heroVideoPlayer.playsInline = true;
+        heroVideoPlayer.disablePictureInPicture = true;
+        heroVideoPlayer.removeAttribute('controls');
+        if (isMuted) {
+            heroVideoPlayer.setAttribute('muted', '');
+        } else {
+            heroVideoPlayer.removeAttribute('muted');
+        }
+        heroVideoPlayer.setAttribute('playsinline', '');
+        heroVideoPlayer.setAttribute('webkit-playsinline', '');
+        heroVideoPlayer.setAttribute('loop', '');
+        heroVideoPlayer.setAttribute('autoplay', '');
+        heroVideoPlayer.setAttribute('controlslist', 'nodownload nofullscreen noremoteplayback');
+        updateSoundUI(isMuted);
+    }
+
+
+    function triggerAutoplay() {
+        if (!heroVideoPlayer || !heroVideoPlayer.src) return;
+
+        // ── Respecter le choix explicite de l'utilisateur ──
+        // Si l'utilisateur a coupé le son → lancer muet, ne jamais réactiver
+        if (userAudioChoice === 'muted') {
+            heroVideoPlayer.muted = true;
+            updateSoundUI(true);
+            heroVideoPlayer.play().catch(() => {});
+            return;
+        }
+
+        // Si l'utilisateur a réactivé le son → lancer avec son
+        if (userAudioChoice === 'unmuted') {
+            heroVideoPlayer.muted = false;
+            heroVideoPlayer.volume = 1;
+            updateSoundUI(false);
+            heroVideoPlayer.play().catch(() => {});
+            return;
+        }
+
+        // ── Comportement par défaut (aucun choix de l'utilisateur) ──
+        // Son activé si le navigateur le permet
+        heroVideoPlayer.muted = false;
+        heroVideoPlayer.volume = 1;
+        updateSoundUI(false);
+
+        const p = heroVideoPlayer.play();
+        if (p && typeof p.catch === 'function') {
+            p.catch(() => {
+                // Navigateur bloque l'autoplay avec son → démarrer muet
+                heroVideoPlayer.muted = true;
+                heroVideoPlayer.play().catch(() => {});
+                updateSoundUI(true);
+
+                // Réactiver au premier clic/touche UNIQUEMENT (pas au scroll)
+                if (userAudioChoice === null) {
+                    const unmuteOnInteraction = () => {
+                        cleanupAutoUnmute();
+                        // Ne réactiver que si l'utilisateur n'a pas encore fait de choix
+                        // ET que la vidéo est visible à l'écran
+                        if (userAudioChoice === null && isVideoInViewport) {
+                            heroVideoPlayer.muted = false;
+                            heroVideoPlayer.volume = 1;
+                            updateSoundUI(false);
+                            heroVideoPlayer.play().catch(() => {});
+                        }
+                    };
+                    window.addEventListener('click', unmuteOnInteraction, { once: true });
+                    window.addEventListener('touchstart', unmuteOnInteraction, { once: true });
+                    window.addEventListener('keydown', unmuteOnInteraction, { once: true });
+                    autoUnmuteCleanup = () => {
+                        window.removeEventListener('click', unmuteOnInteraction);
+                        window.removeEventListener('touchstart', unmuteOnInteraction);
+                        window.removeEventListener('keydown', unmuteOnInteraction);
+                    };
+                }
+            });
+        }
+    }
+
+    function renderHeroVideo() {
+        if (!heroVideoPlayer) return;
+        applyVideoPlayerAttributes();
+
+        if (window.PixoraVideo && typeof window.PixoraVideo.getVideoUrl === 'function') {
+            window.PixoraVideo.getVideoUrl().then(url => {
+                if (url) {
+                    if (heroVideoPlayer.src !== url) {
+                        heroVideoPlayer.src = url;
+                        heroVideoPlayer.load();
+                    }
+                    heroVideoPlayer.style.display = 'block';
+                    if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'flex';
+                    if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'block';
+                    triggerAutoplay();
+                } else {
+                    heroVideoPlayer.pause();
+                    heroVideoPlayer.removeAttribute('src');
+                    heroVideoPlayer.style.display = 'none';
+                    if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'none';
+                    if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'none';
+                }
+            }).catch(err => {
+                console.warn('[Vitrine] Erreur chargement vidéo:', err);
+                heroVideoPlayer.style.display = 'none';
+                if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'none';
+                if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'none';
+            });
+        } else {
+            const d = (typeof getData === 'function') ? getData() : {};
+            const heroVid = (d.settings && (d.settings.heroVideo || d.settings.heroVideoUrl)) || null;
+            const videoUrl = typeof heroVid === 'string' ? heroVid : (heroVid && heroVid.url);
+            if (videoUrl && !videoUrl.startsWith('indexeddb:')) {
+                if (heroVideoPlayer.src !== videoUrl) {
+                    heroVideoPlayer.src = videoUrl;
+                    heroVideoPlayer.load();
+                }
+                heroVideoPlayer.style.display = 'block';
+                if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'flex';
+                if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'block';
+                triggerAutoplay();
+            } else {
+                heroVideoPlayer.pause();
+                heroVideoPlayer.removeAttribute('src');
+                heroVideoPlayer.style.display = 'none';
+                if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'none';
+                if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'none';
+            }
+        }
+    }
+
+    // Gestion du contrôle du son (mute / unmute manuel de l'utilisateur)
+    if (heroVideoSoundBtn && heroVideoPlayer) {
+        heroVideoSoundBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Annuler tout listener de déblocage automatique
+            cleanupAutoUnmute();
+
+            if (heroVideoPlayer.muted) {
+                // L'utilisateur réactive volontairement le son 🔊
+                setUserAudioChoice('unmuted');
+                heroVideoPlayer.muted = false;
+                heroVideoPlayer.volume = 1;
+                updateSoundUI(false);
+                if (isVideoInViewport) {
+                    heroVideoPlayer.play().catch(() => {});
+                }
+            } else {
+                // L'utilisateur coupe volontairement le son 🔇
+                setUserAudioChoice('muted');
+                heroVideoPlayer.muted = true;
+                updateSoundUI(true);
+            }
+        });
+    }
+
+    if (heroVideoPlayer) {
+        // Boucle continue sans interruption
+        heroVideoPlayer.addEventListener('ended', () => {
+            heroVideoPlayer.currentTime = 0;
+            // Préserver le choix mute avant de relancer
+            if (userAudioChoice === 'muted') {
+                heroVideoPlayer.muted = true;
+            }
+            heroVideoPlayer.play().catch(() => {});
+        });
+
+        // Empêcher la mise en pause involontaire
+        heroVideoPlayer.addEventListener('pause', () => {
+            if (heroVideoPlayer.src && heroVideoPlayer.style.display !== 'none') {
+                setTimeout(() => {
+                    if (heroVideoPlayer.paused && isVideoInViewport) {
+                        heroVideoPlayer.play().catch(() => {});
+                    }
+                }, 40);
+            }
+        });
+
+        // Autoplay dès que les métadonnées ou le flux sont prêts
+        heroVideoPlayer.addEventListener('canplay', () => triggerAutoplay());
+        heroVideoPlayer.addEventListener('loadeddata', () => triggerAutoplay());
+
+        // ── IntersectionObserver : gestion de la visibilité ──
+        if ('IntersectionObserver' in window) {
+            const visibilityObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!heroVideoPlayer || !heroVideoPlayer.src || heroVideoPlayer.style.display === 'none') return;
+
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+                        // La vidéo est dans sa section visible
+                        isVideoInViewport = true;
+
+                        // Restaurer strictement le dernier état audio choisi par l'utilisateur
+                        if (userAudioChoice === 'muted') {
+                            heroVideoPlayer.muted = true;
+                            updateSoundUI(true);
+                        } else if (userAudioChoice === 'unmuted') {
+                            heroVideoPlayer.muted = false;
+                            heroVideoPlayer.volume = 1;
+                            updateSoundUI(false);
+                        }
+                        // userAudioChoice === null : triggerAutoplay s'en charge
+
+                        if (heroVideoPlayer.paused) {
+                            heroVideoPlayer.play().catch(() => {});
+                        }
+                    } else {
+                        // La vidéo quitte la zone visible → couper son et pause
+                        isVideoInViewport = false;
+                        cleanupAutoUnmute();
+                        // Couper l'audio sans modifier userAudioChoice
+                        heroVideoPlayer.muted = true;
+                        heroVideoPlayer.pause();
+                    }
+                });
+            }, { threshold: [0, 0.1, 0.25] });
+
+            visibilityObserver.observe(heroVideoPlayer);
+        }
+
+        // Gestion du changement d'onglet
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                heroVideoPlayer.muted = true;
+                heroVideoPlayer.pause();
+            } else if (isVideoInViewport && heroVideoPlayer.src && heroVideoPlayer.style.display !== 'none') {
+                if (userAudioChoice === 'muted') {
+                    heroVideoPlayer.muted = true;
+                    updateSoundUI(true);
+                } else if (userAudioChoice === 'unmuted') {
+                    heroVideoPlayer.muted = false;
+                    updateSoundUI(false);
+                }
+                heroVideoPlayer.play().catch(() => {});
+            }
+        });
+    }
+
+    renderHeroVideo();
+    document.addEventListener('pixora-video-updated', renderHeroVideo);
+
+
+    // ============================================================
     // 2. TEXTES DYNAMIQUES & CONTACTS
     // ============================================================
     function renderTexts() {
@@ -312,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="service-card-body">
                         <div class="service-card-name">${s}</div>
                         <div class="service-card-price">À partir de ${price.toLocaleString('fr-FR')} F CFA</div>
-                        <a href="#commander" class="btn btn-outline btn-order-service" data-service="${s}" style="width:100%; margin-top:12px; font-size:0.85rem; padding:8px 12px; text-align:center; display:block;">Commander</a>
+                        <a href="#commander" class="btn btn-order-service" data-service="${s}">Commander</a>
                     </div>
                 </div>
             `;
@@ -733,6 +1025,7 @@ Commande envoyée depuis Pixora Studio
     function refreshAll() {
         renderLogo();
         renderTexts();
+        renderHeroVideo();
         renderDiff();
         renderServiceCards();
         renderPrices();

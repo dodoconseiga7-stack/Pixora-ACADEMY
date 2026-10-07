@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/style.css?v=3.4">
+    <link rel="stylesheet" href="css/style.css?v=3.6">
 </head>
 <body>
 
@@ -95,18 +95,22 @@
                             <span class="ad-banner-tagsmall">Création Graphique Professionnelle</span>
                         </div>
 
-                        <h2 class="ad-banner-headline">
-                            <span class="ad-headline-line1">AU-DELÀ DE L'IA,</span>
-                            <span class="ad-headline-line2">NOUS CRÉONS DES DESIGNS</span>
-                            <span class="ad-headline-line3">PENSÉS, MAÎTRISÉS ET ADAPTÉS</span>
-                            <span class="ad-headline-line4">À VOTRE IMAGE.</span>
-                        </h2>
+                        <!-- ====================================================
+                             GRAND CADRE VIDÉO HERO
+                             (Vide par défaut, sans texte ni image, prévu pour la vidéo admin)
+                        ==================================================== -->
+                        <div class="hero-video-zone" id="hero-video-zone">
+                            <div class="hero-video-container" id="hero-video-container">
+                                <video id="hero-video-player" class="hero-video-player" autoplay loop playsinline webkit-playsinline disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback" preload="auto"></video>
+                                <div class="hero-video-watermark-mask" id="hero-video-watermark-mask" style="display: none;"></div>
+                                <button type="button" class="hero-video-sound-btn" id="hero-video-sound-btn" aria-label="Couper ou activer le son" title="Couper ou activer le son" style="display: none;">
+                                    <span class="sound-icon-muted" id="sound-icon-muted" style="display: none;">🔇</span>
+                                    <span class="sound-icon-unmuted" id="sound-icon-unmuted" style="display: inline;">🔊</span>
+                                </button>
+                            </div>
+                        </div>
 
-                        <p class="ad-banner-sub">
-                            Créations graphiques professionnelles pour entreprises, commerces, marques et particuliers.
-                        </p>
-
-                        <div class="ad-banner-services" id="banner-category-buttons">
+                        <div class="ad-banner-services" id="banner-category-buttons" style="margin-top: 10px;">
                             <button type="button" class="ad-service-pill" data-category="Logo" title="Afficher les créations de Logos">🎨 Logos</button>
                             <button type="button" class="ad-service-pill" data-category="Flyer" title="Afficher les flyers">📄 Flyers</button>
                             <button type="button" class="ad-service-pill" data-category="Carte de visite" title="Afficher les cartes de visite">🪪 Cartes de visite</button>
@@ -115,14 +119,14 @@
                             <button type="button" class="ad-service-pill" data-category="Étiquette" title="Afficher les étiquettes">🏷️ Étiquettes</button>
                         </div>
 
-                        <div class="ad-banner-accent-bar">
+                        <div class="ad-banner-accent-bar" style="margin-top: 6px;">
                             <span class="accent-dot" style="background:#FF7A1A"></span>
                             <span class="accent-dot" style="background:#D82D9B"></span>
                             <span class="accent-dot" style="background:#6C2BFF"></span>
                             <span class="accent-dot" style="background:#00D2FF"></span>
                         </div>
 
-                        <div class="ad-banner-ctas">
+                        <div class="ad-banner-ctas" style="margin-top: 6px;">
                             <a href="#creations" class="btn btn-gradient btn-large" id="ad-btn-creations">VOIR MES CRÉATIONS</a>
                             <a href="#commander" class="btn btn-outline-white btn-large" id="ad-btn-commander">COMMANDER</a>
                         </div>
@@ -132,7 +136,7 @@
                         <div class="ad-deco-circle ad-deco-circle-3"></div>
                     </div>
 
-                    <div class="hero-text text-center" style="margin-top: 26px;">
+                    <div class="hero-text text-center" style="margin-top: 34px;">
                         <h1 class="hero-title" id="hero-title" style="color: #FFFFFF;">BIENVENUE CHEZ PIXORA ACADEMY</h1>
                         <p class="hero-subtitle" id="hero-subtitle" style="color: rgba(255, 255, 255, 0.7);">Des créations graphiques pensées pour donner une vraie image professionnelle à votre activité.</p>
                     </div>
@@ -330,7 +334,7 @@
                 ==================================================== -->
                 <section class="cadre-horizontal cadre-guarantees">
                     <div class="cadre-header" style="margin-bottom: 22px;">
-                        <span class="cadre-badge-tag">🛡️ QUALITÉ & CONFIANCE</span>
+                        <span class="cadre-badge-tag" style="color: #5CE1E6; border-color: rgba(0, 210, 255, 0.45); background: rgba(0, 210, 255, 0.18);">🛡️ QUALITÉ & CONFIANCE</span>
                         <h2 class="cadre-title" style="font-size: 1.4rem; color: #FFFFFF;">POURQUOI CHOISIR PIXORA ACADEMY ?</h2>
                     </div>
                     <div class="guarantees-grid">
@@ -402,12 +406,14 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <script src="js/firebase-config.js?v=3.0"></script>
 
     <script src="js/data.js?v=3.0"></script>
     <script src="js/data-manager.js?v=3.0"></script>
     <script src="js/ai-seed.js?v=3.0"></script>
-    <script src="js/app.js?v=3.2"></script>
+    <script src="js/video-manager.js?v=3.4"></script>
+    <script src="js/app.js?v=3.5"></script>
 
     <!-- GESTION DE LA NAVIGATION & SYNCHRONISATION -->
     <script>

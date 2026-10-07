@@ -293,6 +293,8 @@ button{font-family:inherit;cursor:pointer;}
 .btn-danger:hover{ background:rgba(255,77,79,0.28); }
 .btn-success{ background:rgba(37,211,102,0.15); color:#25D366; border-color:rgba(37,211,102,0.4); }
 .btn-success:hover{ background:rgba(37,211,102,0.28); }
+.btn-orders{ background: linear-gradient(135deg, #00D2FF 0%, #1769FF 100%); color:#fff; border:none; font-weight:700; box-shadow:0 4px 14px rgba(0,210,255,0.35); }
+.btn-orders:hover{ filter:brightness(1.12); transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,210,255,0.5); }
 .btn-sm{ padding:6px 14px; font-size:0.78rem; }
 .btn-xs{ padding:4px 10px; font-size:0.72rem; border-radius:6px; }
 .btn-full{ width:100%; }
@@ -887,6 +889,155 @@ button{font-family:inherit;cursor:pointer;}
     text-overflow: ellipsis;
     margin-bottom: 4px;
 }
+
+/* ── SECTION IA CREATIONS ────────────────────────────────── */
+.ai-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+.ai-badge-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(108,43,255,0.25) 0%, rgba(216,45,155,0.25) 100%);
+    border: 1px solid rgba(108,43,255,0.45);
+    color: #C4ADFF;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 50px;
+}
+.ai-creation-card {
+    background: rgba(108,43,255,0.06);
+    border: 1.5px solid rgba(108,43,255,0.22);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    transition: all 0.22s ease;
+    display: flex;
+    flex-direction: column;
+}
+.ai-creation-card:hover {
+    border-color: rgba(108,43,255,0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(108,43,255,0.2);
+}
+.ai-current-img-zone {
+    width: 100%;
+    height: 160px;
+    background: #080C24;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+.ai-current-img-zone img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px;
+    transition: transform 0.22s ease;
+}
+.ai-creation-card:hover .ai-current-img-zone img {
+    transform: scale(1.04);
+}
+.ai-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(108,43,255,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-size: 1.4rem;
+}
+.ai-creation-card:hover .ai-img-overlay {
+    opacity: 1;
+}
+.ai-card-body {
+    padding: 12px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.ai-card-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ai-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.ai-card-actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.ai-card-actions .btn-xs {
+    font-size: 0.72rem;
+    padding: 5px 9px;
+}
+.ai-preview-new {
+    width: 100%;
+    height: 90px;
+    object-fit: contain;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    border: 1px dashed rgba(108,43,255,0.4);
+    padding: 4px;
+    display: none;
+    margin-top: 8px;
+}
+/* Modal IA Edit */
+#aiEditModal .modal-card {
+    max-width: 540px;
+}
+.ai-modal-preview-wrap {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+}
+.ai-modal-current-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1.5px solid rgba(108,43,255,0.4);
+    background: #080C24;
+    padding: 4px;
+    flex-shrink: 0;
+}
+.ai-modal-img-info {
+    flex: 1;
+}
+.ai-modal-new-preview {
+    width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px dashed #6C2BFF;
+    background: rgba(0,0,0,0.3);
+    padding: 4px;
+    margin-top: 8px;
+    display: none;
+}
 </style>
 </head>
 <body>
@@ -924,6 +1075,9 @@ button{font-family:inherit;cursor:pointer;}
             <a href="#" data-page="orders" id="nav-orders">
                 <span class="nav-ic">🛒</span> Commandes
                 <span id="orders-badge" style="margin-left:auto;background:rgba(216,45,155,0.25);color:#FBB6CE;font-size:0.65rem;padding:2px 7px;border-radius:50px;font-weight:700;display:none;">0</span>
+            </a>
+            <a href="#" data-page="video" id="nav-video">
+                <span class="nav-ic">🎬</span> Vidéo Vitrine
             </a>
             <a href="#" data-page="settings" id="nav-settings">
                 <span class="nav-ic">⚙️</span> Paramètres
@@ -970,7 +1124,8 @@ button{font-family:inherit;cursor:pointer;}
                 <div style="display:flex;flex-wrap:wrap;gap:12px;">
                     <button class="btn btn-gradient" onclick="showPage('creations')">🎨 Gérer les Créations</button>
                     <button class="btn btn-primary" onclick="showPage('services')">🏷️ Modifier les Tarifs</button>
-                    <button class="btn btn-outline" onclick="showPage('orders')">🛒 Voir les Commandes</button>
+                    <button class="btn btn-orders" onclick="showPage('orders')">🛒 Voir les Commandes</button>
+                    <button class="btn btn-outline" onclick="showPage('video')">🎬 Gérer la Vidéo</button>
                     <a href="index.html" target="_blank" class="btn btn-outline">🌐 Ouvrir la Vitrine</a>
                 </div>
             </div>
@@ -1080,6 +1235,43 @@ button{font-family:inherit;cursor:pointer;}
                     </div>
                 </div>
             </div>
+
+            <!-- ══════════════════════════════════════════════════════════
+                 GESTION DES CRÉATIONS PAR IA
+            ══════════════════════════════════════════════════════════ -->
+            <div class="section-card" id="ai-creations-section">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="ai-badge-label">🤖 Créations IA</span>
+                        GESTION DES CRÉATIONS PAR IA
+                    </div>
+                    <button class="btn btn-gradient btn-sm" id="aiAddCreationBtn" onclick="openAiAddModal()">➕ Ajouter une création IA</button>
+                </div>
+                <p style="color:var(--c-muted);font-size:0.84rem;margin-bottom:20px;line-height:1.6;">
+                    Gérez ici toutes les images affichées dans la section <strong style="color:#C4ADFF;">« CRÉATION PAR IA »</strong> de la vitrine client.
+                    Vous pouvez voir, remplacer, modifier ou supprimer chaque image. Les modifications sont visibles instantanément sur la vitrine.
+                </p>
+
+                <!-- Filtres IA -->
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;">
+                    <select class="form-control" id="ai-filter-service" style="padding:7px 12px;font-size:0.82rem;min-width:160px;">
+                        <option value="ALL">Tous les services</option>
+                    </select>
+                    <select class="form-control" id="ai-filter-domain" style="padding:7px 12px;font-size:0.82rem;min-width:160px;">
+                        <option value="ALL">Tous les domaines</option>
+                    </select>
+                    <span id="ai-creation-count" style="font-size:0.8rem;color:var(--c-muted);">0 création(s)</span>
+                </div>
+
+                <!-- Grille des créations IA -->
+                <div class="creations-admin-grid" id="aiCreationsGrid">
+                    <div class="empty-state" style="grid-column:1/-1;">
+                        <div class="empty-icon">🤖</div>
+                        <p>Chargement des créations IA...</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- ══════════════ PAGE: SERVICES & TARIFS ══════════════ -->
@@ -1161,6 +1353,113 @@ button{font-family:inherit;cursor:pointer;}
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- ══════════════ PAGE: VIDÉO VITRINE ══════════════ -->
+        <div class="admin-page" id="page-video">
+
+            <!-- 1. CARTE : VIDÉO ACTUELLEMENT UTILISÉE -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span>🎬</span> Vidéo actuellement utilisée sur la Vitrine
+                    </div>
+                    <span id="admin-video-status-badge" class="card-badge badge-blue">Vérification...</span>
+                </div>
+
+                <!-- Lecteur vidéo & prévisualisation claire -->
+                <div id="admin-video-active-container" style="display:none;">
+                    <div style="background:#000; border-radius:var(--r-md); overflow:hidden; max-width:760px; margin:0 auto 18px; border:1.5px solid rgba(108,43,255,0.45); box-shadow:0 12px 36px rgba(0,0,0,0.45);">
+                        <video id="admin-current-video-player" controls playsinline style="width:100%; max-height:420px; display:block; object-fit:contain; background:#000;"></video>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:rgba(255,255,255,0.04); border:1px solid var(--c-border-s); border-radius:var(--r-sm); padding:16px 20px; margin-bottom:20px;">
+                        <div>
+                            <div id="admin-video-info-name" style="font-weight:700; color:#fff; font-size:0.96rem;">-</div>
+                            <div id="admin-video-info-meta" style="font-size:0.8rem; color:var(--c-muted); margin-top:4px;">-</div>
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <button class="btn btn-primary btn-sm" id="btn-admin-replace-video">🔄 Remplacer la vidéo</button>
+                            <button class="btn btn-danger btn-sm" id="btn-admin-delete-video">🗑️ Supprimer la vidéo</button>
+                            <a href="index.html#accueil" target="_blank" class="btn btn-outline btn-sm">🌐 Voir sur la Vitrine</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- État vide (quand aucune vidéo n'est configurée) -->
+                <div id="admin-video-empty-container" style="display:block; text-align:center; padding:44px 20px; background:rgba(255,255,255,0.02); border:1.5px dashed rgba(108,43,255,0.35); border-radius:var(--r-md); margin-bottom:20px;">
+                    <div style="font-size:3rem; margin-bottom:12px;">📭</div>
+                    <h4 style="color:#fff; font-size:1.1rem; margin-bottom:8px;">Aucune vidéo n'est actuellement configurée</h4>
+                    <p style="color:var(--c-muted); font-size:0.86rem; max-width:540px; margin:0 auto 20px; line-height:1.6;">
+                        Le grand cadre vidéo de la vitrine publique reste actuellement propre et vide, comme prévu, en attente de votre première vidéo.
+                    </p>
+                    <button class="btn btn-gradient btn-sm" id="btn-empty-upload-video">⬆️ Téléverser une vidéo maintenant</button>
+                </div>
+            </div>
+
+            <!-- 2. CARTE : TÉLÉVERSER / REMPLACER LA VIDÉO -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="card-badge badge-violet">Gestion</span> Ajouter ou Remplacer la vidéo
+                    </div>
+                </div>
+
+                <!-- Zone Drag & Drop -->
+                <div class="upload-zone" id="videoUploadZone" style="padding:38px 24px; text-align:center; cursor:pointer; border:2px dashed rgba(108,43,255,0.45); border-radius:var(--r-md); background:rgba(108,43,255,0.05); margin-bottom:18px; transition:all 0.22s ease;">
+                    <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/*" style="display:none;">
+                    <div class="upload-icon" style="font-size:2.6rem; margin-bottom:8px;">🎬</div>
+                    <div class="upload-text" style="font-size:1.02rem; font-weight:700; color:#fff; margin-bottom:6px;">Glisser-déposer votre fichier vidéo ici</div>
+                    <div class="upload-sub" style="color:var(--c-muted); font-size:0.83rem;">
+                        ou <span style="color:var(--c-cyan); text-decoration:underline;">cliquez pour sélectionner</span> — MP4, WEBM, MOV (recommandé jusqu'à 100 Mo)
+                    </div>
+                </div>
+
+                <!-- Barre de progression -->
+                <div id="videoUploadProgressWrap" style="display:none; margin-bottom:18px; background:rgba(255,255,255,0.03); border:1px solid var(--c-border-s); border-radius:var(--r-sm); padding:14px 18px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.84rem; color:#fff; margin-bottom:8px; font-weight:600;">
+                        <span id="videoUploadStatusText">⏳ Traitement et enregistrement de la vidéo...</span>
+                        <span id="videoUploadPercent" style="color:var(--c-cyan);">0%</span>
+                    </div>
+                    <div style="height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden;">
+                        <div id="videoUploadProgressBar" style="height:100%; width:0%; background:var(--grad-primary); transition:width 0.2s ease;"></div>
+                    </div>
+                </div>
+
+                <!-- Option Alternative: Lien URL direct -->
+                <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--c-border-s);">
+                    <div style="font-size:0.9rem; font-weight:700; color:#fff; margin-bottom:6px;">Ou définir une URL vidéo directe (Hébergement en ligne)</div>
+                    <p style="font-size:0.82rem; color:var(--c-muted); margin-bottom:12px; line-height:1.5;">
+                        Si votre vidéo est déjà hébergée en ligne (Firebase Storage, Cloudinary, votre propre serveur, etc.), renseignez simplement son lien direct :
+                    </p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <input class="form-control" id="videoUrlInput" placeholder="https://exemple.com/ma-video.mp4" style="flex:1; min-width:260px;">
+                        <button class="btn btn-outline" id="btnSaveVideoUrl">💾 Appliquer cette URL</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. CARTE : INFORMATIONS & CONFIRMATION DE RENDU -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <div class="section-card-title">ℹ️ Fonctionnement sur la Vitrine Pixora Academy</div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; font-size:0.84rem; color:var(--c-muted);">
+                    <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:var(--r-sm); border:1px solid var(--c-border-s);">
+                        <strong style="color:#fff; display:block; margin-bottom:5px;">📱 100% Responsive</strong>
+                        Le cadre vidéo adapte ses dimensions automatiquement sur ordinateur, tablette, iPhone et smartphones Android, sans débordement ni déformation.
+                    </div>
+                    <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:var(--r-sm); border:1px solid var(--c-border-s);">
+                        <strong style="color:#fff; display:block; margin-bottom:5px;">⚡ Mise à jour automatique</strong>
+                        Dès l'ajout, le remplacement ou la suppression, le cadre de la vitrine s'actualise immédiatement sans configuration technique complexe.
+                    </div>
+                    <div style="background:rgba(255,255,255,0.03); padding:16px; border-radius:var(--r-sm); border:1px solid var(--c-border-s);">
+                        <strong style="color:#fff; display:block; margin-bottom:5px;">🛡️ Cadre vide préservé</strong>
+                        Tant qu'aucune vidéo n'est configurée, le cadre reste net, sobre, sans aucune image ni aucun texte résiduel sur la vitrine.
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- ══════════════ PAGE: PARAMÈTRES ══════════════ -->
@@ -1348,6 +1647,107 @@ button{font-family:inherit;cursor:pointer;}
     <span id="toast-msg"></span>
 </div>
 
+<!-- ══════════ MODAL AJOUT CRÉATION IA ══════════ -->
+<div class="modal-overlay" id="aiAddModal">
+    <div class="modal-card" style="max-width:520px;width:96vw;max-height:90vh;overflow-y:auto;">
+        <h3 style="margin-bottom:20px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.3rem;">🤖</span>
+            Ajouter une Création par IA
+        </h3>
+
+        <div class="form-group">
+            <label class="form-label">Titre / Nom *</label>
+            <input class="form-control" id="aiAddTitle" placeholder="Ex: Affiche BY IA — Salon de coiffure">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Type de service *</label>
+            <input class="form-control" id="aiAddService" placeholder="Ex: Affiche publicitaire, Flyer, Kakémono...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Domaine d'activité</label>
+            <input class="form-control" id="aiAddDomain" placeholder="Ex: Salon de coiffure, Restaurant..." value="Général">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description (optionnelle)</label>
+            <input class="form-control" id="aiAddDesc" placeholder="Description de l'image IA">
+        </div>
+
+        <!-- Zone image -->
+        <div class="form-group">
+            <label class="form-label">Image *</label>
+            <label class="upload-zone" style="padding:20px;margin-bottom:0;cursor:pointer;position:relative;">
+                <input type="file" id="aiAddImageFile" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;">
+                <div class="upload-icon" style="font-size:1.8rem;margin-bottom:6px;">📁</div>
+                <div class="upload-text" style="font-size:0.88rem;">Cliquer pour sélectionner une image</div>
+                <div class="upload-sub">JPG, PNG, WEBP — Max 8 Mo</div>
+            </label>
+            <!-- Aperçu nouvelle image -->
+            <div style="margin-top:10px;font-size:0.78rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                Aperçu de l'image sélectionnée
+            </div>
+            <img id="aiAddImgPreview" class="ai-modal-new-preview" src="" alt="Aperçu" style="display:none;width:100%;max-height:160px;">
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+            <button class="btn btn-gradient" id="aiAddSaveBtn">💾 Enregistrer</button>
+            <button class="btn btn-outline" onclick="document.getElementById('aiAddModal').classList.remove('active')">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════ MODAL ÉDITION CRÉATION IA ══════════ -->
+<div class="modal-overlay" id="aiEditModal">
+    <div class="modal-card" style="max-width:540px;width:96vw;max-height:90vh;overflow-y:auto;">
+        <h3 style="margin-bottom:18px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.3rem;">✏️</span>
+            Modifier la Création IA
+        </h3>
+
+        <input type="hidden" id="aiEditId">
+
+        <!-- Aperçu image actuelle -->
+        <div class="ai-modal-preview-wrap">
+            <div style="flex-shrink:0;">
+                <div style="font-size:0.72rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Image actuelle</div>
+                <img id="aiEditCurrentImg" class="ai-modal-current-img" src="" alt="Image actuelle"
+                     onerror="this.src='https://placehold.co/100x100?text=IA'">
+            </div>
+            <div class="ai-modal-img-info">
+                <div style="font-size:0.78rem;font-weight:700;color:var(--c-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Remplacer l'image</div>
+                <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:rgba(108,43,255,0.15);border:1px solid rgba(108,43,255,0.4);color:#C4ADFF;padding:8px 14px;border-radius:8px;font-size:0.82rem;font-weight:700;">
+                    🔄 Choisir une nouvelle image
+                    <input type="file" id="aiEditImageFile" accept="image/*" style="display:none;">
+                </label>
+                <!-- Aperçu nouvelle image -->
+                <img id="aiEditNewPreview" class="ai-modal-new-preview" src="" alt="Nouvelle image" style="display:none;max-height:100px;">
+                <div id="aiEditNewPreviewLabel" style="display:none;font-size:0.72rem;color:#25D366;margin-top:4px;font-weight:600;">✓ Nouvelle image sélectionnée</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Titre / Nom *</label>
+            <input class="form-control" id="aiEditTitle" placeholder="Titre de la création IA">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Type de service</label>
+            <input class="form-control" id="aiEditService" placeholder="Ex: Affiche publicitaire, Flyer...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Domaine d'activité</label>
+            <input class="form-control" id="aiEditDomain" placeholder="Ex: Salon de coiffure, Restaurant...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description (optionnelle)</label>
+            <input class="form-control" id="aiEditDesc" placeholder="Description optionnelle">
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+            <button class="btn btn-gradient" id="aiEditSaveBtn">💾 Enregistrer les modifications</button>
+            <button class="btn btn-outline" onclick="document.getElementById('aiEditModal').classList.remove('active')">Annuler</button>
+        </div>
+    </div>
+</div>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -1360,6 +1760,7 @@ button{font-family:inherit;cursor:pointer;}
 <script src="js/data-manager.js?v=3.0"></script>
 <script src="js/ai-seed.js?v=3.0"></script>
 <script src="js/admin-creations.js?v=3.0"></script>
+<script src="js/video-manager.js?v=3.4"></script>
 
 <script>
 /* ══════════════════════════════════════════════════════════════
@@ -1400,13 +1801,14 @@ function showPage(pageId) {
     const navLink = document.getElementById('nav-' + pageId);
     if (navLink) navLink.classList.add('active');
 
-    const titles = { dashboard:'Tableau de bord', creations:'Mes Créations', services:'Services & Tarifs', orders:'Commandes', settings:'Paramètres' };
+    const titles = { dashboard:'Tableau de bord', creations:'Mes Créations', services:'Services & Tarifs', orders:'Commandes', video:'Vidéo Vitrine', settings:'Paramètres' };
     document.getElementById('topbar-title').textContent = titles[pageId] || '';
 
     closeSidebar();
-    if (pageId === 'creations') { renderCreationsGrid(); renderDiffSelection(); }
+    if (pageId === 'creations') { renderCreationsGrid(); renderDiffSelection(); renderAiCreationsGrid(); populateAiFilters(); }
     if (pageId === 'services')  renderServices();
     if (pageId === 'orders')    renderOrders();
+    if (pageId === 'video')     renderAdminVideo();
     if (pageId === 'settings')  { loadSettings(); updateSyncStatus(window.FirebaseSync && window.FirebaseSync.isReady()); }
     if (pageId === 'dashboard') renderDashboard();
 }
@@ -1734,6 +2136,256 @@ document.getElementById('saveEditBtn').addEventListener('click', async () => {
 document.getElementById('editModal').addEventListener('click', e => {
     if (e.target === document.getElementById('editModal')) document.getElementById('editModal').classList.remove('active');
 });
+
+// ══════════════════════════════════════════════════════════════
+// GESTION DES CRÉATIONS PAR IA
+// Même architecture que MY_CREATION — réutilise AdminCreations API
+// ══════════════════════════════════════════════════════════════
+
+// ─ Remplir les filtres IA (service + domaine) ────────────────
+function populateAiFilters() {
+    const data = window.getData();
+    const aiList = (data.creations || []).filter(c => c.type === 'AI_CREATION');
+
+    const services = [...new Set(aiList.map(c => c.service).filter(Boolean))];
+    const domains  = [...new Set(aiList.map(c => c.domain).filter(Boolean))];
+
+    const svcEl = document.getElementById('ai-filter-service');
+    const domEl = document.getElementById('ai-filter-domain');
+    if (!svcEl || !domEl) return;
+
+    const curSvc = svcEl.value;
+    const curDom = domEl.value;
+
+    svcEl.innerHTML = '<option value="ALL">Tous les services</option>' +
+        services.map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+    domEl.innerHTML = '<option value="ALL">Tous les domaines</option>' +
+        domains.map(d => `<option value="${escHtml(d)}">${escHtml(d)}</option>`).join('');
+
+    if (curSvc && svcEl.querySelector(`option[value="${curSvc}"]`)) svcEl.value = curSvc;
+    if (curDom && domEl.querySelector(`option[value="${curDom}"]`)) domEl.value = curDom;
+}
+
+// ─ Rendu de la grille des créations IA ───────────────────────
+function renderAiCreationsGrid() {
+    const data    = window.getData();
+    const svcFil  = (document.getElementById('ai-filter-service') || {}).value || 'ALL';
+    const domFil  = (document.getElementById('ai-filter-domain')  || {}).value || 'ALL';
+
+    let aiList = (data.creations || []).filter(c => c.type === 'AI_CREATION');
+    if (svcFil !== 'ALL') aiList = aiList.filter(c => c.service === svcFil);
+    if (domFil !== 'ALL') aiList = aiList.filter(c => c.domain  === domFil);
+
+    const grid  = document.getElementById('aiCreationsGrid');
+    const count = document.getElementById('ai-creation-count');
+    if (!grid) return;
+
+    if (count) count.textContent = aiList.length + ' création(s) IA';
+
+    if (aiList.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-icon">🤖</div>
+            <p>Aucune création IA trouvée.<br>Cliquez sur « Ajouter une création IA » pour en ajouter.</p>
+        </div>`;
+        return;
+    }
+
+    grid.innerHTML = aiList.map(c => `
+        <div class="ai-creation-card" id="ai-card-${escHtml(c.id)}">
+            <div class="ai-current-img-zone" onclick="openLightbox('${escHtml(c.image)}', '${escHtml(c.title)}')"
+                 title="Voir l'image en grand">
+                <img src="${escHtml(c.image)}" alt="${escHtml(c.title)}" loading="lazy"
+                     onerror="this.src='https://placehold.co/300x200?text=Image+IA'">
+                <div class="ai-img-overlay">🔍</div>
+            </div>
+            <div class="ai-card-body">
+                <div class="ai-card-title" title="${escHtml(c.title)}">${escHtml(c.title)}</div>
+                <div class="ai-card-tags">
+                    ${c.service ? `<span class="tag-chip">${escHtml(c.service)}</span>` : ''}
+                    ${c.domain  ? `<span class="tag-chip domain">${escHtml(c.domain)}</span>` : ''}
+                </div>
+                <div class="ai-card-actions">
+                    <button class="btn btn-outline btn-xs" onclick="openAiEditModal('${escHtml(c.id)}')">✏️ Modifier</button>
+                    <label class="btn btn-outline btn-xs" title="Remplacer l'image" style="cursor:pointer;">
+                        🔄 <input type="file" accept="image/*" style="display:none;" onchange="handleAiReplace('${escHtml(c.id)}', this)">
+                    </label>
+                    <button class="btn btn-danger btn-xs" onclick="handleAiDelete('${escHtml(c.id)}')">🗑️</button>
+                </div>
+            </div>
+        </div>`).join('');
+
+    populateAiFilters();
+}
+
+// ─ Filtres IA ─────────────────────────────────────────────────
+const aiFilterService = document.getElementById('ai-filter-service');
+const aiFilterDomain  = document.getElementById('ai-filter-domain');
+if (aiFilterService) aiFilterService.addEventListener('change', renderAiCreationsGrid);
+if (aiFilterDomain)  aiFilterDomain.addEventListener('change',  renderAiCreationsGrid);
+
+// ─ Remplacement rapide d'image IA ────────────────────────────
+async function handleAiReplace(id, input) {
+    if (!input.files || !input.files[0]) return;
+    showToast('Remplacement de l\'image IA en cours...', '⏳');
+    try {
+        await window.AdminCreations.replaceCreationImage(id, input.files[0]);
+        renderAiCreationsGrid();
+        showToast('✅ Création IA mise à jour avec succès !', '✅');
+    } catch (e) {
+        showToast('Erreur : ' + e.message, '❌');
+    }
+}
+
+// ─ Suppression création IA ────────────────────────────────────
+async function handleAiDelete(id) {
+    const data = window.getData();
+    const c = (data.creations || []).find(x => x.id === id);
+    const name = c ? c.title : 'cette création IA';
+    confirmDialog(
+        'Supprimer « ' + (name.length > 30 ? name.slice(0,30)+'…' : name) + ' » ?',
+        'Cette image IA sera supprimée définitivement de la vitrine.',
+        async () => {
+            await window.AdminCreations.deleteCreation(id);
+            renderAiCreationsGrid();
+            renderDashboard();
+            showToast('Création IA supprimée.', '🗑️');
+        }
+    );
+}
+
+// ─ Modal AJOUT d'une nouvelle création IA ─────────────────────
+function openAiAddModal() {
+    // Réinitialiser le modal d'ajout IA
+    document.getElementById('aiAddTitle').value       = '';
+    document.getElementById('aiAddService').value     = '';
+    document.getElementById('aiAddDomain').value      = 'Général';
+    document.getElementById('aiAddDesc').value        = '';
+    document.getElementById('aiAddImageFile').value   = '';
+    document.getElementById('aiAddImgPreview').style.display = 'none';
+    document.getElementById('aiAddModal').classList.add('active');
+}
+
+// ─ Modal ÉDITION d'une création IA existante ──────────────────
+function openAiEditModal(id) {
+    const data     = window.getData();
+    const creation = (data.creations || []).find(c => c.id === id);
+    if (!creation) return;
+
+    document.getElementById('aiEditId').value          = id;
+    document.getElementById('aiEditTitle').value       = creation.title || '';
+    document.getElementById('aiEditService').value     = creation.service || '';
+    document.getElementById('aiEditDomain').value      = creation.domain  || '';
+    document.getElementById('aiEditDesc').value        = creation.description || '';
+    document.getElementById('aiEditImageFile').value   = '';
+
+    const prevImg = document.getElementById('aiEditCurrentImg');
+    prevImg.src   = creation.image || 'https://placehold.co/300x200?text=Image+IA';
+    document.getElementById('aiEditNewPreview').style.display = 'none';
+
+    document.getElementById('aiEditModal').classList.add('active');
+}
+
+// ─ Aperçu image sélectionnée dans modal AJOUT ─────────────────
+function setupAiAddImagePreview() {
+    const fileEl = document.getElementById('aiAddImageFile');
+    if (!fileEl) return;
+    fileEl.addEventListener('change', () => {
+        const f = fileEl.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const prev = document.getElementById('aiAddImgPreview');
+            prev.src = e.target.result;
+            prev.style.display = 'block';
+        };
+        reader.readAsDataURL(f);
+    });
+}
+
+// ─ Aperçu image sélectionnée dans modal ÉDITION ───────────────
+function setupAiEditImagePreview() {
+    const fileEl = document.getElementById('aiEditImageFile');
+    if (!fileEl) return;
+    fileEl.addEventListener('change', () => {
+        const f = fileEl.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const prev = document.getElementById('aiEditNewPreview');
+            prev.src = e.target.result;
+            prev.style.display = 'block';
+        };
+        reader.readAsDataURL(f);
+    });
+}
+
+// ─ Enregistrement d'une NOUVELLE création IA ─────────────────
+document.getElementById('aiAddSaveBtn').addEventListener('click', async () => {
+    const title   = document.getElementById('aiAddTitle').value.trim();
+    const service = document.getElementById('aiAddService').value.trim();
+    const domain  = document.getElementById('aiAddDomain').value.trim() || 'Général';
+    const desc    = document.getElementById('aiAddDesc').value.trim();
+    const fileEl  = document.getElementById('aiAddImageFile');
+    const file    = fileEl.files[0];
+
+    if (!title)   { showToast('Veuillez saisir un titre.', '⚠️'); return; }
+    if (!service) { showToast('Veuillez saisir un service / type.', '⚠️'); return; }
+    if (!file)    { showToast('Veuillez sélectionner une image.', '⚠️'); return; }
+
+    showToast('Enregistrement en cours...', '⏳');
+    try {
+        const results = await window.AdminCreations.addAiCreation(file, title, service, domain, desc);
+        document.getElementById('aiAddModal').classList.remove('active');
+        renderAiCreationsGrid();
+        renderDashboard();
+        showToast('✅ Création IA mise à jour avec succès !', '✅');
+    } catch(e) {
+        showToast('Erreur : ' + e.message, '❌');
+    }
+});
+
+document.getElementById('aiAddModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('aiAddModal'))
+        document.getElementById('aiAddModal').classList.remove('active');
+});
+
+// ─ Enregistrement des MODIFICATIONS d'une création IA ────────
+document.getElementById('aiEditSaveBtn').addEventListener('click', async () => {
+    const id      = document.getElementById('aiEditId').value;
+    const imgFile = document.getElementById('aiEditImageFile').files[0];
+
+    const fields = {
+        title:       document.getElementById('aiEditTitle').value.trim(),
+        service:     document.getElementById('aiEditService').value.trim(),
+        domain:      document.getElementById('aiEditDomain').value.trim(),
+        description: document.getElementById('aiEditDesc').value.trim()
+    };
+
+    if (!fields.title) { showToast('Veuillez saisir un titre.', '⚠️'); return; }
+
+    showToast('Enregistrement en cours...', '⏳');
+    try {
+        if (imgFile) {
+            await window.AdminCreations.replaceCreationImage(id, imgFile);
+        }
+        window.AdminCreations.updateCreation(id, fields);
+        document.getElementById('aiEditModal').classList.remove('active');
+        renderAiCreationsGrid();
+        populateAiFilters();
+        showToast('✅ Création IA mise à jour avec succès !', '✅');
+    } catch(e) {
+        showToast('Erreur : ' + e.message, '❌');
+    }
+});
+
+document.getElementById('aiEditModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('aiEditModal'))
+        document.getElementById('aiEditModal').classList.remove('active');
+});
+
+// Init aperçus au chargement
+setupAiAddImagePreview();
+setupAiEditImagePreview();
 
 // ─── SÉLECTION VITRINE : LA DIFFÉRENCE ────────────────────────
 let selectedDiffIds = new Set();
@@ -2072,6 +2724,196 @@ document.getElementById('btnDisconnectFirebase').addEventListener('click', () =>
     });
 });
 
+// ─── GESTION VIDÉO VITRINE ─────────────────────────────────────
+async function renderAdminVideo() {
+    const statusBadge = document.getElementById('admin-video-status-badge');
+    const activeBox   = document.getElementById('admin-video-active-container');
+    const emptyBox    = document.getElementById('admin-video-empty-container');
+    const player      = document.getElementById('admin-current-video-player');
+    const nameEl      = document.getElementById('admin-video-info-name');
+    const metaEl      = document.getElementById('admin-video-info-meta');
+    const urlInput    = document.getElementById('videoUrlInput');
+
+    if (!window.PixoraVideo) return;
+
+    try {
+        const info = await window.PixoraVideo.getVideoInfo();
+        const url  = await window.PixoraVideo.getVideoUrl();
+
+        if (info && info.hasVideo && url) {
+            if (statusBadge) {
+                statusBadge.className = 'card-badge badge-green';
+                statusBadge.textContent = '🟢 Vidéo Active sur la Vitrine';
+            }
+            if (activeBox) activeBox.style.display = 'block';
+            if (emptyBox)  emptyBox.style.display = 'none';
+
+            if (player) {
+                if (player.src !== url) {
+                    player.src = url;
+                    player.load();
+                }
+            }
+
+            if (nameEl) nameEl.textContent = info.name || 'Vidéo vitrine';
+            if (metaEl) {
+                const dateStr = info.updatedAt ? new Date(info.updatedAt).toLocaleDateString('fr-FR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                }) : '';
+                const sizeStr = info.size ? window.PixoraVideo.formatBytes(info.size) : '';
+                const parts = [];
+                if (sizeStr) parts.push(sizeStr);
+                if (dateStr) parts.push('Mis à jour le ' + dateStr);
+                parts.push(info.isLocal ? 'Stockage local' : 'Cloud / URL');
+                metaEl.textContent = parts.join(' • ');
+            }
+
+            if (urlInput && !info.isLocal && !info.url.startsWith('indexeddb:')) {
+                urlInput.value = info.url;
+            }
+        } else {
+            if (statusBadge) {
+                statusBadge.className = 'card-badge badge-blue';
+                statusBadge.textContent = '⚪ Aucune vidéo (Cadre vide)';
+            }
+            if (activeBox) activeBox.style.display = 'none';
+            if (emptyBox)  emptyBox.style.display = 'block';
+
+            if (player) {
+                player.pause();
+                player.removeAttribute('src');
+                player.load();
+            }
+            if (urlInput) urlInput.value = '';
+        }
+    } catch (err) {
+        console.error('[Admin] Erreur chargement vidéo:', err);
+    }
+}
+
+function initAdminVideo() {
+    const fileInput   = document.getElementById('videoFileInput');
+    const uploadZone  = document.getElementById('videoUploadZone');
+    const progressWrap = document.getElementById('videoUploadProgressWrap');
+    const progressBar = document.getElementById('videoUploadProgressBar');
+    const percentText = document.getElementById('videoUploadPercent');
+    const statusText  = document.getElementById('videoUploadStatusText');
+    const btnEmpty    = document.getElementById('btn-empty-upload-video');
+    const btnReplace  = document.getElementById('btn-admin-replace-video');
+    const btnDelete   = document.getElementById('btn-admin-delete-video');
+    const btnSaveUrl  = document.getElementById('btnSaveVideoUrl');
+    const urlInput    = document.getElementById('videoUrlInput');
+
+    if (!fileInput || !window.PixoraVideo) return;
+
+    if (btnEmpty) btnEmpty.addEventListener('click', () => fileInput.click());
+    if (btnReplace) btnReplace.addEventListener('click', () => fileInput.click());
+
+    if (uploadZone) {
+        uploadZone.addEventListener('click', (e) => {
+            if (e.target !== fileInput) fileInput.click();
+        });
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = 'var(--c-cyan)';
+            uploadZone.style.background = 'rgba(0, 210, 255, 0.1)';
+        });
+
+        ['dragleave', 'dragend'].forEach(ev => {
+            uploadZone.addEventListener(ev, () => {
+                uploadZone.style.borderColor = 'rgba(108,43,255,0.45)';
+                uploadZone.style.background = 'rgba(108,43,255,0.05)';
+            });
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = 'rgba(108,43,255,0.45)';
+            uploadZone.style.background = 'rgba(108,43,255,0.05)';
+            if (e.dataTransfer.files && e.dataTransfer.files.length) {
+                handleVideoFileUpload(e.dataTransfer.files[0]);
+            }
+        });
+    }
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files && fileInput.files.length) {
+            handleVideoFileUpload(fileInput.files[0]);
+        }
+    });
+
+    async function handleVideoFileUpload(file) {
+        if (!file.type.startsWith('video/')) {
+            showToast('Veuillez sélectionner un fichier vidéo valide (MP4, WEBM, MOV).', '⚠️');
+            return;
+        }
+
+        if (progressWrap) progressWrap.style.display = 'block';
+        if (progressBar) progressBar.style.width = '0%';
+        if (percentText) percentText.textContent = '0%';
+        if (statusText) statusText.textContent = `Traitement de "${file.name}"...`;
+
+        try {
+            await window.PixoraVideo.saveVideoFile(file, (p) => {
+                const rounded = Math.round(p);
+                if (progressBar) progressBar.style.width = rounded + '%';
+                if (percentText) percentText.textContent = rounded + '%';
+                if (statusText) statusText.textContent = `Enregistrement en cours (${rounded}%)...`;
+            });
+
+            if (statusText) statusText.textContent = '✓ Vidéo enregistrée avec succès !';
+            setTimeout(() => {
+                if (progressWrap) progressWrap.style.display = 'none';
+            }, 1200);
+
+            showToast('Vidéo enregistrée ! Elle apparaît maintenant sur la vitrine.', '🎬');
+            fileInput.value = '';
+            renderAdminVideo();
+        } catch (err) {
+            console.error('[Admin] Erreur upload vidéo:', err);
+            if (progressWrap) progressWrap.style.display = 'none';
+            showToast('Erreur lors de l\'enregistrement : ' + (err.message || err), '❌');
+        }
+    }
+
+    if (btnDelete) {
+        btnDelete.addEventListener('click', () => {
+            confirmDialog(
+                'Supprimer la vidéo de la vitrine ?',
+                'Le grand cadre vidéo de la vitrine redeviendra propre et vide jusqu\'au prochain ajout.',
+                async () => {
+                    try {
+                        await window.PixoraVideo.deleteVideo();
+                        showToast('Vidéo supprimée. Le cadre de la vitrine est maintenant vide.', '🗑️');
+                        renderAdminVideo();
+                    } catch (err) {
+                        showToast('Erreur suppression : ' + err.message, '❌');
+                    }
+                }
+            );
+        });
+    }
+
+    if (btnSaveUrl) {
+        btnSaveUrl.addEventListener('click', async () => {
+            const url = (urlInput.value || '').trim();
+            if (!url) {
+                showToast('Veuillez saisir une URL vidéo valide.', '⚠️');
+                return;
+            }
+            try {
+                await window.PixoraVideo.saveVideoUrl(url, 'Vidéo externe');
+                showToast('URL vidéo enregistrée ! Visible sur la vitrine.', '🎬');
+                renderAdminVideo();
+            } catch (err) {
+                showToast('Erreur URL : ' + err.message, '❌');
+            }
+        });
+    }
+}
+
 // ─── SYNC FIREBASE ────────────────────────────────────────────
 function updateSyncStatus(connected) {
     const dot  = document.getElementById('syncDot');
@@ -2104,14 +2946,24 @@ document.addEventListener('pixora-data-updated', () => {
     if (!activePage) return;
     const id = activePage.id.replace('page-', '');
     if (id === 'dashboard') renderDashboard();
-    if (id === 'creations') { renderCreationsGrid(); renderDiffSelection(); }
+    if (id === 'creations') { renderCreationsGrid(); renderDiffSelection(); renderAiCreationsGrid(); populateAiFilters(); }
+    if (id === 'video') renderAdminVideo();
+});
+
+document.addEventListener('pixora-video-updated', () => {
+    const activePage = document.querySelector('.admin-page.active');
+    if (activePage && activePage.id === 'page-video') {
+        renderAdminVideo();
+    }
 });
 
 // ─── INIT PRINCIPAL ───────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     renderSidebarLogo();
     populateSelects();
+    populateAiFilters();
     renderDashboard();
+    initAdminVideo();
 
     // Vérifier Firebase
     setTimeout(() => {

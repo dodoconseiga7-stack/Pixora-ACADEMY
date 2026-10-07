@@ -118,6 +118,31 @@ window.AdminCreations = (function () {
         return true;
     }
 
+    // ─── Ajouter une création IA (single file, gestion admin) ───
+    async function addAiCreation(file, title, service, domain, description) {
+        const data = window.getData();
+        if (!data.creations) data.creations = [];
+
+        const url = await uploadImage(file, service || 'IA', domain || 'General');
+
+        const creation = {
+            id:           'ai_admin_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+            type:         'AI_CREATION',
+            adminManaged: true,          // Marque cette entrée comme gérée manuellement
+            title:        title || file.name.replace(/\.[^.]+$/, '').replace(/[_\-]/g, ' '),
+            service:      service || 'Génération IA',
+            domain:       domain  || 'Général',
+            image:        url,
+            description:  description || '',
+            createdAt:    Date.now()
+        };
+
+        data.creations.push(creation);
+        window.saveData(data);
+        document.dispatchEvent(new CustomEvent('pixora-data-updated', { detail: data }));
+        return creation;
+    }
+
     // ─── Remplacer l'image d'une création ────────────────────────
     async function replaceCreationImage(creationId, newFile) {
         const data = window.getData();
@@ -127,6 +152,9 @@ window.AdminCreations = (function () {
         await deleteFromStorage(creation.image);
         const newUrl = await uploadImage(newFile, creation.service, creation.domain);
         creation.image = newUrl;
+        if (creation.type === 'AI_CREATION') {
+            creation.adminManaged = true;
+        }
 
         window.saveData(data);
         document.dispatchEvent(new CustomEvent('pixora-data-updated', { detail: data }));
@@ -139,6 +167,9 @@ window.AdminCreations = (function () {
         const creation = data.creations.find(c => c.id === creationId);
         if (!creation) return null;
         Object.assign(creation, fields);
+        if (creation.type === 'AI_CREATION') {
+            creation.adminManaged = true;
+        }
         window.saveData(data);
         document.dispatchEvent(new CustomEvent('pixora-data-updated', { detail: data }));
         return creation;
@@ -168,8 +199,20 @@ window.AdminCreations = (function () {
         init();
     }
 
+    // Marquer les créations AI modifiées comme adminManaged afin
+    // qu'ai-seed.js ne les écrase pas au prochain rechargement
+    function markAsAdminManaged(creationId) {
+        const data = window.getData();
+        const creation = data.creations.find(c => c.id === creationId);
+        if (creation) {
+            creation.adminManaged = true;
+            window.saveData(data);
+        }
+    }
+
     return {
         addCreations,
+        addAiCreation,
         deleteCreation,
         replaceCreationImage,
         updateCreation,
