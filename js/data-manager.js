@@ -77,6 +77,26 @@
             }
         }
 
+        // ── Vidéo hero par défaut ──────────────────────────────────────
+        // Si aucune vidéo n'est configurée dans localStorage,
+        // on pointe automatiquement vers la vidéo locale du projet.
+        if (!d.settings.heroVideo && !d.settings.heroVideoUrl) {
+            d.settings.heroVideo = {
+                url: 'assets/videos/hero-video.mp4',
+                name: '1007.mp4',
+                size: 154846495,
+                type: 'video/mp4',
+                updatedAt: 1728309421000,
+                isLocal: false
+            };
+            d.settings.heroVideoUrl = 'assets/videos/hero-video.mp4';
+        }
+
+        // ── Logo par défaut depuis defaultData ─────────────────────────
+        if (!d.settings.logoUrl && window.defaultData && window.defaultData.settings && window.defaultData.settings.logoUrl) {
+            d.settings.logoUrl = window.defaultData.settings.logoUrl;
+        }
+
         return d;
     };
 

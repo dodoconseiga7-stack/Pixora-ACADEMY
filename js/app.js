@@ -373,73 +373,69 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================================
     function renderDiff() {
         const freshData = getData();
-        const myList = freshData.creations.filter(c => c.type === 'MY_CREATION');
-        const aiList = freshData.creations.filter(c => c.type === 'AI_CREATION');
+        const allCreations = (freshData.creations && Array.isArray(freshData.creations)) ? freshData.creations : [];
+
+        // Séparer les créations authentiques Pixora et les créations IA
+        const myList = allCreations.filter(c => c.type === 'MY_CREATION' && !(c.title && c.title.toLowerCase().includes('by ia')));
+        const aiList = allCreations.filter(c => {
+            if (c.image && c.image.indexOf('images.unsplash.com') !== -1) return false;
+            return c.type === 'AI_CREATION' || c.id.startsWith('ai_') || (c.title && c.title.toLowerCase().includes('by ia'));
+        });
 
         const myEl = document.getElementById('my-creation-content');
         const aiEl = document.getElementById('ai-creation-content');
 
-        // ── 1. RASSEMBLER LES CRÉATIONS IA ──
-        let allAiList = (aiList && aiList.length > 0) ? [...aiList] : [];
-        if (freshData.difference && freshData.difference.aiCreation && freshData.difference.aiCreation.image) {
-            const featImg = freshData.difference.aiCreation.image;
-            const alreadyExists = allAiList.some(item => (item.image === featImg || (item.images && item.images.includes(featImg))));
-            if (!alreadyExists) {
-                allAiList.unshift({
-                    id: 'ai_featured',
-                    type: 'AI_CREATION',
-                    title: freshData.difference.aiCreation.title || 'Création par IA',
-                    service: freshData.difference.aiCreation.service || 'Génération IA',
-                    domain: freshData.difference.aiCreation.domain || 'Artificiel',
-                    image: featImg,
-                    description: freshData.difference.aiCreation.description || ''
-                });
+        // Ordre précis des 5 catégories de comparaison validées
+        const comparisonServices = [
+            'Carte de visite',
+            'Flyer',
+            'Affiche publicitaire',
+            'Affiche / Kakémono',
+            'Visuel publicitaire'
+        ];
+
+        const pairedMyList = [];
+        const pairedAiList = [];
+
+        comparisonServices.forEach(svc => {
+            const svcLower = svc.toLowerCase().replace(/[^a-z]/g, '');
+            // Trouver la création Pixora correspondante
+            const matchMy = myList.find(c => {
+                const s = (c.service || '').toLowerCase().replace(/[^a-z]/g, '');
+                return s === svcLower || s.includes(svcLower) || svcLower.includes(s);
+            });
+            // Trouver la création IA correspondante
+            const matchAi = aiList.find(c => {
+                const s = (c.service || '').toLowerCase().replace(/[^a-z]/g, '');
+                const t = (c.title || '').toLowerCase().replace(/[^a-z]/g, '');
+                return s === svcLower || s.includes(svcLower) || svcLower.includes(s) || t.includes(svcLower);
+            });
+
+            if (matchMy && matchAi) {
+                pairedMyList.push(matchMy);
+                pairedAiList.push(matchAi);
             }
-        }
+        });
 
-        // ── 2. SÉLECTION ÉQUILIBRÉE POUR MA CRÉATION ──
-        const diffSelected = (freshData.difference && Array.isArray(freshData.difference.selectedMyCreations))
-            ? freshData.difference.selectedMyCreations
-            : [];
-
-        let displayedMyList;
-        if (diffSelected.length > 0) {
-            // Utiliser les créations explicitement cochées dans l'administration
-            displayedMyList = diffSelected
-                .map(id => myList.find(c => c.id === id))
-                .filter(Boolean);
-        } else {
-            // Pas de sélection manuelle : appariement intelligent 1-pour-1 avec les créations IA
-            // Pour chaque création IA, associer en miroir la création Pixora du même service/domaine
-            const matchedIds = new Set();
-            const pairedList = [];
-
-            allAiList.forEach(aiItem => {
-                const aiService = (aiItem.service || '').toLowerCase().trim();
-                const aiDomain = (aiItem.domain || '').toLowerCase().trim();
-                const match = myList.find(c =>
-                    !matchedIds.has(c.id) && (
-                        (aiService && (c.service || '').toLowerCase().trim() === aiService) ||
-                        (aiDomain && (c.domain || '').toLowerCase().trim() === aiDomain)
-                    )
-                );
-                if (match) {
-                    matchedIds.add(match.id);
-                    pairedList.push(match);
+        // Compléter si des créations IA supplémentaires existent
+        if (pairedAiList.length < aiList.length) {
+            const usedAiIds = new Set(pairedAiList.map(a => a.id));
+            const usedMyIds = new Set(pairedMyList.map(m => m.id));
+            aiList.forEach(aiItem => {
+                if (!usedAiIds.has(aiItem.id)) {
+                    const fallbackMy = myList.find(m => !usedMyIds.has(m.id));
+                    if (fallbackMy) {
+                        usedMyIds.add(fallbackMy.id);
+                        pairedMyList.push(fallbackMy);
+                        usedAiIds.add(aiItem.id);
+                        pairedAiList.push(aiItem);
+                    }
                 }
             });
-
-            // Compléter si nécessaire pour avoir un nombre de cartes équilibré (ex: 4 vs 4)
-            const targetCount = allAiList.length > 0 ? allAiList.length : 4;
-            myList.forEach(c => {
-                if (pairedList.length < targetCount && !matchedIds.has(c.id)) {
-                    matchedIds.add(c.id);
-                    pairedList.push(c);
-                }
-            });
-
-            displayedMyList = pairedList.length > 0 ? pairedList : myList.slice(0, targetCount);
         }
+
+        const displayedMyList = pairedMyList.length > 0 ? pairedMyList : myList.slice(0, 5);
+        const displayedAiList = pairedAiList.length > 0 ? pairedAiList : aiList.slice(0, 5);
 
         // ── 3. RENDU « MA CRÉATION » (Format Paysage) ──
         if (myEl) {
@@ -457,8 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          data-meta="${escapedMeta}"
                          title="${escapedTitle} — Cliquer pour agrandir">
                         <div class="diff-gallery-img-wrap my-gallery-img-wrap">
-                            <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/400x250?text=Création';">
+                            <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy">
                             <div class="diff-zoom-hint">🔍 Agrandir</div>
                         </div>
                         <div class="diff-gallery-info my-gallery-info">
@@ -489,8 +484,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ── 4. RENDU « CRÉATION PAR IA » (Format Paysage) ──
         if (aiEl) {
-            if (allAiList.length > 0) {
-                const aiGalleryHtml = allAiList.map(item => {
+            if (displayedAiList.length > 0) {
+                const aiGalleryHtml = displayedAiList.map(item => {
                     const imgSrc = (item.images && item.images[0]) ? item.images[0] : (item.image || '');
                     const escapedTitle = (item.title || 'Création par IA').replace(/"/g, '&quot;');
                     const escapedDesc = (item.description || '').replace(/"/g, '&quot;');
@@ -503,8 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          data-meta="${escapedMeta}"
                          title="${escapedTitle} — Cliquer pour agrandir">
                         <div class="diff-gallery-img-wrap ai-gallery-img-wrap">
-                            <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/400x250?text=Image+IA';">
+                            <img src="${imgSrc}" alt="${escapedTitle}" loading="lazy">
                             <div class="diff-zoom-hint">🔍 Agrandir</div>
                         </div>
                         <div class="diff-gallery-info ai-gallery-info">
