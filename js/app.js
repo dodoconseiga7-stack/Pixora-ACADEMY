@@ -155,50 +155,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!heroVideoPlayer) return;
         applyVideoPlayerAttributes();
 
+        const defaultVid = 'assets/videos/hero-video.mp4';
+
+        const setVideoActive = (src) => {
+            const finalSrc = src || defaultVid;
+            if (heroVideoPlayer.src !== finalSrc && !heroVideoPlayer.src.endsWith(finalSrc)) {
+                heroVideoPlayer.src = finalSrc;
+                heroVideoPlayer.load();
+            }
+            heroVideoPlayer.style.display = 'block';
+            if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'flex';
+            if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'block';
+            triggerAutoplay();
+        };
+
         if (window.PixoraVideo && typeof window.PixoraVideo.getVideoUrl === 'function') {
             window.PixoraVideo.getVideoUrl().then(url => {
-                if (url) {
-                    if (heroVideoPlayer.src !== url) {
-                        heroVideoPlayer.src = url;
-                        heroVideoPlayer.load();
-                    }
-                    heroVideoPlayer.style.display = 'block';
-                    if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'flex';
-                    if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'block';
-                    triggerAutoplay();
-                } else {
-                    heroVideoPlayer.pause();
-                    heroVideoPlayer.removeAttribute('src');
-                    heroVideoPlayer.style.display = 'none';
-                    if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'none';
-                    if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'none';
-                }
+                setVideoActive(url || defaultVid);
             }).catch(err => {
-                console.warn('[Vitrine] Erreur chargement vidéo:', err);
-                heroVideoPlayer.style.display = 'none';
-                if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'none';
-                if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'none';
+                console.warn('[Vitrine] Erreur chargement vidéo, utilisation vidéo locale:', err);
+                setVideoActive(defaultVid);
             });
         } else {
             const d = (typeof getData === 'function') ? getData() : {};
             const heroVid = (d.settings && (d.settings.heroVideo || d.settings.heroVideoUrl)) || null;
             const videoUrl = typeof heroVid === 'string' ? heroVid : (heroVid && heroVid.url);
-            if (videoUrl && !videoUrl.startsWith('indexeddb:')) {
-                if (heroVideoPlayer.src !== videoUrl) {
-                    heroVideoPlayer.src = videoUrl;
-                    heroVideoPlayer.load();
-                }
-                heroVideoPlayer.style.display = 'block';
-                if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'flex';
-                if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'block';
-                triggerAutoplay();
-            } else {
-                heroVideoPlayer.pause();
-                heroVideoPlayer.removeAttribute('src');
-                heroVideoPlayer.style.display = 'none';
-                if (heroVideoSoundBtn) heroVideoSoundBtn.style.display = 'none';
-                if (heroVideoWatermarkMask) heroVideoWatermarkMask.style.display = 'none';
-            }
+            setVideoActive(videoUrl || defaultVid);
         }
     }
 
@@ -585,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         serviceCardsGrid.innerHTML = displayServices.map(s => {
-            const price = freshData.prices[s] ? freshData.prices[s].basic : 0;
+            const price = (freshData.prices && freshData.prices[s]) ? freshData.prices[s].basic : 5000;
             const imgUrl = freshData.serviceImages ? freshData.serviceImages[s] : '';
             const icon = (typeof SERVICE_ICONS !== 'undefined' && SERVICE_ICONS[s]) ? SERVICE_ICONS[s] : '🎨';
 
@@ -612,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imgEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const svcName = imgEl.dataset.zoomTitle;
-                const p = freshData.prices[svcName] ? freshData.prices[svcName].basic : 0;
+                const p = (freshData.prices && freshData.prices[svcName]) ? freshData.prices[svcName].basic : 5000;
                 openLightbox(imgEl.dataset.zoomImg, svcName, `Tarif à partir de ${p.toLocaleString('fr-FR')} F CFA`, 'Service Pixora Studio');
             });
         });
@@ -850,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.service-row').forEach(row => {
             const s = row.querySelector('.input-service').value;
             const f = row.querySelector('.input-formule').value;
-            if (s && f && freshData.prices[s]) total += freshData.prices[s][f] || 0;
+            if (s && f && freshData.prices && freshData.prices[s]) total += freshData.prices[s][f] || 0;
         });
         orderTotalEl.textContent = `${total.toLocaleString('fr-FR')} F CFA`;
         const rightTotalEl = document.getElementById('right-col-total');
@@ -901,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const s = row.querySelector('.input-service').value;
             const f = row.querySelector('.input-formule').value;
             const fTitle = f.charAt(0).toUpperCase() + f.slice(1);
-            const price = freshData.prices[s] ? freshData.prices[s][f] : 0;
+            const price = (freshData.prices && freshData.prices[s]) ? freshData.prices[s][f] : 0;
             servicesHtml += `
                 <div class="recap-row">
                     <div><strong>${idx}. ${s}</strong><br><small style="color:var(--c-text-muted)">Formule : ${fTitle}</small></div>
@@ -981,7 +963,7 @@ ${logo}
             const s = row.querySelector('.input-service').value;
             const f = row.querySelector('.input-formule').value;
             const fTitle = f.charAt(0).toUpperCase() + f.slice(1);
-            const price = freshData.prices[s] ? freshData.prices[s][f] : 0;
+            const price = (freshData.prices && freshData.prices[s]) ? freshData.prices[s][f] : 0;
             const emoji = numMap[idx] || `${idx + 1}.`;
             msg += `${emoji} ${s}\nFormule : ${fTitle}\nPrix : ${price.toLocaleString('fr-FR')} F CFA\n\n`;
             total += price;

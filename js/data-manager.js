@@ -97,6 +97,14 @@
             d.settings.logoUrl = window.defaultData.settings.logoUrl;
         }
 
+        // ── Prix et Images de services par défaut ──────────────────────
+        if (!d.prices && window.defaultData && window.defaultData.prices) {
+            d.prices = JSON.parse(JSON.stringify(window.defaultData.prices));
+        }
+        if ((!d.serviceImages || Object.keys(d.serviceImages).length < 7) && window.defaultData && window.defaultData.serviceImages) {
+            d.serviceImages = JSON.parse(JSON.stringify(window.defaultData.serviceImages));
+        }
+
         return d;
     };
 

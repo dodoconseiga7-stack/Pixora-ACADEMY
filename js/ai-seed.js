@@ -5,8 +5,8 @@
  */
 
 (function seedAICreations() {
-    const KEY = 'pixora_studio_data_v4';
-    const AI_SEED_FLAG = 'pixora_ai_seeded_v5';
+    const KEY = 'pixora_studio_data_v5';
+    const AI_SEED_FLAG = 'pixora_ai_seeded_v6';
 
     if (localStorage.getItem(AI_SEED_FLAG) === 'true') return;
 

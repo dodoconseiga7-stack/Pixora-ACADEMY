@@ -1753,14 +1753,14 @@ button{font-family:inherit;cursor:pointer;}
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
-<script src="js/firebase-config.js?v=4.0"></script>
+<script src="js/firebase-config.js?v=5.0"></script>
 
 <!-- Data -->
-<script src="js/data.js?v=4.0"></script>
-<script src="js/data-manager.js?v=4.0"></script>
-<script src="js/ai-seed.js?v=4.0"></script>
-<script src="js/admin-creations.js?v=4.0"></script>
-<script src="js/video-manager.js?v=4.0"></script>
+<script src="js/data.js?v=5.0"></script>
+<script src="js/data-manager.js?v=5.0"></script>
+<script src="js/ai-seed.js?v=5.0"></script>
+<script src="js/admin-creations.js?v=5.0"></script>
+<script src="js/video-manager.js?v=5.0"></script>
 
 <script>
 /* ══════════════════════════════════════════════════════════════
@@ -2511,8 +2511,9 @@ function renderServices() {
 
 function renderPricesGrid(data) {
     const grid = document.getElementById('adminPricesGrid');
+    if (!data.prices) data.prices = {};
     grid.innerHTML = (data.services || []).map(s => {
-        const p = data.prices[s] || { basic:0, standard:0, premium:0 };
+        const p = (data.prices && data.prices[s]) || { basic:0, standard:0, premium:0 };
         return `<div class="price-card-admin">
             <h4>${escHtml(s)}</h4>
             <div class="price-row-admin">

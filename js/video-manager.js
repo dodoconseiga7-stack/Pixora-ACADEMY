@@ -209,7 +209,7 @@ window.PixoraVideo = (function () {
     async function getVideoUrl() {
         const info = await getVideoInfo();
         if (!info.hasVideo || !info.url) {
-            return null;
+            return 'assets/videos/hero-video.mp4';
         }
 
         // Si c'est stocké dans IndexedDB
@@ -222,11 +222,11 @@ window.PixoraVideo = (function () {
                 cachedBlobUrl = URL.createObjectURL(localRec.blob);
                 return cachedBlobUrl;
             }
-            return null;
+            return 'assets/videos/hero-video.mp4';
         }
 
         // Si c'est une URL directe (http, https, cloud, data ou chemin relatif)
-        return info.url;
+        return info.url || 'assets/videos/hero-video.mp4';
     }
 
     // ─── Enregistrer un fichier vidéo ────────────────────────────
