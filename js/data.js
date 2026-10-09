@@ -1,4 +1,4 @@
-﻿const STORAGE_KEY = 'pixora_studio_data_v3';
+const STORAGE_KEY = 'pixora_studio_data_v4';
 
 const SERVICE_ICONS = {
     'Carte de visite': 'ðŸªª',
@@ -21,6 +21,11 @@ try {
 } catch(e) {}
 
 function initData() {
+    try {
+        if (localStorage.getItem('pixora_studio_data_v3')) localStorage.removeItem('pixora_studio_data_v3');
+        if (localStorage.getItem('pixora_studio_data_v2')) localStorage.removeItem('pixora_studio_data_v2');
+        if (localStorage.getItem('pixora_studio_data')) localStorage.removeItem('pixora_studio_data');
+    } catch(e) {}
     let stored;
     try { stored = localStorage.getItem(STORAGE_KEY); } catch(e) { stored = null; }
 
