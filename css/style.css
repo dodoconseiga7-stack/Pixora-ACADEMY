@@ -1119,8 +1119,8 @@ button { font-family: inherit; }
 }
 .grid#creations-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 22px;
 }
 .creation-item {
     background: #FFFFFF;
@@ -1128,152 +1128,33 @@ button { font-family: inherit; }
     overflow: hidden;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    display: flex;
-    flex-direction: column;
     transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s;
-    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .creation-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), 0 0 18px rgba(216, 45, 155, 0.35);
-}
-.creation-img-wrap {
-    position: relative;
-    width: 100%;
-    height: 220px;
-    background: #F8F9FA;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25), 0 0 16px rgba(216, 45, 155, 0.35);
 }
 .creation-item img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 220px;
     object-fit: contain;
+    background: #F5F5F5;
     display: block;
-    transition: transform 0.35s ease;
+    padding: 8px;
 }
-.creation-item:hover img {
-    transform: scale(1.04);
-}
-.creation-badge-cat {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(18, 26, 58, 0.88);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    color: #00D2FF;
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(0, 210, 255, 0.3);
-    z-index: 2;
-}
-.creation-zoom-hint {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    background: rgba(0, 0, 0, 0.65);
-    color: #FFFFFF;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-    z-index: 2;
-}
-.creation-item:hover .creation-zoom-hint {
-    opacity: 1;
-}
-.creation-info {
-    padding: 16px 18px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    background: #FFFFFF;
-}
-.creation-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-}
-.creation-domain-pill {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #D82D9B;
-    background: rgba(216, 45, 155, 0.08);
-    border: 1px solid rgba(216, 45, 155, 0.2);
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
+.creation-info { padding: 14px 16px; }
 .creation-title {
-    font-size: 0.98rem;
-    font-weight: 800;
-    color: #1A202C !important;
-    margin: 0 0 6px 0;
-    line-height: 1.35;
-    letter-spacing: 0.2px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--c-text-dark);
+    margin-bottom: 4px;
 }
-.creation-desc {
-    font-size: 0.83rem;
-    color: #4A5568 !important;
-    line-height: 1.45;
-    margin: 0 0 14px 0;
-    flex-grow: 1;
-}
-.creation-footer-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 12px;
-    border-top: 1px solid #EDF2F7;
-    margin-top: auto;
-    gap: 8px;
-}
-.creation-price-col {
-    display: flex;
-    flex-direction: column;
-}
-.creation-price-note {
-    font-size: 0.68rem;
-    color: #718096;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 2px;
-}
-.creation-price-amount {
-    font-size: 0.96rem;
-    font-weight: 800;
-    color: #D82D9B;
-}
-.creation-btn-action {
-    background: rgba(216, 45, 155, 0.08);
-    color: #D82D9B;
-    border: 1px solid rgba(216, 45, 155, 0.25);
+.creation-domain {
     font-size: 0.76rem;
     font-weight: 700;
-    padding: 6px 12px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-.creation-item:hover .creation-btn-action {
-    background: linear-gradient(135deg, #FF7A1A 0%, #D82D9B 100%);
-    color: #FFFFFF;
-    border-color: transparent;
+    color: var(--c-logo-pink);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* ================================================================

@@ -329,9 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elDiffSub && texts.diffSubtitle) elDiffSub.textContent = texts.diffSubtitle;
 
         const elCreationsTitle = document.getElementById('creations-title');
-        if (elCreationsTitle) {
-            elCreationsTitle.textContent = (texts.creationsTitle && !texts.creationsTitle.includes('Ã')) ? texts.creationsTitle : 'MES CRÉATIONS';
-        }
+        if (elCreationsTitle && texts.creationsTitle) elCreationsTitle.textContent = texts.creationsTitle;
 
         const elTarifsTitle = document.getElementById('tarifs-title');
         if (elTarifsTitle && texts.tarifsTitle) elTarifsTitle.textContent = texts.tarifsTitle;
@@ -633,42 +631,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { label: '🏷️ Étiquettes', filter: 'Étiquette' }
     ];
 
-    function getOfficialServicePrice(serviceName, dataPrices) {
-        if (!dataPrices) return 5000;
-        if (dataPrices[serviceName] && typeof dataPrices[serviceName].basic === 'number') {
-            return dataPrices[serviceName].basic;
-        }
-        const sClean = (serviceName || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-        for (const [k, p] of Object.entries(dataPrices)) {
-            const kClean = k.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-            if (kClean === sClean && p && typeof p.basic === 'number') {
-                return p.basic;
-            }
-        }
-        if (sClean.includes('logo') && dataPrices['Logo']) return dataPrices['Logo'].basic;
-        if (sClean.includes('carte') && dataPrices['Carte de visite']) return dataPrices['Carte de visite'].basic;
-        if (sClean.includes('flyer') && dataPrices['Flyer']) return dataPrices['Flyer'].basic;
-        if (sClean.includes('affiche publicitaire') && dataPrices['Affiche publicitaire']) return dataPrices['Affiche publicitaire'].basic;
-        if (sClean.includes('kakemono')) {
-            const kp = dataPrices['Affiche / Kakemono'] || dataPrices['Affiche / Kakémono'];
-            if (kp && typeof kp.basic === 'number') return kp.basic;
-        }
-        if (sClean.includes('visuel') && dataPrices['Visuel publicitaire']) return dataPrices['Visuel publicitaire'].basic;
-        if (sClean.includes('etiquette')) {
-            const ep = dataPrices['Etiquette'] || dataPrices['Étiquette'];
-            if (ep && typeof ep.basic === 'number') return ep.basic;
-        }
-        if (dataPrices['Autres'] && typeof dataPrices['Autres'].basic === 'number') return dataPrices['Autres'].basic;
-        return 5000;
-    }
-
     function matchesPortfolioFilter(c, filter) {
         if (!filter || filter === 'ALL') return true;
-        const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-        const f = norm(filter);
-        const svc = norm(c.service);
-        const dom = norm(c.domain);
-        const tit = norm(c.title);
+        const f = filter.toLowerCase().trim();
+        const svc = (c.service || '').toLowerCase().trim();
+        const dom = (c.domain || '').toLowerCase().trim();
+        const tit = (c.title || '').toLowerCase().trim();
 
         if (f === 'logo' || f === 'logos') {
             return svc.includes('logo') || dom.includes('logo') || tit.includes('logo');
@@ -679,14 +647,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (f.includes('carte')) {
             return svc.includes('carte') || dom.includes('carte') || tit.includes('carte');
         }
-        if (f.includes('affiche') || f.includes('kakemono')) {
-            return svc.includes('affiche') || svc.includes('kakemono') || dom.includes('affiche') || dom.includes('kakemono') || tit.includes('affiche');
+        if (f.includes('affiche') || f.includes('kakemono') || f.includes('kakémono')) {
+            return svc.includes('affiche') || svc.includes('kakemono') || svc.includes('kakémono') || dom.includes('affiche') || dom.includes('kakemono') || tit.includes('affiche');
         }
         if (f.includes('visuel')) {
             return svc.includes('visuel') || dom.includes('visuel') || tit.includes('visuel');
         }
-        if (f.includes('etiquette')) {
-            return svc.includes('etiquette') || dom.includes('etiquette') || tit.includes('etiquette');
+        if (f.includes('etiquette') || f.includes('étiquette')) {
+            return svc.includes('etiquette') || svc.includes('étiquette') || dom.includes('etiquette') || dom.includes('étiquette') || tit.includes('etiquette');
         }
         return svc === f || dom === f || svc.includes(f) || dom.includes(f) || tit.includes(f);
     }
@@ -734,39 +702,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         creationsGrid.innerHTML = list.map(c => {
-            const officialPrice = getOfficialServicePrice(c.service, freshData.prices);
-            const priceFormatted = Number(officialPrice).toLocaleString('fr-FR');
-            const cleanDesc = (c.description || '')
-                .replace(/Ã©/g, 'é')
-                .replace(/Ã¨/g, 'è')
-                .replace(/Ãª/g, 'ê')
-                .replace(/Ã /g, 'à')
-                .replace(/Ã¢/g, 'â')
-                .replace(/Ã‰/g, 'É')
-                .replace(/Ã®/g, 'î')
-                .replace(/Ã´/g, 'ô');
-
+            const priceHtml = c.price ? `<span style="font-weight:700; color:var(--c-primary); font-size:0.88rem; margin-left:8px;">${Number(c.price).toLocaleString('fr-FR')} F CFA</span>` : '';
             return `
-                <div class="creation-item" data-img="${c.image}" data-title="${c.title}" data-desc="${cleanDesc}" data-service="${c.service || ''}" data-domain="${c.domain || ''}" data-price="${officialPrice}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
-                    <div class="creation-img-wrap">
-                        <span class="creation-badge-cat">${c.service || 'Création'}</span>
-                        <img src="${c.image}" alt="${c.title}" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
-                        <span class="creation-zoom-hint">🔍 Voir en grand</span>
-                    </div>
+                <div class="creation-item" data-img="${c.image}" data-title="${c.title}" data-desc="${c.description || ''}" data-service="${c.service || ''}" data-domain="${c.domain || ''}" data-price="${c.price || ''}" style="cursor:zoom-in;" title="Cliquer pour voir en grand">
+                    <img src="${c.image}" alt="${c.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x300?text=Image';">
                     <div class="creation-info">
-                        ${c.domain ? `
-                        <div class="creation-meta-row">
-                            <span class="creation-domain-pill">${c.domain}</span>
-                        </div>` : ''}
-                        <h4 class="creation-title">${c.title}</h4>
-                        <p class="creation-desc">${cleanDesc}</p>
-                        <div class="creation-footer-bar">
-                            <div class="creation-price-col">
-                                <span class="creation-price-note">Tarif Nos services</span>
-                                <span class="creation-price-amount">${priceFormatted} F CFA</span>
-                            </div>
-                            <span class="creation-btn-action">🔍 Agrandir</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <h4 style="margin:0;">${c.title}</h4>
+                            ${priceHtml}
                         </div>
+                        <p style="margin-bottom:8px;">${c.description || ''}</p>
+                        <span class="creation-tag">${c.service || 'Création'}</span>
+                        ${c.domain ? `<span class="creation-tag" style="background:rgba(23,105,255,0.15); color:#82b1ff; margin-left:4px;">${c.domain}</span>` : ''}
                     </div>
                 </div>
             `;
@@ -774,7 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         creationsGrid.querySelectorAll('.creation-item').forEach(el => {
             el.addEventListener('click', () => {
-                const meta = `${el.dataset.service || 'Création'}${el.dataset.domain ? ' • ' + el.dataset.domain : ''}` + (el.dataset.price ? ` • Tarif officiel : ${Number(el.dataset.price).toLocaleString('fr-FR')} F CFA` : '');
+                const meta = `${el.dataset.service}${el.dataset.domain ? ' • ' + el.dataset.domain : ''}` + (el.dataset.price ? ` • ${Number(el.dataset.price).toLocaleString('fr-FR')} F CFA` : '');
                 openLightbox(el.dataset.img, el.dataset.title, el.dataset.desc, meta);
             });
         });
